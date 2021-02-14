@@ -1,0 +1,8 @@
+gin:
+  port: 8888
+db:
+  user: arong
+  password: 123
+  host: 10.211.55.30
+  port: 3306
+  dbName: hrms_prod

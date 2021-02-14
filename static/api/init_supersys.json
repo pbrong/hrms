@@ -1,0 +1,45 @@
+{
+  "homeInfo": {
+    "title": "首页",
+    "href": "/views/welcome-1.html?t=1"
+  },
+  "logoInfo": {
+    "title": "欢迎超级管理员",
+    "image": "/static/images/logo.png",
+    "href": ""
+  },
+  "menuInfo": [
+    {
+      "title": "常用功能",
+      "icon": "fa fa-address-book",
+      "href": "",
+      "target": "_self",
+      "child": [
+        {
+          "title": "部门管理",
+          "href": "",
+          "icon": "fa fa-home",
+          "target": "_self"
+        },
+        {
+          "title": "职级管理",
+          "href": "views/menu.html",
+          "icon": "fa fa-window-maximize",
+          "target": "_self"
+        },
+        {
+          "title": "员工管理",
+          "href": "views/setting.html",
+          "icon": "fa fa-gears",
+          "target": "_self"
+        },
+        {
+          "title": "权限管理",
+          "href": "views/table.html",
+          "icon": "fa fa-file-text",
+          "target": "_self"
+        }
+      ]
+    }
+  ]
+}
