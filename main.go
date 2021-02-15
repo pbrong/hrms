@@ -62,11 +62,15 @@ func routerInit(server *gin.Engine) {
 	// 首页重定向
 	server.GET("/index", handler.Index)
 	// 账户相关
-	account := server.Group("/account")
-	{
-		account.POST("/login", handler.Login)
-		account.POST("/quit", handler.Quit)
-	}
+	accountGroup := server.Group("/account")
+	accountGroup.POST("/login", handler.Login)
+	accountGroup.POST("/quit", handler.Quit)
+	// 部门相关
+	departGroup := server.Group("/depart")
+	departGroup.POST("/create", handler.DepartCreate)
+	departGroup.DELETE("/del/:dep_id", handler.DepartDel)
+	departGroup.POST("/edit", handler.DepartEdit)
+	departGroup.GET("/query/:dep_id", handler.DepartQuery)
 }
 
 func htmlInit(server *gin.Engine) {
@@ -75,6 +79,10 @@ func htmlInit(server *gin.Engine) {
 	server.StaticFS("/views", http.Dir("./views"))
 	// HTML模板加载
 	server.LoadHTMLGlob("views/*")
+	// 404页面
+	server.NoRoute(func(c *gin.Context) {
+		c.HTML(404, "404.html", nil)
+	})
 }
 
 func InitGorm() error {

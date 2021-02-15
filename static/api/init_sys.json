@@ -4,7 +4,7 @@
     "href": "/views/welcome-1.html?t=1"
   },
   "logoInfo": {
-    "title": "欢迎超级管理员",
+    "title": "欢迎系统管理员",
     "image": "/static/images/logo.png",
     "href": ""
   },
@@ -17,6 +17,12 @@
       "child": [
         {
           "title": "员工管理",
+          "href": "",
+          "icon": "fa fa-home",
+          "target": "_self"
+        },
+        {
+          "title": "工资管理",
           "href": "",
           "icon": "fa fa-home",
           "target": "_self"

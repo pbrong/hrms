@@ -89,5 +89,4 @@ func Quit(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"status": 2000,
 	})
-	//c.HTML(http.StatusOK, "login-1.html", nil)
 }
