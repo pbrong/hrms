@@ -1,9 +1,12 @@
 package util
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
+	"math/rand"
 	"strconv"
+	"time"
 )
 
 func AcceptPage(c *gin.Context) (int, int) {
@@ -21,4 +24,9 @@ func AcceptPage(c *gin.Context) (int, int) {
 	limit, _ := strconv.Atoi(limitStr)
 	startIndex := (page - 1) * limit
 	return startIndex, limit
+}
+
+func RandomID(pre string) string {
+	rand.Seed(time.Now().Unix())
+	return fmt.Sprintf("%v_%v", pre, rand.Uint32())
 }

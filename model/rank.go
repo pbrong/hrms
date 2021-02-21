@@ -16,3 +16,7 @@ type RankEditDTO struct {
 	RankId   string `json:"rank_id" binding:"required"`
 	RankName string `json:"rank_name" binding:"required"`
 }
+
+func (d Rank) TableName() string {
+	return "rank"
+}

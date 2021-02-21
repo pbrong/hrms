@@ -23,7 +23,7 @@
         },
         {
           "title": "职级管理",
-          "href": "views/menu.html",
+          "href": "views/rank_manage.html",
           "icon": "fa fa-window-maximize",
           "target": "_self"
         },
@@ -31,11 +31,25 @@
           "title": "员工管理",
           "href": "views/setting.html",
           "icon": "fa fa-gears",
-          "target": "_self"
+          "target": "_self",
+          "child": [
+            {
+              "title": "员工信息管理",
+              "href": "views/staff_manage.html",
+              "icon": "fa fa-tachometer",
+              "target": "_self"
+            },
+            {
+              "title": "登陆密码管理",
+              "href": "views/welcome-2.html",
+              "icon": "fa fa-tachometer",
+              "target": "_self"
+            }
+          ]
         },
         {
           "title": "权限管理",
-          "href": "views/table.html",
+          "href": "views/404.html",
           "icon": "fa fa-file-text",
           "target": "_self"
         }

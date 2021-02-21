@@ -32,7 +32,7 @@ func DepartCreate(c *gin.Context) {
 		return
 	}
 	departmentCreate := model.Department{
-		DepId:    model.CreateDepId(),
+		DepId:    util.RandomID("dep"),
 		PreDepId: departmentCreateDTO.PreDepId,
 		DepName:  departmentCreateDTO.DepName,
 	}
