@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>部门管理</title>
+    <title>员工管理</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -18,31 +18,32 @@
             <div style="margin: 10px 10px 10px 10px">
                 <form class="layui-form layui-form-pane" action="">
                     <div class="layui-inline">
-                        <label class="layui-form-label">部门ID</label>
+                        <label class="layui-form-label">员工姓名</label>
                         <div class="layui-input-inline">
-                            <input type="text" name="dep_id" autocomplete="off" class="layui-input">
+                            <input type="text" name="staff_name" autocomplete="off" class="layui-input">
                         </div>
                     </div>
-                    <!--                    <div class="layui-form-item">-->
-                    <!--                        <div class="layui-inline">-->
-                    <!--                            <label class="layui-form-label">部门名称</label>-->
-                    <!--                            <div class="layui-input-inline">-->
-                    <!--                                <input type="text" name="dep_name" autocomplete="off" class="layui-input">-->
-                    <!--                            </div>-->
-                    <!--                        </div>-->
+<!--                    <div class="layui-form-item">-->
+<!--                        <div class="layui-inline">-->
+<!--                            <label class="layui-form-label">部门名称</label>-->
+<!--                            <div class="layui-input-inline">-->
+<!--                                <input type="text" name="dep_name" autocomplete="off" class="layui-input">-->
+<!--                            </div>-->
+<!--                        </div>-->
 
-                    <!--                        <div class="layui-inline">-->
-                    <!--                            <label class="layui-form-label">上级部门ID</label>-->
-                    <!--                            <div class="layui-input-inline">-->
-                    <!--                                <input type="text" name="pre_dep_id" autocomplete="off" class="layui-input">-->
-                    <!--                            </div>-->
-                    <!--                        </div>-->
-                    <div class="layui-inline">
-                        <button type="submit" class="layui-btn layui-btn-primary"  lay-submit lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索</button>
-                    </div>
-                    <!--                    </div>-->
+<!--                        <div class="layui-inline">-->
+<!--                            <label class="layui-form-label">上级部门ID</label>-->
+<!--                            <div class="layui-input-inline">-->
+<!--                                <input type="text" name="pre_dep_id" autocomplete="off" class="layui-input">-->
+<!--                            </div>-->
+<!--                        </div>-->
+                        <div class="layui-inline">
+                            <button type="submit" class="layui-btn layui-btn-primary"  lay-submit lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索</button>
+                        </div>
+<!--                    </div>-->
+                </fieldset>
+            </div>
         </fieldset>
-
 
         <script type="text/html" id="toolbarDemo">
             <div class="layui-btn-container">
@@ -69,7 +70,7 @@
 
         table.render({
             elem: '#currentTableId',
-            url: '/depart/query/all',
+            url: '/staff/query/all',
             toolbar: '#toolbarDemo',
             defaultToolbar: ['filter', 'exports', 'print', {
                 title: '提示',
@@ -79,12 +80,24 @@
             cols: [[
                 // {type: "checkbox", width: 50},
                 {field: 'ID', width: 60, title: 'ID', sort: true},
-                {field: 'dep_id', width: 150, title: '部门ID'},
-                {field: 'pre_dep_id', width: 150, title: '上级部门ID'},
-                {field: 'dep_name', width: 150, title: '部门名称'},
-                {field: 'CreatedAt', title: '创建时间', minWidth: 150, sort: true},
-                {field: 'UpdatedAt', width: 150, title: '更新时间', sort: true},
-                {title: '操作', minWidth: 150, toolbar: '#currentTableBar', align: "center"}
+                {field: 'staff_id', width: 150, title: '员工ID'},
+                {field: 'staff_name', width: 150, title: '员工姓名'},
+                {field: 'birthday', width: 150, title: '出生日期', templet: dateFormat1},
+                {field: 'identity_num', width: 150, title: '身份证号'},
+                {field: 'sex', width: 150, title: '性别', templet: sexFormat},
+                {field: 'nation', width: 150, title: '民族'},
+                {field: 'school', title: '毕业院校', minWidth: 150},
+                {field: 'major', title: '毕业专业', minWidth: 150},
+                {field: 'edu_level', title: '最高学历', minWidth: 150},
+                {field: 'base_salary', title: '基本工资', minWidth: 150},
+                {field: 'card_num', title: '银行卡号', minWidth: 150},
+                {field: 'rank_id', title: '职位ID', minWidth: 150, hide:true},
+                {field: 'rank_name', title: '职位名称', minWidth: 150},
+                {field: 'dep_id', title: '部门ID', minWidth: 150, hide:true},
+                {field: 'dep_name', title: '部门名称', minWidth: 150},
+                {field: 'email', title: '电子邮箱', minWidth: 150},
+                {field: 'entry_date', title: '入职时间', minWidth: 150, templet: dateFormat2},
+                {title: '操作', minWidth: 150, toolbar: '#currentTableBar', align: "center", fixed: 'right'}
             ]],
             limits: [10, 15, 20, 25, 50, 100],
             limit: 10,
@@ -105,14 +118,38 @@
         }
         });
 
+        // 性别格式化
+        function sexFormat(data) {
+            var sex = data.sex;
+            var sexStr
+            if (sex == 1) {
+                sexStr = "男"
+            } else {
+                sexStr = "女"
+            }
+            return sexStr
+        }
+
+        // 时间格式化
+        function dateFormat1(data) {
+            if (data.birthday != "undefined") {
+                return data.birthday.slice(0, 10)
+            }
+        }
+
+        function dateFormat2(data) {
+            if (data.entry_date != "undefined") {
+                return data.entry_date.slice(0, 10)
+            }
+        }
+
         // 监听搜索操作
         form.on('submit(data-search-btn)', function (data) {
             layer.msg("搜索成功");
-            // alert(data.field.dep_id)
-            var depId = data.field.dep_id;
-            var reqUrl = "/depart/query/" + depId
-            if (typeof depId == "undefined" || depId == null || depId == "") {
-                reqUrl = "/depart/query/all"
+            var staffName = data.field.staff_name;
+            var reqUrl = "/staff/query_by_name/" + staffName
+            if (typeof staffName == "undefined" || staffName == null || staffName == "") {
+                reqUrl = "/staff/query/all"
             }
             //执行搜索重载
             table.reload('currentTableId', {
@@ -130,13 +167,13 @@
         table.on('toolbar(currentTableFilter)', function (obj) {
             if (obj.event === 'add') {  // 监听添加操作
                 var index = layer.open({
-                    title: '添加部门',
+                    title: '添加员工',
                     type: 2,
                     shade: 0.2,
                     maxmin:true,
                     shadeClose: true,
                     area: ['80%', '80%'],
-                    content: '/views/dep_add.html',
+                    content: '/views/staff_add.html',
                     end: function(){
                         //执行搜索重载
                         table.reload('currentTableId', {
@@ -158,22 +195,23 @@
         // });
 
         table.on('tool(currentTableFilter)', function (obj) {
-            var depId = obj.data.dep_id;
-            var preDepId = obj.data.pre_dep_id;
-            var depName = obj.data.dep_name;
-            var needEditDepInfo = {"dep_id":depId, "pre_dep_id": preDepId,
-            "dep_name":depName}
+            var staffId = obj.data.staff_id;
+            // var preDepId = obj.data.pre_dep_id;
+            // var depName = obj.data.dep_name;
+            // var needEditDepInfo = {"dep_id":depId, "pre_dep_id": preDepId,
+            // "dep_name":depName}
             if (obj.event === 'edit') {
-                // 本地缓存需要编辑的部门信息
-                localStorage.setItem("dep_edit_info", JSON.stringify(needEditDepInfo))
+                // 本地缓存需要编辑的员工信息
+                localStorage.setItem("staff_edit_info", JSON.stringify(obj.data))
+                // alert("待编辑：" + localStorage.getItem("staff_edit_info"))
                 var index = layer.open({
-                    title: '编辑部门',
+                    title: '编辑员工信息',
                     type: 2,
                     shade: 0.2,
                     maxmin:true,
                     shadeClose: true,
                     area: ['80%', '80%'],
-                    content: '/views/dep_edit.html',
+                    content: '/views/staff_edit.html',
                     end: function(){
                         //执行搜索重载
                         table.reload('currentTableId', {
@@ -193,12 +231,12 @@
                     // alert(depId)
                     $.ajax({
                         type: "DELETE",
-                        url: "/depart/del/" + depId,
+                        url: "/staff/del/" + staffId,
                         async: false,
                         success:function (data) {
                             var resp = JSON.parse(JSON.stringify(data));
                             if (resp.status == 2000) {
-                                layer.alert("删除部门成功",function(index) {
+                                layer.alert("删除员工信息成功",function(index) {
                                     // 重新渲染
                                     table.reload('currentTableId', {
                                         page: {
@@ -211,7 +249,7 @@
                             }
                         },
                         error:function (data) {
-                            console.log("login error resp:" + JSON.stringify(data))
+                            console.log("error resp:" + JSON.stringify(data))
                             layer.msg("系统异常");
                         }
                     });

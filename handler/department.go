@@ -5,7 +5,7 @@ import (
 	"gorm.io/gorm"
 	"hrms/model"
 	"hrms/resource"
-	"hrms/util"
+	"hrms/service"
 	"log"
 )
 
@@ -32,7 +32,7 @@ func DepartCreate(c *gin.Context) {
 		return
 	}
 	departmentCreate := model.Department{
-		DepId:    util.RandomID("dep"),
+		DepId:    service.RandomID("dep"),
 		PreDepId: departmentCreateDTO.PreDepId,
 		DepName:  departmentCreateDTO.DepName,
 	}
@@ -79,7 +79,7 @@ func DepartEdit(c *gin.Context) {
 func DepartQuery(c *gin.Context) {
 	var total int64 = 1
 	// 分页
-	start, limit := util.AcceptPage(c)
+	start, limit := service.AcceptPage(c)
 	code := 2000
 	depId := c.Param("dep_id")
 	var deps []model.Department

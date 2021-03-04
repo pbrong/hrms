@@ -77,6 +77,13 @@ func routerInit(server *gin.Engine) {
 	rankGroup.DELETE("/del/:rank_id", handler.RankDel)
 	rankGroup.POST("/edit", handler.RankEdit)
 	rankGroup.GET("/query/:rank_id", handler.RankQuery)
+	// 员工信息相关
+	staffGroup := server.Group("/staff")
+	staffGroup.POST("/create", handler.StaffCreate)
+	staffGroup.DELETE("/del/:staff_id", handler.StaffDel)
+	staffGroup.POST("/edit", handler.StaffEdit)
+	staffGroup.GET("/query/:staff_id", handler.StaffQuery)
+	staffGroup.GET("/query_by_name/:staff_name", handler.StaffQueryByName)
 }
 
 func htmlInit(server *gin.Engine) {

@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"hrms/model"
 	"hrms/resource"
-	"hrms/util"
+	"hrms/service"
 	"log"
 )
 
@@ -28,7 +28,7 @@ func RankCreate(c *gin.Context) {
 		return
 	}
 	rank := model.Rank{
-		RankId:   util.RandomID("rank"),
+		RankId:   service.RandomID("rank"),
 		RankName: rankCreateDto.RankName,
 	}
 	resource.HrmsDB.Create(&rank)
@@ -58,7 +58,7 @@ func RankEdit(c *gin.Context) {
 func RankQuery(c *gin.Context) {
 	var total int64 = 1
 	// 分页
-	start, limit := util.AcceptPage(c)
+	start, limit := service.AcceptPage(c)
 	code := 2000
 	rankId := c.Param("rank_id")
 	var ranks []model.Rank

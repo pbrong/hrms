@@ -29,7 +29,7 @@
         },
         {
           "title": "员工管理",
-          "href": "views/setting.html",
+          "href": "",
           "icon": "fa fa-gears",
           "target": "_self",
           "child": [
