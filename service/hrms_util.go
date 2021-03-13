@@ -33,6 +33,12 @@ func RandomID(pre string) string {
 	return fmt.Sprintf("%v_%v", pre, rand.Uint32())
 }
 
+func RandomStaffId() string {
+	rand.Seed(time.Now().UnixNano())
+	randStaffStr := fmt.Sprintf("H%v", rand.Uint32())
+	return randStaffStr[0:6]
+}
+
 func Str2Time(timeStr string, typ int) time.Time {
 	var curTime time.Time
 	var err error

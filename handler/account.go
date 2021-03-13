@@ -30,7 +30,7 @@ func Index(c *gin.Context) {
 	c.HTML(http.StatusOK, "index.html", gin.H{
 		"title":     fmt.Sprintf("欢迎%v:%v登陆HRMS", userType, userNo),
 		"user_type": userType,
-		"user_no":   userNo,
+		"staff_id":  userNo,
 	})
 }
 
@@ -46,9 +46,9 @@ func Login(c *gin.Context) {
 	}
 	log.Printf("[handler.Login] login R = %v", loginR)
 	var loginDb model.Login
-	resource.HrmsDB.Where("user_no = ? and user_password = ?",
+	resource.HrmsDB.Where("staff_id = ? and user_password = ?",
 		loginR.UserNo, loginR.UserPassword).First(&loginDb)
-	if loginDb.UserNo != loginR.UserNo {
+	if loginDb.StaffId != loginR.UserNo {
 		log.Printf("[handler.Login] user login fail, user = %v", loginR)
 		c.JSON(200, gin.H{
 			"status": 2001,
@@ -58,7 +58,7 @@ func Login(c *gin.Context) {
 	}
 	log.Printf("[handler.Login] user login success, user = %v", loginR)
 	// set cookie user_cookie=sys_3117000001
-	c.SetCookie("user_cookie", fmt.Sprintf("%v_%v", loginDb.UserType, loginDb.UserNo), 0, "/", "localhost", false, true)
+	c.SetCookie("user_cookie", fmt.Sprintf("%v_%v", loginDb.UserType, loginDb.StaffId), 0, "/", "localhost", false, true)
 	c.JSON(200, gin.H{
 		"status": 2000,
 	})
@@ -75,9 +75,9 @@ func Quit(c *gin.Context) {
 		return
 	}
 	var quitDb model.Login
-	resource.HrmsDB.Where("user_no = ?",
+	resource.HrmsDB.Where("staff_id = ?",
 		quitR.UserNo).First(&quitDb)
-	if quitDb.UserType == "" || quitDb.UserNo == 0 {
+	if quitDb.UserType == "" || quitDb.StaffId == "" {
 		log.Printf("[handler.Quit] user quit fail, user = %v", quitR)
 		c.JSON(200, gin.H{
 			"status": 5000,
@@ -85,7 +85,7 @@ func Quit(c *gin.Context) {
 	}
 	log.Printf("[handler.Quit] user quit success, user = %v", quitR)
 	// del cookie user_cookie
-	c.SetCookie("user_cookie", fmt.Sprintf("%v_%v", quitDb.UserType, quitDb.UserNo), -1, "/", "localhost", false, true)
+	c.SetCookie("user_cookie", fmt.Sprintf("%v_%v", quitDb.UserType, quitDb.StaffId), -1, "/", "localhost", false, true)
 	c.JSON(200, gin.H{
 		"status": 2000,
 	})

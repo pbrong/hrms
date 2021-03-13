@@ -2,6 +2,7 @@ package model
 
 import (
 	"fmt"
+	"math/rand"
 	"testing"
 	"time"
 )
@@ -15,4 +16,18 @@ func TestCreateStaff(t *testing.T) {
 		return
 	}
 	fmt.Printf(curTime.String())
+}
+
+func TestConstructStaffId(t *testing.T) {
+	for i := 0; i < 10; i++ {
+		rand.Seed(time.Now().UnixNano())
+		randStaffStr := fmt.Sprintf("H%v", rand.Uint32())
+		fmt.Println("staffId = " + randStaffStr[0:6])
+	}
+}
+
+func TestIdenLenSplit(t *testing.T) {
+	ident := "460034199905215518"
+	identLen := len(ident)
+	fmt.Println("pass: " + ident[identLen-6:identLen])
 }

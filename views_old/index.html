@@ -60,7 +60,7 @@
                     <a href="javascript:;" data-check-screen="full"><i class="fa fa-arrows-alt"></i></a>
                 </li>
                 <li class="layui-nav-item layuimini-setting" style="padding-right: 30px">
-                    <a href="javascript:;">{{.user_no}}</a>
+                    <a href="javascript:;">{{.staff_id}}</a>
                     <dl class="layui-nav-child">
                         <dd>
                             <a href="javascript:;" layuimini-content-href="user-setting.html" data-title="基本资料" data-icon="fa fa-gears">基本资料<span class="layui-badge-dot"></span></a>
@@ -133,7 +133,7 @@
 <script src="/static/lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
 <script src="/static/js/lay-config.js?v=2.0.0" charset="utf-8"></script>
 
-<input id="user_no" type="hidden" value="{{.user_no}}">
+<input id="staff_id" type="hidden" value="{{.staff_id}}">
 <input id="user_type" type="hidden" value="{{.user_type}}">
 
 <script>
@@ -144,7 +144,7 @@
             miniTongji = layui.miniTongji;
 
         var initUrl = "/static/api/init.json"
-        var userNo = $("#user_no").val();
+        var userNo = $("#staff_id").val();
         var userType = $("#user_type").val();
         console.log("获取到userNo:" + userNo)
         console.log("获取到user_type:" + userType)
@@ -191,7 +191,7 @@
                 // 清空localStorage
                 localStorage.removeItem("userNo")
                 localStorage.removeItem("userType")
-                var quitData = {user_no:parseInt(userNo), user_password:"null"}
+                var quitData = {staff_id:parseInt(userNo), user_password:"null"}
                 $.ajax({
                     type: "POST",
                     url: "/account/quit",

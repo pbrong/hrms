@@ -41,7 +41,7 @@
             },
             {
               "title": "登陆密码管理",
-              "href": "views/welcome-2.html",
+              "href": "views/password_manage.html",
               "icon": "fa fa-tachometer",
               "target": "_self"
             }

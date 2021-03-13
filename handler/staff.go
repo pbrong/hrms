@@ -2,6 +2,7 @@ package handler
 
 import (
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 	"hrms/model"
 	"hrms/resource"
 	"hrms/service"
@@ -20,8 +21,10 @@ func StaffCreate(c *gin.Context) {
 		return
 	}
 	log.Printf("[StaffCreate staff = %v]", staffCreateDto)
+	staffId := service.RandomStaffId()
+	// 创建员工信息
 	staff := model.Staff{
-		StaffId:     service.RandomID("staff"),
+		StaffId:     staffId,
 		StaffName:   staffCreateDto.StaffName,
 		Birthday:    service.Str2Time(staffCreateDto.BirthdayStr, 0),
 		IdentityNum: staffCreateDto.IdentityNum,
@@ -38,7 +41,7 @@ func StaffCreate(c *gin.Context) {
 		EntryDate:   service.Str2Time(staffCreateDto.EntryDateStr, 0),
 	}
 	var exist int64
-	resource.HrmsDB.Model(&model.Staff{}).Where("identity_num = ?", staffCreateDto.IdentityNum).Count(&exist)
+	resource.HrmsDB.Model(&model.Staff{}).Where("identity_num = ? or staff_id = ?", staffCreateDto.IdentityNum, staffId).Count(&exist)
 	if exist != 0 {
 		c.JSON(http.StatusOK, gin.H{
 			"status": 2001,
@@ -46,7 +49,24 @@ func StaffCreate(c *gin.Context) {
 		})
 		return
 	}
-	err := resource.HrmsDB.Create(&staff).Error
+	// 创建登陆信息，密码为身份证后六位
+	identLen := len(staff.IdentityNum)
+	login := model.Login{
+		LoginId:      service.RandomID("pass"),
+		StaffId:      staffId,
+		UserPassword: staff.IdentityNum[identLen-6 : identLen],
+		Aval:         1,
+		UserType:     "normal", // 暂时只能创建普通员工
+	}
+	err := resource.HrmsDB.Transaction(func(tx *gorm.DB) error {
+		if err := tx.Create(&staff).Error; err != nil {
+			return err
+		}
+		if err := tx.Create(&login).Error; err != nil {
+			return err
+		}
+		return nil
+	})
 	if err != nil {
 		log.Printf("[StaffCreate err = %v]", err)
 		c.JSON(http.StatusInternalServerError, gin.H{

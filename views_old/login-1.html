@@ -41,7 +41,7 @@
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-icon layui-icon-username"></label>
-                    <input type="text" name="user_no" lay-verify="required|number" placeholder="员工工号" autocomplete="off" class="layui-input" value="3117000001">
+                    <input type="text" name="staff_id" lay-verify="required|number" placeholder="员工工号" autocomplete="off" class="layui-input" value="3117000001">
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-icon layui-icon-password" ></label>
@@ -79,7 +79,7 @@
         // 进行登录操作
         form.on('submit(login)', function (data) {
             data = data.field;
-            if (data.user_no == '') {
+            if (data.staff_id == '') {
                 layer.msg('员工账号不能为空');
                 return false;
             }
@@ -88,7 +88,7 @@
                 return false;
             }
             var loginData = {
-                user_no:parseInt(data.user_no),
+                staff_id:parseInt(data.staff_id),
                 user_password:data.user_password
             }
             // alert(loginData)

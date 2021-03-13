@@ -6,6 +6,8 @@ import (
 	"github.com/spf13/viper"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
+	"gorm.io/gorm/schema"
 	"hrms/handler"
 	"hrms/resource"
 	"log"
@@ -84,6 +86,10 @@ func routerInit(server *gin.Engine) {
 	staffGroup.POST("/edit", handler.StaffEdit)
 	staffGroup.GET("/query/:staff_id", handler.StaffQuery)
 	staffGroup.GET("/query_by_name/:staff_name", handler.StaffQueryByName)
+	// 密码管理信息相关
+	passwordGroup := server.Group("/password")
+	passwordGroup.GET("/query/:staff_id", handler.PasswordQuery)
+	passwordGroup.POST("/edit", handler.PasswordEdit)
 }
 
 func htmlInit(server *gin.Engine) {
@@ -108,7 +114,14 @@ func InitGorm() error {
 		resource.HrmsConf.Db.Port,
 		resource.HrmsConf.Db.DbName,
 	)
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
+		NamingStrategy: schema.NamingStrategy{
+			// 全局禁止表名复数
+			SingularTable: true,
+		},
+		// 日志等级
+		Logger: logger.Default.LogMode(logger.Info),
+	})
 	if err != nil {
 		log.Printf("[InitGorm] err = %v", err)
 		return err
