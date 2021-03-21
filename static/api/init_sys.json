@@ -17,7 +17,7 @@
       "child": [
         {
           "title": "员工管理",
-          "href": "",
+          "href": "/views/staff_manage_hr.html",
           "icon": "fa fa-home",
           "target": "_self"
         },

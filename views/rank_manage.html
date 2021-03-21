@@ -135,6 +135,7 @@
                 });
                 return false;
             } else if (obj.event === 'delete') {
+                layer.confirm('确认删除吗？', function () {
                     // alert(JSON.stringify(obj.data))
                     // alert(depId)
                     $.ajax({
