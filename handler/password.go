@@ -36,7 +36,7 @@ func PasswordQuery(c *gin.Context) {
 }
 
 func buildPasswordQueryResult(staffId string, start int, limit int) ([]model.PasswordQueryVO, error) {
-	var loginList []model.Login
+	var loginList []model.Authority
 	var err error
 	if staffId == "all" {
 		// 查询全部
@@ -90,7 +90,7 @@ func PasswordEdit(c *gin.Context) {
 	}
 	staffId := passwordEditDTO.StaffId
 	password := passwordEditDTO.Password
-	if err := resource.HrmsDB.Where("staff_id = ?", staffId).Updates(&model.Login{
+	if err := resource.HrmsDB.Where("staff_id = ?", staffId).Updates(&model.Authority{
 		UserPassword: password,
 	}).Error; err != nil {
 		c.JSON(http.StatusOK, gin.H{

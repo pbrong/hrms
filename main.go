@@ -90,6 +90,12 @@ func routerInit(server *gin.Engine) {
 	passwordGroup := server.Group("/password")
 	passwordGroup.GET("/query/:staff_id", handler.PasswordQuery)
 	passwordGroup.POST("/edit", handler.PasswordEdit)
+	// 授权信息相关
+	authorityGroup := server.Group("/authority")
+	authorityGroup.POST("/create", handler.AddAuthorityDetail)
+	authorityGroup.POST("/edit", handler.UpdateAuthorityDetailById)
+	authorityGroup.GET("/query_by_user_type/:user_type", handler.GetAuthorityDetailListByUserType)
+	authorityGroup.POST("/query_by_user_type_and_model", handler.GetAuthorityDetailByUserTypeAndModel)
 }
 
 func htmlInit(server *gin.Engine) {

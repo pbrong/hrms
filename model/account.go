@@ -9,9 +9,9 @@ type LoginDTO struct {
 	UserPassword string `json:"user_password" binding:"required"`
 }
 
-type Login struct {
+type Authority struct {
 	gorm.Model
-	LoginId      string `gorm:"column:login_id" json:"login_id"`
+	AuthorityId  string `gorm:"column:authority_id" json:"authority_id"`
 	StaffId      string `gorm:"column:staff_id" json:"staff_id"`
 	UserPassword string `gorm:"column:user_password" json:"user_password"`
 	Aval         int64  `gorm:"column:aval" json:"aval"`
@@ -28,8 +28,4 @@ type PasswordQueryVO struct {
 type PasswordEditDTO struct {
 	StaffId  string `json:"staff_id"`
 	Password string `json:"password"`
-}
-
-func (l Login) TableName() string {
-	return "login"
 }

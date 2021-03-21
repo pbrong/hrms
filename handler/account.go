@@ -45,7 +45,7 @@ func Login(c *gin.Context) {
 		return
 	}
 	log.Printf("[handler.Login] login R = %v", loginR)
-	var loginDb model.Login
+	var loginDb model.Authority
 	resource.HrmsDB.Where("staff_id = ? and user_password = ?",
 		loginR.UserNo, loginR.UserPassword).First(&loginDb)
 	if loginDb.StaffId != loginR.UserNo {
@@ -74,7 +74,7 @@ func Quit(c *gin.Context) {
 		})
 		return
 	}
-	var quitDb model.Login
+	var quitDb model.Authority
 	resource.HrmsDB.Where("staff_id = ?",
 		quitR.UserNo).First(&quitDb)
 	if quitDb.UserType == "" || quitDb.StaffId == "" {

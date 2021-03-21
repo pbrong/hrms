@@ -1,6 +1,7 @@
 package service
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"hrms/model"
@@ -100,4 +101,18 @@ func GetRankNameRankDepId(rankId string) string {
 	var rank model.Rank
 	resource.HrmsDB.Where("rank_id = ?", rankId).Find(&rank)
 	return rank.RankName
+}
+
+func Transfer(from, to interface{}) error {
+	bytes, err := json.Marshal(&from)
+	if err != nil {
+		log.Println("Transfer json err = %v", err)
+		return err
+	}
+	err = json.Unmarshal(bytes, &to)
+	if err != nil {
+		log.Println("Transfer json err = %v", err)
+		return err
+	}
+	return nil
 }

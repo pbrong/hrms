@@ -51,8 +51,8 @@ func StaffCreate(c *gin.Context) {
 	}
 	// 创建登陆信息，密码为身份证后六位
 	identLen := len(staff.IdentityNum)
-	login := model.Login{
-		LoginId:      service.RandomID("pass"),
+	login := model.Authority{
+		AuthorityId:  service.RandomID("auth"),
 		StaffId:      staffId,
 		UserPassword: staff.IdentityNum[identLen-6 : identLen],
 		Aval:         1,
