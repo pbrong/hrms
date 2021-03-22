@@ -17,7 +17,7 @@
       "child": [
         {
           "title": "部门管理",
-          "href": "views/dep_manage.html",
+          "href": "/authority_render/dep_manage",
           "icon": "fa fa-home",
           "target": "_self"
         },
