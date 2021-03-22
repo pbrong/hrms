@@ -23,7 +23,7 @@
         },
         {
           "title": "职级管理",
-          "href": "views/rank_manage.html",
+          "href": "/authority_render/rank_manage",
           "icon": "fa fa-window-maximize",
           "target": "_self"
         },
