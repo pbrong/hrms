@@ -61,6 +61,8 @@ func InitGin() error {
 func routerInit(server *gin.Engine) {
 	// 测试
 	server.GET("/ping", handler.Ping)
+	// 权限重定向
+	server.GET("/authority_render/:modelName", handler.RenderAuthority)
 	// 首页重定向
 	server.GET("/index", handler.Index)
 	// 账户相关

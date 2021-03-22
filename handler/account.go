@@ -5,14 +5,15 @@ import (
 	"github.com/gin-gonic/gin"
 	"hrms/model"
 	"hrms/resource"
+	"hrms/service"
 	"log"
 	"net/http"
 	"strings"
 )
 
 func Ping(c *gin.Context) {
-	c.JSON(200, gin.H{
-		"message": "pong",
+	c.HTML(http.StatusOK, "staff_manage.html", gin.H{
+		"create": true,
 	})
 }
 
@@ -28,10 +29,37 @@ func Index(c *gin.Context) {
 	userType := user[0]
 	userNo := user[1]
 	c.HTML(http.StatusOK, "index.html", gin.H{
-		"title":     fmt.Sprintf("欢迎%v:%v登陆HRMS", userType, userNo),
+		//"title":     fmt.Sprintf("欢迎%v:%v登陆HRMS", userType, userNo),
+		"title":     fmt.Sprintf("人力资源管理系"),
 		"user_type": userType,
 		"staff_id":  userNo,
 	})
+}
+
+func RenderAuthority(c *gin.Context) {
+	cookie, err := c.Cookie("user_cookie")
+	if err != nil || cookie == "" {
+		c.HTML(http.StatusOK, "login-1.html", nil)
+		return
+	}
+	modelName := c.Param("modelName")
+	userType := strings.Split(cookie, "_")[0]
+	dto := &model.GetAuthorityDetailDTO{
+		UserType: userType,
+		Model:    modelName,
+	}
+	autoContent, err := service.GetAuthorityDetailByUserTypeAndModel(dto)
+	if err != nil {
+		c.HTML(http.StatusOK, "login-1.html", nil)
+		return
+	}
+	autoMap := make(map[string]bool)
+	autoList := strings.Split(autoContent, "|")
+	for _, autority := range autoList {
+		autoMap[autority] = true
+	}
+	//c.JSON(200, autoMap)
+	c.HTML(http.StatusOK, modelName+".html", autoMap)
 }
 
 func Login(c *gin.Context) {
@@ -58,7 +86,7 @@ func Login(c *gin.Context) {
 	}
 	log.Printf("[handler.Login] user login success, user = %v", loginR)
 	// set cookie user_cookie=sys_3117000001
-	c.SetCookie("user_cookie", fmt.Sprintf("%v_%v", loginDb.UserType, loginDb.StaffId), 0, "/", "localhost", false, true)
+	c.SetCookie("user_cookie", fmt.Sprintf("%v_%v", loginDb.UserType, loginDb.StaffId), 0, "/", "localhost", false, false)
 	c.JSON(200, gin.H{
 		"status": 2000,
 	})
@@ -85,7 +113,7 @@ func Quit(c *gin.Context) {
 	}
 	log.Printf("[handler.Quit] user quit success, user = %v", quitR)
 	// del cookie user_cookie
-	c.SetCookie("user_cookie", fmt.Sprintf("%v_%v", quitDb.UserType, quitDb.StaffId), -1, "/", "localhost", false, true)
+	c.SetCookie("user_cookie", fmt.Sprintf("%v_%v", quitDb.UserType, quitDb.StaffId), -1, "/", "localhost", false, false)
 	c.JSON(200, gin.H{
 		"status": 2000,
 	})

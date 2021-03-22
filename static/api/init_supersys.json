@@ -1,7 +1,7 @@
 {
   "homeInfo": {
     "title": "首页",
-    "href": "/views/welcome-1.html?t=1"
+    "href": "/authority_render/staff_manage"
   },
   "logoInfo": {
     "title": "欢迎超级管理员",
@@ -35,7 +35,7 @@
           "child": [
             {
               "title": "员工信息管理",
-              "href": "views/staff_manage.html",
+              "href": "/authority_render/staff_manage",
               "icon": "fa fa-tachometer",
               "target": "_self"
             },
@@ -49,9 +49,23 @@
         },
         {
           "title": "权限管理",
-          "href": "views/404.html",
+          "href": "",
           "icon": "fa fa-file-text",
-          "target": "_self"
+          "target": "_self",
+          "child": [
+            {
+              "title": "角色权限管理",
+              "href": "views/authority_manage.html",
+              "icon": "fa fa-tachometer",
+              "target": "_self"
+            },
+            {
+              "title": "管理员管理",
+              "href": "views/xx.html",
+              "icon": "fa fa-tachometer",
+              "target": "_self"
+            }
+          ]
         }
       ]
     }
