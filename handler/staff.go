@@ -155,13 +155,31 @@ func StaffQuery(c *gin.Context) {
 	})
 }
 
+func getRuleByStaffId(staffId string) string {
+	var authority model.Authority
+	var userTypeName string
+	if err := resource.HrmsDB.Where("staff_id = ?", staffId).Find(&authority).Error; err == nil {
+		switch authority.UserType {
+		case "supersys":
+			userTypeName = "超级管理员"
+		case "sys":
+			userTypeName = "系统管理员"
+		case "normal":
+			userTypeName = "普通员工"
+		default:
+			userTypeName = "未知"
+		}
+	}
+	return userTypeName
+}
 func convert2VO(staffs []model.Staff) []model.StaffVO {
 	var staffVOs []model.StaffVO
 	for _, staff := range staffs {
 		staffVOs = append(staffVOs, model.StaffVO{
-			Staff:    staff,
-			DepName:  service.GetDepNameByDepId(staff.DepId),
-			RankName: service.GetRankNameRankDepId(staff.RankId),
+			Staff:        staff,
+			DepName:      service.GetDepNameByDepId(staff.DepId),
+			RankName:     service.GetRankNameRankDepId(staff.RankId),
+			UserTypeName: getRuleByStaffId(staff.StaffId),
 		})
 	}
 	return staffVOs

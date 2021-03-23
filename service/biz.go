@@ -54,3 +54,25 @@ func GetAuthorityDetailListByUserType(userType string, start int, limit int) ([]
 	resource.HrmsDB.Model(&model.AuthorityDetail{}).Count(&total)
 	return authorityDetailList, total, nil
 }
+
+func SetAdminByStaffId(staffId string) error {
+	authority := model.Authority{
+		UserType: "sys",
+	}
+	if err := resource.HrmsDB.Where("staff_id = ?", staffId).Updates(&authority).Error; err != nil {
+		log.Printf("SetAdminByStaffId err = %v", err)
+		return err
+	}
+	return nil
+}
+
+func SetNormalByStaffId(staffId string) error {
+	authority := model.Authority{
+		UserType: "normal",
+	}
+	if err := resource.HrmsDB.Where("staff_id = ?", staffId).Updates(&authority).Error; err != nil {
+		log.Printf("SetNormalByStaffId err = %v", err)
+		return err
+	}
+	return nil
+}

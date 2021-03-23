@@ -101,3 +101,49 @@ func UpdateAuthorityDetailById(c *gin.Context) {
 		"status": 2000,
 	})
 }
+
+func SetAdminByStaffId(c *gin.Context) {
+	staffId := c.Param("staff_id")
+	if staffId == "" {
+		log.Printf("[SetAdminByStaffId] staff_id is empty")
+		c.JSON(200, gin.H{
+			"status": 5001,
+			"result": "staff_id is empty",
+		})
+		return
+	}
+	if err := service.SetAdminByStaffId(staffId); err != nil {
+		log.Printf("[SetAdminByStaffId] err = %v", err)
+		c.JSON(200, gin.H{
+			"status": 5002,
+			"result": err.Error(),
+		})
+		return
+	}
+	c.JSON(200, gin.H{
+		"status": 2000,
+	})
+}
+
+func SetNormalByStaffId(c *gin.Context) {
+	staffId := c.Param("staff_id")
+	if staffId == "" {
+		log.Printf("[SetNormalByStaffId] staff_id is empty")
+		c.JSON(200, gin.H{
+			"status": 5001,
+			"result": "staff_id is empty",
+		})
+		return
+	}
+	if err := service.SetNormalByStaffId(staffId); err != nil {
+		log.Printf("[SetNormalByStaffId] err = %v", err)
+		c.JSON(200, gin.H{
+			"status": 5002,
+			"result": err.Error(),
+		})
+		return
+	}
+	c.JSON(200, gin.H{
+		"status": 2000,
+	})
+}

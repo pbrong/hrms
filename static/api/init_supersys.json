@@ -61,7 +61,7 @@
             },
             {
               "title": "管理员管理",
-              "href": "views/xx.html",
+              "href": "views/admin_manage.html",
               "icon": "fa fa-tachometer",
               "target": "_self"
             }

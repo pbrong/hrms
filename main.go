@@ -98,6 +98,8 @@ func routerInit(server *gin.Engine) {
 	authorityGroup.POST("/edit", handler.UpdateAuthorityDetailById)
 	authorityGroup.GET("/query_by_user_type/:user_type", handler.GetAuthorityDetailListByUserType)
 	authorityGroup.POST("/query_by_user_type_and_model", handler.GetAuthorityDetailByUserTypeAndModel)
+	authorityGroup.POST("/set_admin/:staff_id", handler.SetAdminByStaffId)
+	authorityGroup.POST("/set_normal/:staff_id", handler.SetNormalByStaffId)
 }
 
 func htmlInit(server *gin.Engine) {

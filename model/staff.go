@@ -26,8 +26,9 @@ type Staff struct {
 
 type StaffVO struct {
 	Staff
-	DepName  string `json:"dep_name"`
-	RankName string `json:"rank_name"`
+	DepName      string `json:"dep_name"`
+	RankName     string `json:"rank_name"`
+	UserTypeName string `json:"user_type_name"`
 }
 
 type StaffCreateDTO struct {

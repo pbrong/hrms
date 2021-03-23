@@ -30,7 +30,7 @@ func Index(c *gin.Context) {
 	userNo := user[1]
 	c.HTML(http.StatusOK, "index.html", gin.H{
 		//"title":     fmt.Sprintf("欢迎%v:%v登陆HRMS", userType, userNo),
-		"title":     fmt.Sprintf("人力资源管理系"),
+		"title":     fmt.Sprintf("人力资源管理系统"),
 		"user_type": userType,
 		"staff_id":  userNo,
 	})
