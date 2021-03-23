@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 	"hrms/model"
@@ -125,16 +126,16 @@ func StaffQuery(c *gin.Context) {
 	if staffId == "all" {
 		// 查询全部
 		if start == -1 && start == -1 {
-			resource.HrmsDB.Find(&staffs)
+			resource.HrmsDB.Where("staff_id != 'root' and staff_id != 'admin'").Find(&staffs)
 		} else {
-			resource.HrmsDB.Offset(start).Limit(limit).Find(&staffs)
+			resource.HrmsDB.Where("staff_id != 'root' and staff_id != 'admin'").Offset(start).Limit(limit).Find(&staffs)
 		}
 		if len(staffs) == 0 {
 			// 不存在
 			code = 2001
 		}
 		// 总记录数
-		resource.HrmsDB.Model(&model.Staff{}).Count(&total)
+		resource.HrmsDB.Model(&model.Staff{}).Where("staff_id != 'root' and staff_id != 'admin'").Count(&total)
 		c.JSON(http.StatusOK, gin.H{
 			"status": code,
 			"total":  total,
@@ -142,7 +143,7 @@ func StaffQuery(c *gin.Context) {
 		})
 		return
 	}
-	resource.HrmsDB.Where("staff_id = ?", staffId).Find(&staffs)
+	resource.HrmsDB.Where("staff_id = ? and staff_id != 'root' and staff_id != 'admin'", staffId).Find(&staffs)
 	if len(staffs) == 0 {
 		// 不存在
 		code = 2001
@@ -195,16 +196,16 @@ func StaffQueryByName(c *gin.Context) {
 	if staffName == "all" {
 		// 查询全部
 		if start == -1 && start == -1 {
-			resource.HrmsDB.Find(&staffs)
+			resource.HrmsDB.Where("staff_id != 'root' and staff_id != 'admin'").Find(&staffs)
 		} else {
-			resource.HrmsDB.Offset(start).Limit(limit).Find(&staffs)
+			resource.HrmsDB.Where("staff_id != 'root' and staff_id != 'admin'").Offset(start).Limit(limit).Find(&staffs)
 		}
 		if len(staffs) == 0 {
 			// 不存在
 			code = 2001
 		}
 		// 总记录数
-		resource.HrmsDB.Model(&model.Staff{}).Count(&total)
+		resource.HrmsDB.Model(&model.Staff{}).Where("staff_id != 'root' and staff_id != 'admin'").Count(&total)
 		c.JSON(http.StatusOK, gin.H{
 			"status": code,
 			"total":  total,
@@ -212,7 +213,32 @@ func StaffQueryByName(c *gin.Context) {
 		})
 		return
 	}
-	resource.HrmsDB.Where("staff_name like ?", "%"+staffName+"%").Find(&staffs)
+	resource.HrmsDB.Where("staff_name like ?", "%"+staffName+"%").Where("staff_id != 'root' and staff_id != 'admin'").Find(&staffs)
+	if len(staffs) == 0 {
+		// 不存在
+		code = 2001
+	}
+	total = int64(len(staffs))
+	c.JSON(http.StatusOK, gin.H{
+		"status": code,
+		"total":  total,
+		"msg":    convert2VO(staffs),
+	})
+}
+
+func StaffQueryByDep(c *gin.Context) {
+	var total int64 = 1
+	// 分页
+	start, limit := service.AcceptPage(c)
+	code := 2000
+	depName := c.Param("dep_name")
+	var staffs []model.Staff
+	reqSql := `select * from staff as staff left join department as dep on staff.dep_id = dep.dep_id where dep.dep_name like "%v"`
+	if start != -1 && limit != -1 {
+		reqSql += fmt.Sprintf(` limit %v,%v`, start, limit)
+	}
+	reqSql = fmt.Sprintf(reqSql, "%"+depName+"%")
+	resource.HrmsDB.Raw(reqSql).Scan(&staffs)
 	if len(staffs) == 0 {
 		// 不存在
 		code = 2001

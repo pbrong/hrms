@@ -1,7 +1,7 @@
 {
   "homeInfo": {
     "title": "首页",
-    "href": "/views/welcome-1.html?t=1"
+    "href": "/authority_render/admin_staff_manage"
   },
   "logoInfo": {
     "title": "欢迎系统管理员",
@@ -17,12 +17,12 @@
       "child": [
         {
           "title": "员工管理",
-          "href": "/views/staff_manage_hr.html",
+          "href": "/authority_render/admin_staff_manage",
           "icon": "fa fa-home",
           "target": "_self"
         },
         {
-          "title": "工资管理",
+          "title": "通知管理",
           "href": "",
           "icon": "fa fa-home",
           "target": "_self"
@@ -31,6 +31,12 @@
           "title": "招聘管理",
           "href": "views/menu.html",
           "icon": "fa fa-window-maximize",
+          "target": "_self"
+        },
+        {
+          "title": "工资管理",
+          "href": "",
+          "icon": "fa fa-home",
           "target": "_self"
         },
         {

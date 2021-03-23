@@ -88,6 +88,7 @@ func routerInit(server *gin.Engine) {
 	staffGroup.POST("/edit", handler.StaffEdit)
 	staffGroup.GET("/query/:staff_id", handler.StaffQuery)
 	staffGroup.GET("/query_by_name/:staff_name", handler.StaffQueryByName)
+	staffGroup.GET("/query_by_dep/:dep_name", handler.StaffQueryByDep)
 	// 密码管理信息相关
 	passwordGroup := server.Group("/password")
 	passwordGroup.GET("/query/:staff_id", handler.PasswordQuery)
