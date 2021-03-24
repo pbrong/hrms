@@ -47,6 +47,11 @@
                     <label class="layui-icon layui-icon-password" ></label>
                     <input type="password" name="user_password" lay-verify="required" placeholder="登陆密码" autocomplete="off" class="layui-input" value="admin1">
                 </div>
+                <div class="layui-form-item">
+                    <select name="branch_id" id="branch_select" lay-verify="required" lay-search>
+                        <option value="-1">请选择分公司</option>
+                    </select>
+                </div>
 <!--                <div class="layui-form-item">-->
 <!--                    <input type="checkbox" name="rememberMe" value="true" lay-skin="primary" title="记住密码">-->
 <!--                </div>-->
@@ -61,6 +66,21 @@
 <script src="/static/lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
 <script src="/static/lib/jq-module/jquery.particleground.min.js" charset="utf-8"></script>
 <script>
+
+    $(function() {
+        $ = layui.$
+        $.ajax({
+            type: "GET",
+            url: "/company/query",
+            success:function (data) {
+                var resp = JSON.parse(JSON.stringify(data));
+                $.each(resp.msg, function (index, item) {
+                    $('#branch_select').append(new Option(item.name, item.branch_id));// 下拉菜单里添加元素
+                });
+                layui.form.render("select");
+            }});
+    })
+
     layui.use(['form'], function () {
         var form = layui.form,
             layer = layui.layer;
@@ -87,9 +107,14 @@
                 layer.msg('登陆密码不能为空');
                 return false;
             }
+            if (data.branch_id == -1) {
+                layer.msg('请选择分公司');
+                return false;
+            }
             var loginData = {
                 staff_id:data.staff_id,
-                user_password:data.user_password
+                user_password:data.user_password,
+                branch_id:data.branch_id
             }
             // alert(loginData)
             // Json Post 登陆校验
