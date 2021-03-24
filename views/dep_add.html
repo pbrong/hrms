@@ -17,20 +17,19 @@
 <body>
 <div class="layui-form layuimini-form">
     <div class="layui-form-item">
-        <label class="layui-form-label required">上级部门ID</label>
-        <div class="layui-input-block">
-            <input type="text" name="pre_dep_id" lay-verify="required" lay-reqtext="上级部门ID不能为空" placeholder="请输入上级部门ID" value="" class="layui-input">
-            <tip>可以在部门管理页找到上级部门ID</tip>
-        </div>
-    </div>
-
-    <div class="layui-form-item">
         <label class="layui-form-label required">部门名称</label>
         <div class="layui-input-block">
             <input type="text" name="dep_name" lay-verify="required" lay-reqtext="部门名称不能为空" placeholder="请输入部门名称" value="" class="layui-input">
         </div>
     </div>
-<!--    <div class="layui-form-item">-->
+    <div class="layui-form-item">
+        <label class="layui-form-label required">部门描述</label>
+        <div class="layui-input-block">
+            <input type="text" name="dep_describe" lay-verify="required" lay-reqtext="部门描述不能为空" placeholder="请输入部门描述" value="" class="layui-input">
+        </div>
+    </div>
+
+    <!--    <div class="layui-form-item">-->
 <!--        <label class="layui-form-label required">性别</label>-->
 <!--        <div class="layui-input-block">-->
 <!--            <input type="radio" name="sex" value="男" title="男" checked="">-->
@@ -72,7 +71,7 @@
                     }
                 },
                 error:function (data) {
-                    console.log("login error resp:" + JSON.stringify(data))
+                    console.log("error resp:" + JSON.stringify(data))
                     layer.msg("系统异常,添加失败");
                 }
             });

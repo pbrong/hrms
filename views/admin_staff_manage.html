@@ -50,6 +50,12 @@
         <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
 
         <script type="text/html" id="currentTableBar">
+
+            {{ if .query }}
+            <a id="query_button" class="layui-btn layui-btn-warm layui-btn-xs data-count-get" lay-event="query">查看</a>
+            {{ else }}
+            {{ end }}
+
             {{ if .update }}
             <a id="edit_button" class="layui-btn layui-btn-normal layui-btn-xs data-count-edit" lay-event="edit">编辑</a>
             {{ else }}
@@ -102,7 +108,7 @@
                     {field: 'dep_name', title: '部门名称', minWidth: 150},
                     {field: 'email', title: '电子邮箱', minWidth: 150},
                     {field: 'entry_date', title: '入职时间', minWidth: 150, templet: dateFormat2},
-                    {title: '操作', minWidth: 150, toolbar: '#currentTableBar', align: "center", fixed: 'right'}
+                    {title: '操作', minWidth: 200, toolbar: '#currentTableBar', align: "center", fixed: 'right'}
                 ]],
                 limits: [10, 15, 20, 25, 50, 100],
                 limit: 10,
@@ -268,6 +274,31 @@
                             }
                         });
                     });
+                } else if (obj.event === 'query') {
+                    // 本地缓存需要查看的员工信息
+                    localStorage.setItem("staff_query_info", JSON.stringify(obj.data))
+                    // alert("待编辑：" + localStorage.getItem("staff_edit_info"))
+                    var index = layer.open({
+                        title: '员工信息',
+                        type: 2,
+                        shade: 0.2,
+                        maxmin:true,
+                        shadeClose: true,
+                        area: ['80%', '80%'],
+                        content: '/views/staff_query.html',
+                        end: function(){
+                            //执行搜索重载
+                            table.reload('currentTableId', {
+                                page: {
+                                    curr: 1
+                                }
+                            }, 'data');
+                        }
+                    });
+                    $(window).on("resize", function () {
+                        layer.full(index);
+                    });
+                    return false;
                 }
             });
 

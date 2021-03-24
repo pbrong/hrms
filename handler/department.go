@@ -32,9 +32,9 @@ func DepartCreate(c *gin.Context) {
 		return
 	}
 	departmentCreate := model.Department{
-		DepId:    service.RandomID("dep"),
-		PreDepId: departmentCreateDTO.PreDepId,
-		DepName:  departmentCreateDTO.DepName,
+		DepId:       service.RandomID("dep"),
+		DepDescribe: departmentCreateDTO.DepDescribe,
+		DepName:     departmentCreateDTO.DepName,
 	}
 	if result = resource.HrmsDB(c).Create(&departmentCreate); result.Error != nil {
 		result.Rollback()
@@ -70,7 +70,7 @@ func DepartEdit(c *gin.Context) {
 		return
 	}
 	resource.HrmsDB(c).Model(&model.Department{}).Where("dep_id = ?", departmentEditDTO.DepId).
-		Updates(&model.Department{PreDepId: departmentEditDTO.PreDepId, DepName: departmentEditDTO.DepName})
+		Updates(&model.Department{DepDescribe: departmentEditDTO.DepDescribe, DepName: departmentEditDTO.DepName})
 	c.JSON(200, gin.H{
 		"status": 2000,
 	})
