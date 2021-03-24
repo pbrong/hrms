@@ -101,6 +101,13 @@ func routerInit(server *gin.Engine) {
 	authorityGroup.POST("/query_by_user_type_and_model", handler.GetAuthorityDetailByUserTypeAndModel)
 	authorityGroup.POST("/set_admin/:staff_id", handler.SetAdminByStaffId)
 	authorityGroup.POST("/set_normal/:staff_id", handler.SetNormalByStaffId)
+	// 通知相关
+	notificationGroup := server.Group("/notification")
+	notificationGroup.POST("/create", handler.CreateNotification)
+	notificationGroup.DELETE("/delete/:notice_id", handler.DeleteNotificationById)
+	notificationGroup.POST("/edit", handler.UpdateNotificationById)
+	notificationGroup.GET("/query/:notice_title", handler.GetNotificationByTitle)
+
 }
 
 func htmlInit(server *gin.Engine) {

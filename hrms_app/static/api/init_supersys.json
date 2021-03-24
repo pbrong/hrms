@@ -1,0 +1,73 @@
+{
+  "homeInfo": {
+    "title": "首页",
+    "href": "/authority_render/staff_manage"
+  },
+  "logoInfo": {
+    "title": "欢迎超级管理员",
+    "image": "/static/images/logo.png",
+    "href": ""
+  },
+  "menuInfo": [
+    {
+      "title": "常用功能",
+      "icon": "fa fa-address-book",
+      "href": "",
+      "target": "_self",
+      "child": [
+        {
+          "title": "部门管理",
+          "href": "/authority_render/dep_manage",
+          "icon": "fa fa-home",
+          "target": "_self"
+        },
+        {
+          "title": "职级管理",
+          "href": "/authority_render/rank_manage",
+          "icon": "fa fa-window-maximize",
+          "target": "_self"
+        },
+        {
+          "title": "员工管理",
+          "href": "",
+          "icon": "fa fa-gears",
+          "target": "_self",
+          "child": [
+            {
+              "title": "员工信息管理",
+              "href": "/authority_render/staff_manage",
+              "icon": "fa fa-tachometer",
+              "target": "_self"
+            },
+            {
+              "title": "登陆密码管理",
+              "href": "/authority_render/password_manage",
+              "icon": "fa fa-tachometer",
+              "target": "_self"
+            }
+          ]
+        },
+        {
+          "title": "权限管理",
+          "href": "",
+          "icon": "fa fa-file-text",
+          "target": "_self",
+          "child": [
+            {
+              "title": "角色权限管理",
+              "href": "views/authority_manage.html",
+              "icon": "fa fa-tachometer",
+              "target": "_self"
+            },
+            {
+              "title": "管理员管理",
+              "href": "views/admin_manage.html",
+              "icon": "fa fa-tachometer",
+              "target": "_self"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

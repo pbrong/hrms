@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>编辑</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="/static/lib/layui-v2.5.5/css/layui.css" media="all">
+    <link rel="stylesheet" href="/static/css/public.css" media="all">
+    <style>
+        body {
+            background-color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+<div class="layui-form layuimini-form">
+    <div class="layui-form-item">
+        <label class="layui-form-label required">职位名称</label>
+        <div class="layui-input-block">
+            <input type="text" id="rank_name" name="rank_name" lay-verify="required" lay-reqtext="职位名称不能为空" placeholder="请输入职位名称" value="" class="layui-input">
+        </div>
+    </div>
+<!--    <div class="layui-form-item">-->
+<!--        <label class="layui-form-label required">性别</label>-->
+<!--        <div class="layui-input-block">-->
+<!--            <input type="radio" name="sex" value="男" title="男" checked="">-->
+<!--            <input type="radio" name="sex" value="女" title="女">-->
+<!--        </div>-->
+<!--    </div>-->
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn layui-btn-normal" lay-submit lay-filter="saveBtn">保 存</button>
+        </div>
+    </div>
+</div>
+
+<script src="/static/lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
+<script>
+    layui.use(['form'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.$;
+        var editInfo = JSON.parse(localStorage.getItem("rank_edit_info"));
+        // alert(editInfo)
+        $("#rank_name").val(editInfo.rank_name)
+        //监听提交
+        form.on('submit(saveBtn)', function (req) {
+            // alert(localStorage.getItem("dep_edit_info"))
+            var rankId = editInfo.rank_id
+            // alert(JSON.stringify(req.field))
+            req.field.rank_id = rankId
+            // alert(JSON.stringify(req.field))
+            $.ajax({
+                type: "POST",
+                url: "/rank/edit",
+                contentType: "application/json;charset=utf-8",
+                data: JSON.stringify(req.field),
+                dataType: "json",
+                async: false,
+                success:function (data) {
+                    var resp = JSON.parse(JSON.stringify(data));
+                    if (resp.status == 2000) {
+                        layer.alert("编辑职级成功", function (){
+                            // 关闭
+                            var iframeIndex = parent.layer.getFrameIndex(window.name);
+                            parent.layer.close(iframeIndex);
+                        })
+                    }
+                },
+                error:function (data) {
+                    console.log("login error resp:" + JSON.stringify(data))
+                    layer.msg("系统异常");
+                }
+            });
+            return false;
+        });
+
+    });
+</script>
+</body>
+</html>

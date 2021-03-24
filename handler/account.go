@@ -86,7 +86,9 @@ func Login(c *gin.Context) {
 	}
 	log.Printf("[handler.Login] user login success, user = %v", loginR)
 	// set cookie user_cookie=sys_3117000001
-	c.SetCookie("user_cookie", fmt.Sprintf("%v_%v", loginDb.UserType, loginDb.StaffId), 0, "/", "localhost", false, false)
+	c.SetCookie("user_cookie", fmt.Sprintf("%v_%v", loginDb.UserType, loginDb.StaffId), 0, "/", "*", false, false)
+	//c.SetCookie("user_cookie", fmt.Sprintf("%v_%v", loginDb.UserType, loginDb.StaffId), 0, "/", "10.211.55.30", false, false)
+
 	c.JSON(200, gin.H{
 		"status": 2000,
 	})
@@ -113,7 +115,7 @@ func Quit(c *gin.Context) {
 	}
 	log.Printf("[handler.Quit] user quit success, user = %v", quitR)
 	// del cookie user_cookie
-	c.SetCookie("user_cookie", fmt.Sprintf("%v_%v", quitDb.UserType, quitDb.StaffId), -1, "/", "localhost", false, false)
+	c.SetCookie("user_cookie", fmt.Sprintf("%v_%v", quitDb.UserType, quitDb.StaffId), -1, "/", "*", false, false)
 	c.JSON(200, gin.H{
 		"status": 2000,
 	})

@@ -23,7 +23,7 @@
         },
         {
           "title": "通知管理",
-          "href": "",
+          "href": "/authority_render/admin_notification_manage",
           "icon": "fa fa-home",
           "target": "_self"
         },

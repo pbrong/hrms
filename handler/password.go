@@ -26,7 +26,7 @@ func PasswordQuery(c *gin.Context) {
 		return
 	}
 	// 总记录数
-	resource.HrmsDB.Model(&model.Staff{}).Count(&total)
+	resource.HrmsDB.Where("staff_id != 'root' and staff_id != 'admin'").Model(&model.Staff{}).Count(&total)
 	psws = result
 	c.JSON(http.StatusOK, gin.H{
 		"status": code,
@@ -42,14 +42,14 @@ func buildPasswordQueryResult(staffId string, start int, limit int) ([]model.Pas
 		// 查询全部
 		if start == -1 && limit == -1 {
 			// 不加分页
-			err = resource.HrmsDB.Find(&loginList).Error
+			err = resource.HrmsDB.Where("staff_id != 'root' and staff_id != 'admin'").Find(&loginList).Error
 		} else {
 			// 加分页
-			err = resource.HrmsDB.Offset(start).Limit(limit).Find(&loginList).Error
+			err = resource.HrmsDB.Where("staff_id != 'root' and staff_id != 'admin'").Offset(start).Limit(limit).Find(&loginList).Error
 		}
 	} else {
 		// 查询单个用户
-		err = resource.HrmsDB.Where("staff_id = ?", staffId).First(&loginList).Error
+		err = resource.HrmsDB.Where("staff_id != 'root' and staff_id != 'admin'").Where("staff_id = ?", staffId).First(&loginList).Error
 	}
 	if err != nil {
 		log.Printf("[buildPasswordQueryResult] err = %v", err)
