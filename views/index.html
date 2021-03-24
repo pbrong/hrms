@@ -183,7 +183,7 @@
                 // 清空localStorage
                 localStorage.removeItem("userNo")
                 localStorage.removeItem("userType")
-                var quitData = {staff_id: userNo, user_password:"null"}
+                var quitData = {staff_id: userNo, user_password:"null", branch_id:"null"}
                 $.ajax({
                     type: "POST",
                     url: "/account/quit",

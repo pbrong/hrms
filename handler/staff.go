@@ -42,7 +42,7 @@ func StaffCreate(c *gin.Context) {
 		EntryDate:   service.Str2Time(staffCreateDto.EntryDateStr, 0),
 	}
 	var exist int64
-	resource.HrmsDB.Model(&model.Staff{}).Where("identity_num = ? or staff_id = ?", staffCreateDto.IdentityNum, staffId).Count(&exist)
+	resource.HrmsDB(c).Model(&model.Staff{}).Where("identity_num = ? or staff_id = ?", staffCreateDto.IdentityNum, staffId).Count(&exist)
 	if exist != 0 {
 		c.JSON(http.StatusOK, gin.H{
 			"status": 2001,
@@ -59,7 +59,7 @@ func StaffCreate(c *gin.Context) {
 		Aval:         1,
 		UserType:     "normal", // 暂时只能创建普通员工
 	}
-	err := resource.HrmsDB.Transaction(func(tx *gorm.DB) error {
+	err := resource.HrmsDB(c).Transaction(func(tx *gorm.DB) error {
 		if err := tx.Create(&staff).Error; err != nil {
 			return err
 		}
@@ -93,7 +93,7 @@ func StaffEdit(c *gin.Context) {
 		return
 	}
 	log.Printf("[StaffEdit staff = %v]", staffEditDTO)
-	resource.HrmsDB.Model(&model.Staff{}).Where("staff_id = ?", staffEditDTO.StaffId).
+	resource.HrmsDB(c).Model(&model.Staff{}).Where("staff_id = ?", staffEditDTO.StaffId).
 		Updates(&model.Staff{
 			StaffId:     staffEditDTO.StaffId,
 			StaffName:   staffEditDTO.StaffName,
@@ -126,24 +126,24 @@ func StaffQuery(c *gin.Context) {
 	if staffId == "all" {
 		// 查询全部
 		if start == -1 && start == -1 {
-			resource.HrmsDB.Where("staff_id != 'root' and staff_id != 'admin'").Find(&staffs)
+			resource.HrmsDB(c).Where("staff_id != 'root' and staff_id != 'admin'").Find(&staffs)
 		} else {
-			resource.HrmsDB.Where("staff_id != 'root' and staff_id != 'admin'").Offset(start).Limit(limit).Find(&staffs)
+			resource.HrmsDB(c).Where("staff_id != 'root' and staff_id != 'admin'").Offset(start).Limit(limit).Find(&staffs)
 		}
 		if len(staffs) == 0 {
 			// 不存在
 			code = 2001
 		}
 		// 总记录数
-		resource.HrmsDB.Model(&model.Staff{}).Where("staff_id != 'root' and staff_id != 'admin'").Count(&total)
+		resource.HrmsDB(c).Model(&model.Staff{}).Where("staff_id != 'root' and staff_id != 'admin'").Count(&total)
 		c.JSON(http.StatusOK, gin.H{
 			"status": code,
 			"total":  total,
-			"msg":    convert2VO(staffs),
+			"msg":    convert2VO(c, staffs),
 		})
 		return
 	}
-	resource.HrmsDB.Where("staff_id = ? and staff_id != 'root' and staff_id != 'admin'", staffId).Find(&staffs)
+	resource.HrmsDB(c).Where("staff_id = ? and staff_id != 'root' and staff_id != 'admin'", staffId).Find(&staffs)
 	if len(staffs) == 0 {
 		// 不存在
 		code = 2001
@@ -152,14 +152,14 @@ func StaffQuery(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"status": code,
 		"total":  total,
-		"msg":    convert2VO(staffs),
+		"msg":    convert2VO(c, staffs),
 	})
 }
 
-func getRuleByStaffId(staffId string) string {
+func getRuleByStaffId(c *gin.Context, staffId string) string {
 	var authority model.Authority
 	var userTypeName string
-	if err := resource.HrmsDB.Where("staff_id = ?", staffId).Find(&authority).Error; err == nil {
+	if err := resource.HrmsDB(c).Where("staff_id = ?", staffId).Find(&authority).Error; err == nil {
 		switch authority.UserType {
 		case "supersys":
 			userTypeName = "超级管理员"
@@ -173,14 +173,14 @@ func getRuleByStaffId(staffId string) string {
 	}
 	return userTypeName
 }
-func convert2VO(staffs []model.Staff) []model.StaffVO {
+func convert2VO(c *gin.Context, staffs []model.Staff) []model.StaffVO {
 	var staffVOs []model.StaffVO
 	for _, staff := range staffs {
 		staffVOs = append(staffVOs, model.StaffVO{
 			Staff:        staff,
-			DepName:      service.GetDepNameByDepId(staff.DepId),
-			RankName:     service.GetRankNameRankDepId(staff.RankId),
-			UserTypeName: getRuleByStaffId(staff.StaffId),
+			DepName:      service.GetDepNameByDepId(c, staff.DepId),
+			RankName:     service.GetRankNameRankDepId(c, staff.RankId),
+			UserTypeName: getRuleByStaffId(c, staff.StaffId),
 		})
 	}
 	return staffVOs
@@ -196,24 +196,24 @@ func StaffQueryByName(c *gin.Context) {
 	if staffName == "all" {
 		// 查询全部
 		if start == -1 && start == -1 {
-			resource.HrmsDB.Where("staff_id != 'root' and staff_id != 'admin'").Find(&staffs)
+			resource.HrmsDB(c).Where("staff_id != 'root' and staff_id != 'admin'").Find(&staffs)
 		} else {
-			resource.HrmsDB.Where("staff_id != 'root' and staff_id != 'admin'").Offset(start).Limit(limit).Find(&staffs)
+			resource.HrmsDB(c).Where("staff_id != 'root' and staff_id != 'admin'").Offset(start).Limit(limit).Find(&staffs)
 		}
 		if len(staffs) == 0 {
 			// 不存在
 			code = 2001
 		}
 		// 总记录数
-		resource.HrmsDB.Model(&model.Staff{}).Where("staff_id != 'root' and staff_id != 'admin'").Count(&total)
+		resource.HrmsDB(c).Model(&model.Staff{}).Where("staff_id != 'root' and staff_id != 'admin'").Count(&total)
 		c.JSON(http.StatusOK, gin.H{
 			"status": code,
 			"total":  total,
-			"msg":    convert2VO(staffs),
+			"msg":    convert2VO(c, staffs),
 		})
 		return
 	}
-	resource.HrmsDB.Where("staff_name like ?", "%"+staffName+"%").Where("staff_id != 'root' and staff_id != 'admin'").Find(&staffs)
+	resource.HrmsDB(c).Where("staff_name like ?", "%"+staffName+"%").Where("staff_id != 'root' and staff_id != 'admin'").Find(&staffs)
 	if len(staffs) == 0 {
 		// 不存在
 		code = 2001
@@ -222,7 +222,7 @@ func StaffQueryByName(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"status": code,
 		"total":  total,
-		"msg":    convert2VO(staffs),
+		"msg":    convert2VO(c, staffs),
 	})
 }
 
@@ -238,7 +238,7 @@ func StaffQueryByDep(c *gin.Context) {
 		reqSql += fmt.Sprintf(` limit %v,%v`, start, limit)
 	}
 	reqSql = fmt.Sprintf(reqSql, "%"+depName+"%")
-	resource.HrmsDB.Raw(reqSql).Scan(&staffs)
+	resource.HrmsDB(c).Raw(reqSql).Scan(&staffs)
 	if len(staffs) == 0 {
 		// 不存在
 		code = 2001
@@ -247,13 +247,13 @@ func StaffQueryByDep(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"status": code,
 		"total":  total,
-		"msg":    convert2VO(staffs),
+		"msg":    convert2VO(c, staffs),
 	})
 }
 
 func StaffDel(c *gin.Context) {
 	rankId := c.Param("staff_id")
-	if err := resource.HrmsDB.Where("staff_id = ?", rankId).Delete(&model.Staff{}).Error; err != nil {
+	if err := resource.HrmsDB(c).Where("staff_id = ?", rankId).Delete(&model.Staff{}).Error; err != nil {
 		log.Printf("[StaffDel] err = %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"status": 5001,

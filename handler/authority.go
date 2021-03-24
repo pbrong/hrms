@@ -17,7 +17,7 @@ func AddAuthorityDetail(c *gin.Context) {
 		})
 		return
 	}
-	err := service.AddAuthorityDetail(&authorityDetailDTO)
+	err := service.AddAuthorityDetail(c, &authorityDetailDTO)
 	if err != nil {
 		log.Printf("[AddAuthorityDetail] err = %v", err)
 		c.JSON(200, gin.H{
@@ -41,7 +41,7 @@ func GetAuthorityDetailByUserTypeAndModel(c *gin.Context) {
 		})
 		return
 	}
-	content, err := service.GetAuthorityDetailByUserTypeAndModel(&dto)
+	content, err := service.GetAuthorityDetailByUserTypeAndModel(c, &dto)
 	if err != nil {
 		log.Printf("[GetAuthorityDetailByUserTypeAndModel] err = %v", err)
 		c.JSON(200, gin.H{
@@ -60,7 +60,7 @@ func GetAuthorityDetailListByUserType(c *gin.Context) {
 	// 分页
 	start, limit := service.AcceptPage(c)
 	userType := c.Param("user_type")
-	detailList, total, err := service.GetAuthorityDetailListByUserType(userType, start, limit)
+	detailList, total, err := service.GetAuthorityDetailListByUserType(c, userType, start, limit)
 	if err != nil {
 		log.Printf("[GetAuthorityDetailByUserTypeAndModel] err = %v", err)
 		c.JSON(200, gin.H{
@@ -88,7 +88,7 @@ func UpdateAuthorityDetailById(c *gin.Context) {
 		return
 	}
 	// 业务处理
-	err := service.UpdateAuthorityDetailById(&dto)
+	err := service.UpdateAuthorityDetailById(c, &dto)
 	if err != nil {
 		log.Printf("[UpdateAuthorityDetailById] err = %v", err)
 		c.JSON(200, gin.H{
@@ -112,7 +112,7 @@ func SetAdminByStaffId(c *gin.Context) {
 		})
 		return
 	}
-	if err := service.SetAdminByStaffId(staffId); err != nil {
+	if err := service.SetAdminByStaffId(c, staffId); err != nil {
 		log.Printf("[SetAdminByStaffId] err = %v", err)
 		c.JSON(200, gin.H{
 			"status": 5002,
@@ -135,7 +135,7 @@ func SetNormalByStaffId(c *gin.Context) {
 		})
 		return
 	}
-	if err := service.SetNormalByStaffId(staffId); err != nil {
+	if err := service.SetNormalByStaffId(c, staffId); err != nil {
 		log.Printf("[SetNormalByStaffId] err = %v", err)
 		c.JSON(200, gin.H{
 			"status": 5002,

@@ -18,7 +18,7 @@ func CreateNotification(c *gin.Context) {
 		return
 	}
 	// 业务处理
-	err := service.CreateNotification(&notificationDTO)
+	err := service.CreateNotification(c, &notificationDTO)
 	if err != nil {
 		log.Printf("[CreateNotification] err = %v", err)
 		c.JSON(200, gin.H{
@@ -35,7 +35,7 @@ func CreateNotification(c *gin.Context) {
 func DeleteNotificationById(c *gin.Context) {
 	noticeId := c.Param("notice_id")
 	// 业务处理
-	err := service.DelNotificationById(noticeId)
+	err := service.DelNotificationById(c, noticeId)
 	if err != nil {
 		log.Printf("[DeleteNotificationById] err = %v", err)
 		c.JSON(200, gin.H{
@@ -53,7 +53,7 @@ func GetNotificationByTitle(c *gin.Context) {
 	noticeTitle := c.Param("notice_title")
 	start, limit := service.AcceptPage(c)
 	// 业务处理
-	notifications, total, err := service.GetNotificationByTitle(noticeTitle, start, limit)
+	notifications, total, err := service.GetNotificationByTitle(c, noticeTitle, start, limit)
 	if err != nil {
 		log.Printf("[DeleteNotificationById] err = %v", err)
 		c.JSON(200, gin.H{
@@ -81,7 +81,7 @@ func UpdateNotificationById(c *gin.Context) {
 		return
 	}
 	// 业务处理
-	err := service.UpdateNotificationById(&dto)
+	err := service.UpdateNotificationById(c, &dto)
 	if err != nil {
 		log.Printf("[UpdateNotificationById] err = %v", err)
 		c.JSON(200, gin.H{

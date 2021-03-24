@@ -5,4 +5,4 @@ db:
   password: 123
   host: 10.211.55.30
   port: 3306
-  dbName: hrms_test
+  dbName: hrms_C001,hrms_C002

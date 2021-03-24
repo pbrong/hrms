@@ -7,6 +7,7 @@ import (
 type LoginDTO struct {
 	UserNo       string `json:"staff_id" binding:"required"`
 	UserPassword string `json:"user_password" binding:"required"`
+	BranchId     string `json:"branch_id" binding:"required"`
 }
 
 type Authority struct {

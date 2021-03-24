@@ -13,6 +13,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 )
 
 func InitConfig() error {
@@ -107,6 +108,9 @@ func routerInit(server *gin.Engine) {
 	notificationGroup.DELETE("/delete/:notice_id", handler.DeleteNotificationById)
 	notificationGroup.POST("/edit", handler.UpdateNotificationById)
 	notificationGroup.GET("/query/:notice_title", handler.GetNotificationByTitle)
+	// 分公司相关
+	companyGroup := server.Group("/company")
+	companyGroup.GET("/query", handler.BranchCompanyQuery)
 
 }
 
@@ -124,27 +128,39 @@ func htmlInit(server *gin.Engine) {
 
 func InitGorm() error {
 	// "user:pass@tcp(127.0.0.1:3306)/dbname?charset=utf8mb4&parseTime=True&loc=Local"
-	dsn := fmt.Sprintf(
-		"%v:%v@tcp(%v:%v)/%v?charset=utf8mb4&parseTime=True&loc=Local",
-		resource.HrmsConf.Db.User,
-		resource.HrmsConf.Db.Password,
-		resource.HrmsConf.Db.Host,
-		resource.HrmsConf.Db.Port,
-		resource.HrmsConf.Db.DbName,
-	)
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
-		NamingStrategy: schema.NamingStrategy{
-			// 全局禁止表名复数
-			SingularTable: true,
-		},
-		// 日志等级
-		Logger: logger.Default.LogMode(logger.Info),
-	})
-	if err != nil {
-		log.Printf("[InitGorm] err = %v", err)
-		return err
+	// 对每个分公司数据库进行连接
+	dbNames := resource.HrmsConf.Db.DbName
+	dbNameList := strings.Split(dbNames, ",")
+	for index, dbName := range dbNameList {
+		dsn := fmt.Sprintf(
+			"%v:%v@tcp(%v:%v)/%v?charset=utf8mb4&parseTime=True&loc=Local",
+			resource.HrmsConf.Db.User,
+			resource.HrmsConf.Db.Password,
+			resource.HrmsConf.Db.Host,
+			resource.HrmsConf.Db.Port,
+			dbName,
+		)
+		db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
+			NamingStrategy: schema.NamingStrategy{
+				// 全局禁止表名复数
+				SingularTable: true,
+			},
+			// 日志等级
+			Logger: logger.Default.LogMode(logger.Info),
+		})
+		if err != nil {
+			log.Printf("[InitGorm] err = %v", err)
+			return err
+		}
+		// 添加到映射表中
+		resource.DbMapper[dbName] = db
+		// 第一个是默认DB，用以启动程序选择分公司
+		if index == 0 {
+			resource.DefaultDb = db
+		}
+		log.Printf("[InitGorm] 分公司数据库%v注册成功", dbName)
 	}
-	resource.HrmsDB = db
+	//fmt.Println(resource.DbMapper["hrms_C001"])
 	log.Printf("[InitGorm] success")
 	return nil
 }

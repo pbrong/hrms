@@ -91,15 +91,15 @@ func SexInt2Str(sex int64) string {
 	return sexStr
 }
 
-func GetDepNameByDepId(depId string) string {
+func GetDepNameByDepId(c *gin.Context, depId string) string {
 	var dep model.Department
-	resource.HrmsDB.Where("dep_id = ?", depId).Find(&dep)
+	resource.HrmsDB(c).Where("dep_id = ?", depId).Find(&dep)
 	return dep.DepName
 }
 
-func GetRankNameRankDepId(rankId string) string {
+func GetRankNameRankDepId(c *gin.Context, rankId string) string {
 	var rank model.Rank
-	resource.HrmsDB.Where("rank_id = ?", rankId).Find(&rank)
+	resource.HrmsDB(c).Where("rank_id = ?", rankId).Find(&rank)
 	return rank.RankName
 }
 

@@ -16,7 +16,7 @@ func PasswordQuery(c *gin.Context) {
 	code := 2000
 	staffId := c.Param("staff_id")
 	var psws []model.PasswordQueryVO
-	result, err := buildPasswordQueryResult(staffId, start, limit)
+	result, err := buildPasswordQueryResult(c, staffId, start, limit)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"status": 5000,
@@ -26,7 +26,7 @@ func PasswordQuery(c *gin.Context) {
 		return
 	}
 	// 总记录数
-	resource.HrmsDB.Where("staff_id != 'root' and staff_id != 'admin'").Model(&model.Staff{}).Count(&total)
+	resource.HrmsDB(c).Where("staff_id != 'root' and staff_id != 'admin'").Model(&model.Staff{}).Count(&total)
 	psws = result
 	c.JSON(http.StatusOK, gin.H{
 		"status": code,
@@ -35,21 +35,21 @@ func PasswordQuery(c *gin.Context) {
 	})
 }
 
-func buildPasswordQueryResult(staffId string, start int, limit int) ([]model.PasswordQueryVO, error) {
+func buildPasswordQueryResult(c *gin.Context, staffId string, start int, limit int) ([]model.PasswordQueryVO, error) {
 	var loginList []model.Authority
 	var err error
 	if staffId == "all" {
 		// 查询全部
 		if start == -1 && limit == -1 {
 			// 不加分页
-			err = resource.HrmsDB.Where("staff_id != 'root' and staff_id != 'admin'").Find(&loginList).Error
+			err = resource.HrmsDB(c).Where("staff_id != 'root' and staff_id != 'admin'").Find(&loginList).Error
 		} else {
 			// 加分页
-			err = resource.HrmsDB.Where("staff_id != 'root' and staff_id != 'admin'").Offset(start).Limit(limit).Find(&loginList).Error
+			err = resource.HrmsDB(c).Where("staff_id != 'root' and staff_id != 'admin'").Offset(start).Limit(limit).Find(&loginList).Error
 		}
 	} else {
 		// 查询单个用户
-		err = resource.HrmsDB.Where("staff_id != 'root' and staff_id != 'admin'").Where("staff_id = ?", staffId).First(&loginList).Error
+		err = resource.HrmsDB(c).Where("staff_id != 'root' and staff_id != 'admin'").Where("staff_id = ?", staffId).First(&loginList).Error
 	}
 	if err != nil {
 		log.Printf("[buildPasswordQueryResult] err = %v", err)
@@ -60,7 +60,7 @@ func buildPasswordQueryResult(staffId string, start int, limit int) ([]model.Pas
 		queryVO := model.PasswordQueryVO{
 			Id:        int64(loginData.ID),
 			StaffId:   loginData.StaffId,
-			StaffName: convertStaffIdToName(loginData.StaffId),
+			StaffName: convertStaffIdToName(c, loginData.StaffId),
 			Password:  loginData.UserPassword,
 		}
 		queryVOs = append(queryVOs, queryVO)
@@ -72,9 +72,9 @@ type Result struct {
 	StaffName string `json:"staff_name"`
 }
 
-func convertStaffIdToName(staffId string) string {
+func convertStaffIdToName(c *gin.Context, staffId string) string {
 	var result Result
-	resource.HrmsDB.Raw("select staff_name from staff where staff_id = ?", staffId).Scan(&result)
+	resource.HrmsDB(c).Raw("select staff_name from staff where staff_id = ?", staffId).Scan(&result)
 	return result.StaffName
 }
 
@@ -90,7 +90,7 @@ func PasswordEdit(c *gin.Context) {
 	}
 	staffId := passwordEditDTO.StaffId
 	password := passwordEditDTO.Password
-	if err := resource.HrmsDB.Where("staff_id = ?", staffId).Updates(&model.Authority{
+	if err := resource.HrmsDB(c).Where("staff_id = ?", staffId).Updates(&model.Authority{
 		UserPassword: password,
 	}).Error; err != nil {
 		c.JSON(http.StatusOK, gin.H{

@@ -22,7 +22,7 @@ func DepartCreate(c *gin.Context) {
 	var departmentCheck model.Department
 	var result *gorm.DB
 	// 找不到记录也会抛出ErrRecordNotFound错误，但这其实不算错误情况
-	resource.HrmsDB.Where("dep_name = ?", departmentCreateDTO.DepName).First(&departmentCheck)
+	resource.HrmsDB(c).Where("dep_name = ?", departmentCreateDTO.DepName).First(&departmentCheck)
 	if departmentCheck.DepName == departmentCreateDTO.DepName {
 		log.Printf("[HrmsDB.Create] 部门已存在, dep = %v", departmentCheck)
 		c.JSON(200, gin.H{
@@ -36,7 +36,7 @@ func DepartCreate(c *gin.Context) {
 		PreDepId: departmentCreateDTO.PreDepId,
 		DepName:  departmentCreateDTO.DepName,
 	}
-	if result = resource.HrmsDB.Create(&departmentCreate); result.Error != nil {
+	if result = resource.HrmsDB(c).Create(&departmentCreate); result.Error != nil {
 		result.Rollback()
 		log.Printf("[HrmsDB.Create] err = %v", result.Error)
 		c.JSON(500, gin.H{
@@ -45,7 +45,7 @@ func DepartCreate(c *gin.Context) {
 		})
 		return
 	}
-	if result = resource.HrmsDB.Where("id = ?", departmentCreate.ID); result.Error != nil {
+	if result = resource.HrmsDB(c).Where("id = ?", departmentCreate.ID); result.Error != nil {
 		log.Printf("[HrmsDB.Create] 插入数据失败， departmentCreate = %v", departmentCreate)
 		c.JSON(500, gin.H{
 			"status": 5001,
@@ -69,7 +69,7 @@ func DepartEdit(c *gin.Context) {
 		})
 		return
 	}
-	resource.HrmsDB.Model(&model.Department{}).Where("dep_id = ?", departmentEditDTO.DepId).
+	resource.HrmsDB(c).Model(&model.Department{}).Where("dep_id = ?", departmentEditDTO.DepId).
 		Updates(&model.Department{PreDepId: departmentEditDTO.PreDepId, DepName: departmentEditDTO.DepName})
 	c.JSON(200, gin.H{
 		"status": 2000,
@@ -86,16 +86,16 @@ func DepartQuery(c *gin.Context) {
 	if depId == "all" {
 		// 查询全部
 		if start == -1 && start == -1 {
-			resource.HrmsDB.Find(&deps)
+			resource.HrmsDB(c).Find(&deps)
 		} else {
-			resource.HrmsDB.Offset(start).Limit(limit).Find(&deps)
+			resource.HrmsDB(c).Offset(start).Limit(limit).Find(&deps)
 		}
 		if len(deps) == 0 {
 			// 不存在
 			code = 2001
 		}
 		// 总记录数
-		resource.HrmsDB.Model(&model.Department{}).Count(&total)
+		resource.HrmsDB(c).Model(&model.Department{}).Count(&total)
 		c.JSON(200, gin.H{
 			"status": code,
 			"total":  total,
@@ -103,7 +103,7 @@ func DepartQuery(c *gin.Context) {
 		})
 		return
 	}
-	resource.HrmsDB.Where("dep_id = ?", depId).Find(&deps)
+	resource.HrmsDB(c).Where("dep_id = ?", depId).Find(&deps)
 	if len(deps) == 0 {
 		// 不存在
 		code = 2001
@@ -118,7 +118,7 @@ func DepartQuery(c *gin.Context) {
 
 func DepartDel(c *gin.Context) {
 	depId := c.Param("dep_id")
-	if err := resource.HrmsDB.Where("dep_id = ?", depId).Delete(&model.Department{}).Error; err != nil {
+	if err := resource.HrmsDB(c).Where("dep_id = ?", depId).Delete(&model.Department{}).Error; err != nil {
 		log.Printf("[DepartDel] err = %v", err)
 		c.JSON(500, gin.H{
 			"status": 5001,

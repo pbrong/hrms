@@ -19,7 +19,7 @@ func Template(c *gin.Context) {
 		return
 	}
 	// 业务处理
-	err := service.AddAuthorityDetail(&authorityDetailDTO)
+	err := service.AddAuthorityDetail(c, &authorityDetailDTO)
 	if err != nil {
 		log.Printf("[Template] err = %v", err)
 		c.JSON(200, gin.H{
