@@ -117,6 +117,14 @@ func routerInit(server *gin.Engine) {
 	salaryGroup.DELETE("/delete/:salary_id", handler.DelSalary)
 	salaryGroup.POST("/edit", handler.UpdateSalaryById)
 	salaryGroup.GET("/query/:staff_id", handler.GetSalaryByStaffId)
+	// 薪资发放相关
+	salaryRecordGroup := server.Group("/salary_record")
+	salaryRecordGroup.POST("/create", handler.CreateSalaryRecord)
+	salaryRecordGroup.DELETE("/delete/:salary_record_id", handler.DelSalaryRecord)
+	salaryRecordGroup.POST("/edit", handler.UpdateSalaryRecordById)
+	salaryRecordGroup.GET("/query/:staff_id", handler.GetSalaryRecordByStaffId)
+	salaryRecordGroup.GET("/get_salary_record_is_pay_by_id/:id", handler.GetSalaryRecordIsPayById)
+	salaryRecordGroup.GET("/pay_salary_record_by_id/:id", handler.PaySalaryRecordById)
 }
 
 func htmlInit(server *gin.Engine) {
