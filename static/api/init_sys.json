@@ -28,15 +28,21 @@
           "target": "_self"
         },
         {
-          "title": "招聘管理",
-          "href": "views/menu.html",
-          "icon": "fa fa-window-maximize",
+          "title": "考勤管理",
+          "href": "",
+          "icon": "fa fa-home",
           "target": "_self"
         },
         {
-          "title": "工资管理",
+          "title": "薪酬管理",
           "href": "",
           "icon": "fa fa-home",
+          "target": "_self"
+        },
+        {
+          "title": "招聘管理",
+          "href": "views/menu.html",
+          "icon": "fa fa-window-maximize",
           "target": "_self"
         },
         {
