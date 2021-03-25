@@ -37,7 +37,21 @@
           "title": "薪酬管理",
           "href": "",
           "icon": "fa fa-home",
-          "target": "_self"
+          "target": "_self",
+          "child": [
+            {
+              "title": "工资套账",
+              "href": "/authority_render/normal_salary_detail_manage",
+              "icon": "fa fa-tachometer",
+              "target": "_self"
+            },
+            {
+              "title": "工资历史",
+              "href": "/authority_render/normal_salary_history_manage",
+              "icon": "fa fa-tachometer",
+              "target": "_self"
+            }
+          ]
         },
         {
           "title": "考试管理",

@@ -111,7 +111,12 @@ func routerInit(server *gin.Engine) {
 	// 分公司相关
 	companyGroup := server.Group("/company")
 	companyGroup.GET("/query", handler.BranchCompanyQuery)
-
+	// 薪资相关
+	salaryGroup := server.Group("/salary")
+	salaryGroup.POST("/create", handler.CreateSalary)
+	salaryGroup.DELETE("/delete/:salary_id", handler.DelSalary)
+	salaryGroup.POST("/edit", handler.UpdateSalaryById)
+	salaryGroup.GET("/query/:staff_id", handler.GetSalaryByStaffId)
 }
 
 func htmlInit(server *gin.Engine) {

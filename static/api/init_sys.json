@@ -37,7 +37,27 @@
           "title": "薪酬管理",
           "href": "",
           "icon": "fa fa-home",
-          "target": "_self"
+          "target": "_self",
+          "child": [
+            {
+              "title": "工资发放",
+              "href": "/authority_render/salary_giving_manage",
+              "icon": "fa fa-tachometer",
+              "target": "_self"
+            },
+            {
+              "title": "工资套账",
+              "href": "/authority_render/salary_detail_manage",
+              "icon": "fa fa-tachometer",
+              "target": "_self"
+            },
+            {
+              "title": "工资历史",
+              "href": "/authority_render/salary_history_manage",
+              "icon": "fa fa-tachometer",
+              "target": "_self"
+            }
+          ]
         },
         {
           "title": "招聘管理",
