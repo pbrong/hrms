@@ -77,8 +77,8 @@
         //     active[type] ? active[type].call(this) : '';
         // });
 
-        var editInfo = JSON.parse(localStorage.getItem("notification_edit_info"));
-        // alert(JSON.stringify(editInfo))
+        var editInfo = JSON.parse(localStorage.getItem("notification_detail_info"));
+        alert(JSON.stringify(editInfo))
         $("#notice_title").val(editInfo.notice_title)
         $("#type").val(editInfo.type)
         $("#LAY_demo1").val(editInfo.notice_content)

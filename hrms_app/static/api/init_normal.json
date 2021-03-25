@@ -16,9 +16,21 @@
       "target": "_self",
       "child": [
         {
-          "title": "信息管理",
-          "href": "",
+          "title": "信息查询",
+          "href": "/authority_render/normal_staff_manage",
           "icon": "fa fa-home",
+          "target": "_self"
+        },
+        {
+          "title": "通知查询",
+          "href": "/authority_render/normal_notification_manage",
+          "icon": "fa fa-home",
+          "target": "_self"
+        },
+        {
+          "title": "工作管理",
+          "href": "views/setting.html",
+          "icon": "fa fa-gears",
           "target": "_self"
         },
         {
@@ -31,12 +43,6 @@
           "title": "请假上报",
           "href": "views/menu.html",
           "icon": "fa fa-window-maximize",
-          "target": "_self"
-        },
-        {
-          "title": "工作管理",
-          "href": "views/setting.html",
-          "icon": "fa fa-gears",
           "target": "_self"
         },
         {
