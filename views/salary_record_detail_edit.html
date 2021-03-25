@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>编辑</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="/static/lib/layui-v2.5.5/css/layui.css" media="all">
+    <link rel="stylesheet" href="/static/css/public.css" media="all">
+    <style>
+        body {
+            background-color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+<div class="layui-form layuimini-form">
+    <div class="layui-form-item">
+        <label class="layui-form-label required">员工工号</label>
+        <div class="layui-input-block">
+            <input type="text" name="staff_id"  id="staff_id" lay-verify="required" lay-reqtext="员工工号不能为空" placeholder="请输入员工工号" value="" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label required">员工姓名</label>
+        <div class="layui-input-block">
+            <input type="text" name="staff_name" id="staff_name" lay-verify="required" lay-reqtext="员工姓名不能为空" placeholder="请输入员工姓名" value="" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label required">基本薪资(元/月)</label>
+        <div class="layui-input-block">
+            <input type="number" name="base"  id="base" lay-verify="required" lay-reqtext="基本薪资不能为空" placeholder="请输入基本薪资" value="" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">补贴(元/月)</label>
+        <div class="layui-input-block">
+            <input type="number" name="subsidy" id="subsidy" placeholder="请输入补贴" value="0" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">福利(元/月)</label>
+        <div class="layui-input-block">
+            <input type="number" name="benifits" id="benifits"   placeholder="请输入福利" value="0" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">罚款(元/月)</label>
+        <div class="layui-input-block">
+            <input type="number" id="fine" name="fine"   placeholder="请输入罚款" value="0" class="layui-input">
+        </div>
+    </div>
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label required">月份</label>
+        <div class="layui-input-block">
+            <input type="month" id="salary_date" name="salary_date" lay-verify="required" lay-reqtext="月份不能为空" placeholder="请输入月份" value="" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn layui-btn-normal" lay-submit lay-filter="saveBtn">保 存</button>
+        </div>
+    </div>
+</div>
+
+<script src="/static/lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
+<script>
+    layui.use(['form'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.$;
+        var editInfo = JSON.parse(localStorage.getItem("salary_record_edit_info"));
+        // alert(editInfo)
+        $("#staff_id").val(editInfo.staff_id)
+        $("#staff_name").val(editInfo.staff_name)
+        $("#base").val(editInfo.base)
+        $("#subsidy").val(editInfo.subsidy)
+        $("#benifits").val(editInfo.benifits)
+        $("#fine").val(editInfo.fine)
+        $("#salary_date").val(editInfo.salary_date)
+        //监听提交
+        form.on('submit(saveBtn)', function (req) {
+            // alert(localStorage.getItem("dep_edit_info"))
+            var id = editInfo.ID
+            // alert(JSON.stringify(req.field))
+            req.field.id = id
+            req.field.base = parseInt(req.field.base)
+            req.field.subsidy = parseInt(req.field.subsidy)
+            req.field.benifits = parseInt(req.field.benifits)
+            req.field.fine = parseInt(req.field.fine)
+            // alert(JSON.stringify(req.field))
+            $.ajax({
+                type: "POST",
+                url: "/salary_record/edit",
+                contentType: "application/json;charset=utf-8",
+                data: JSON.stringify(req.field),
+                dataType: "json",
+                async: false,
+                success:function (data) {
+                    var resp = JSON.parse(JSON.stringify(data));
+                    if (resp.status == 2000) {
+                        layer.alert("编辑成功", function (){
+                            // 关闭
+                            var iframeIndex = parent.layer.getFrameIndex(window.name);
+                            parent.layer.close(iframeIndex);
+                        })
+                    }
+                },
+                error:function (data) {
+                    console.log("error resp:" + JSON.stringify(data))
+                    layer.msg("系统异常");
+                }
+            });
+            return false;
+        });
+
+    });
+</script>
+</body>
+</html>
