@@ -125,6 +125,7 @@ func routerInit(server *gin.Engine) {
 	salaryRecordGroup.GET("/query/:staff_id", handler.GetSalaryRecordByStaffId)
 	salaryRecordGroup.GET("/get_salary_record_is_pay_by_id/:id", handler.GetSalaryRecordIsPayById)
 	salaryRecordGroup.GET("/pay_salary_record_by_id/:id", handler.PaySalaryRecordById)
+	salaryRecordGroup.GET("/query_history/:staff_id", handler.GetHadPaySalaryRecordByStaffId)
 }
 
 func htmlInit(server *gin.Engine) {

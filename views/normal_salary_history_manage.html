@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>工资套账管理</title>
+    <title>工资发放历史</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -34,33 +34,33 @@
 <!--        {{ else }}-->
 <!--        {{ end }}-->
 
-        <script type="text/html" id="toolbarDemo">
-            <div class="layui-btn-container">
-                {{ if .create }}
-                <button id="add_button" class="layui-btn layui-btn-normal layui-btn-sm data-add-btn" lay-event="add"> 添加 </button>
-                {{ else }}
-                {{ end }}
-            </div>
-        </script>
+<!--        <script type="text/html" id="toolbarDemo">-->
+<!--            <div class="layui-btn-container">-->
+<!--                {{ if .create }}-->
+<!--                <button id="add_button" class="layui-btn layui-btn-normal layui-btn-sm data-add-btn" lay-event="add"> 添加 </button>-->
+<!--                {{ else }}-->
+<!--                {{ end }}-->
+<!--            </div>-->
+<!--        </script>-->
 
         <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
 
-        <script type="text/html" id="currentTableBar">
+<!--        <script type="text/html" id="currentTableBar">-->
 <!--            {{ if .query }}-->
 <!--            <a id="query_button" class="layui-btn layui-btn-warm layui-btn-xs data-count-get" lay-event="query">查看</a>-->
 <!--            {{ else }}-->
 <!--            {{ end }}-->
 
-            {{ if .update }}
-            <a id="edit_button" class="layui-btn layui-btn-normal layui-btn-xs data-count-edit" lay-event="edit">编辑</a>
-            {{ else }}
-            {{ end }}
+<!--            {{ if .update }}-->
+<!--            <a id="edit_button" class="layui-btn layui-btn-normal layui-btn-xs data-count-edit" lay-event="edit">编辑</a>-->
+<!--            {{ else }}-->
+<!--            {{ end }}-->
 
-            {{ if .delete }}
-            <a id="delete_button" class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除</a>
-            {{ else }}
-            {{ end }}
-        </script>
+<!--            {{ if .delete }}-->
+<!--            <a id="delete_button" class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除</a>-->
+<!--            {{ else }}-->
+<!--            {{ end }}-->
+<!--        </script>-->
 
     </div>
 </div>
@@ -90,7 +90,7 @@
 
             table.render({
                 elem: '#currentTableId',
-                url: '/salary/query/' + staffId,
+                url: '/salary_record/query_history/' + staffId,
                 toolbar: '#toolbarDemo',
                 defaultToolbar: ['filter', 'exports', 'print', {
                     title: '提示',
@@ -98,14 +98,18 @@
                     icon: 'layui-icon-tips'
                 }],
                 cols: [[
-                    // {type: "checkbox", width: 50},
+                    // {type: "checkbox", width: 30},
                     {field: 'ID', width: 60, title: 'ID', sort: true,  hide:true},
-                    {field: 'salary_id', width: 150, title: '工资ID', hide:true},
-                    {field: 'staff_id', width: 150, title: '员工工号'},
-                    {field: 'staff_name', width: 200, title: '员工姓名'},
-                    {field: 'base', width: 170, title: '基本工资(元/月)'},
-                    {field: 'subsidy', width: 150, title: '补贴(元/月)'},
-                    {title: '操作', minWidth: 150, toolbar: '#currentTableBar', align: "center", fixed: 'right'}
+                    {field: 'salary_record_id', width: 120, title: '工资ID', hide:true},
+                    {field: 'staff_id', width: 95, title: '工号'},
+                    {field: 'staff_name', width: 120, title: '姓名'},
+                    {field: 'base', width: 95, title: '基本(元)'},
+                    {field: 'subsidy', width: 95, title: '补贴(元)'},
+                    {field: 'benifits', width: 95, title: '福利(元)'},
+                    {field: 'fine', width: 95, title: '罚款(元)'},
+                    {field: 'total', width: 95, title: '合计(元)'},
+                    {field: 'salary_date', width: 95, title: '月份'},
+                    {field: 'is_pay', width: 95, title: '状态', templet: isPayFormat},
                 ]],
                 limits: [10, 15, 20, 25, 50, 100],
                 limit: 10,
@@ -126,14 +130,22 @@
                 }
             });
 
+            function isPayFormat(data) {
+                if (data.is_pay == 1) {
+                    return "未发放"
+                } else {
+                    return "已发放"
+                }
+            }
+
             // 监听搜索操作
             form.on('submit(data-search-btn)', function (data) {
                 layer.msg("搜索成功");
                 var staff_id = data.field.staff_id;
-                var reqUrl = "/salary/query/all"
+                var reqUrl = "/salary_record/query_history/all"
                 if (typeof staff_id != "undefined" && staff_id != null && staff_id != "") {
                     //执行搜索重载
-                    reqUrl = "/salary/query/"+staff_id
+                    reqUrl = "/salary_record/query_history/"+staff_id
                 }
                 table.reload('currentTableId', {
                     url: reqUrl,

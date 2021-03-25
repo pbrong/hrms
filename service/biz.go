@@ -267,6 +267,9 @@ func GetSalaryRecordByStaffId(c *gin.Context, staffId string, start int, limit i
 	}
 	var total int64
 	resource.HrmsDB(c).Model(&model.SalaryRecord{}).Count(&total)
+	if staffId == "all" {
+		total = 1
+	}
 	return salaryRecords, total, nil
 }
 
@@ -284,4 +287,34 @@ func PaySalaryRecordById(c *gin.Context, id int64) error {
 		return err
 	}
 	return nil
+}
+
+func GetHadPaySalaryRecordByStaffId(c *gin.Context, staffId string, start int, limit int) ([]*model.SalaryRecord, int64, error) {
+	var salaryRecords []*model.SalaryRecord
+	var err error
+	if start == -1 && limit == -1 {
+		// 不加分页
+		if staffId != "all" {
+			err = resource.HrmsDB(c).Where("staff_id = ? and is_pay = 2", staffId).Find(&salaryRecords).Error
+		} else {
+			err = resource.HrmsDB(c).Where("is_pay = 2").Find(&salaryRecords).Error
+		}
+
+	} else {
+		// 加分页
+		if staffId != "all" {
+			err = resource.HrmsDB(c).Where("staff_id = ? and is_pay = 2", staffId).Offset(start).Limit(limit).Find(&salaryRecords).Error
+		} else {
+			err = resource.HrmsDB(c).Where("is_pay = 2").Find(&salaryRecords).Error
+		}
+	}
+	if err != nil {
+		return nil, 0, err
+	}
+	var total int64
+	resource.HrmsDB(c).Model(&model.SalaryRecord{}).Where("is_pay = 2").Count(&total)
+	if staffId == "all" {
+		total = 1
+	}
+	return salaryRecords, total, nil
 }

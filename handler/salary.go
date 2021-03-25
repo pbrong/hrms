@@ -231,3 +231,25 @@ func PaySalaryRecordById(c *gin.Context) {
 		"status": 2000,
 	})
 }
+
+func GetHadPaySalaryRecordByStaffId(c *gin.Context) {
+	// 参数绑定
+	staffId := c.Param("staff_id")
+	start, limit := service.AcceptPage(c)
+	// 业务处理
+	list, total, err := service.GetHadPaySalaryRecordByStaffId(c, staffId, start, limit)
+	if err != nil {
+		log.Printf("[GetHadPaySalaryRecordByStaffId] err = %v", err)
+		c.JSON(200, gin.H{
+			"status": 5000,
+			"total":  0,
+			"msg":    err.Error(),
+		})
+		return
+	}
+	c.JSON(200, gin.H{
+		"status": 2000,
+		"total":  total,
+		"msg":    list,
+	})
+}
