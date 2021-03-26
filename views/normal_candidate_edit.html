@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>编辑</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="/static/lib/layui-v2.5.5/css/layui.css" media="all">
+    <link rel="stylesheet" href="/static/css/public.css" media="all">
+    <style>
+        body {
+            background-color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+<div class="layui-form layuimini-form">
+    <div class="layui-form-item">
+        <label class="layui-form-label">候选人姓名</label>
+        <div class="layui-input-block">
+            <input readonly="readonly" type="text" name="name" id="name" lay-verify="required" lay-reqtext="候选人姓名不能为空" placeholder="请输入候选人姓名" value="" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">应聘岗位</label>
+        <div class="layui-input-block">
+            <input  readonly="readonly" type="text" name="job_name" id="job_name" lay-verify="required" lay-reqtext="应聘岗位不能为空" placeholder="请输入应聘岗位" value="" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">最高学历</label>
+        <div class="layui-input-block">
+            <input  readonly="readonly"  type="text" name="edu_level" id="edu_level"  placeholder="请输入最高学历" value="" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">毕业专业</label>
+        <div class="layui-input-block">
+            <input  readonly="readonly" type="text" name="major" id="major"  placeholder="请输入毕业专业"  value="" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">工作经验</label>
+        <div class="layui-input-block">
+            <input  readonly="readonly" type="text" name="experience" id="experience"   placeholder="请输入工作经验" value="" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">技能描述</label>
+        <div class="layui-input-block">
+            <textarea  readonly="readonly" style="height: 200px" type="text" name="describe"  id="describe"  placeholder="请输入技能描述" value="" class="layui-input"></textarea>
+        </div>
+    </div>
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">投递邮箱</label>
+        <div class="layui-input-block">
+            <input  readonly="readonly" type="text" name="email" id="email"  placeholder="请输入投递邮箱"  value="" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label required">面试评价</label>
+        <div class="layui-input-block">
+            <textarea style="height: 200px" type="text" name="evaluation"  id="evaluation" placeholder="请输入面试评价" value="" class="layui-input"></textarea>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">应聘状态</label>
+        <div class="layui-input-block">
+            <input readonly="readonly" type="text" name="status"  id="status" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn layui-btn-normal" lay-submit lay-filter="saveBtn">保存面试评价</button>
+<!--            <button class="layui-btn layui-btn-danger" lay-submit lay-filter="rejectBtn">拒 绝</button>-->
+<!--            <button class="layui-btn layui-btn-warm" lay-submit lay-filter="acceptBtn">录 取</button>-->
+        </div>
+    </div>
+</div>
+
+<script src="/static/lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
+<script>
+    layui.use(['form'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.$;
+        var editInfo = JSON.parse(localStorage.getItem("normal_candidate_edit_info"));
+        // alert(editInfo)
+        $("#staff_id").val(editInfo.staff_id)
+        $("#name").val(editInfo.name)
+        $("#job_name").val(editInfo.job_name)
+        $("#edu_level").val(editInfo.edu_level)
+        $("#major").val(editInfo.major)
+        $("#experience").val(editInfo.experience)
+        $("#describe").val(editInfo.describe)
+        $("#email").val(editInfo.email)
+        $("#evaluation").val(editInfo.evaluation)
+
+        function statusQuery(status) {
+            if (status == 0) {
+                return "面试中"
+            }
+            if (status == 1) {
+                return "已拒绝"
+            }
+            if (status == 2) {
+                return "已录取"
+            }
+        }
+        $("#status").val(statusQuery(editInfo.status))
+        // $("#status").val(editInfo.status)
+
+        //监听提交
+        form.on('submit(saveBtn)', function (req) {
+            // alert(localStorage.getItem("dep_edit_info"))
+            var id = editInfo.ID
+            // alert(JSON.stringify(req.field))
+            req.field.id = id
+            // alert(JSON.stringify(req.field))
+            $.ajax({
+                type: "POST",
+                url: "/candidate/edit",
+                contentType: "application/json;charset=utf-8",
+                data: JSON.stringify(req.field),
+                dataType: "json",
+                async: false,
+                success:function (data) {
+                    var resp = JSON.parse(JSON.stringify(data));
+                    if (resp.status == 2000) {
+                        layer.alert("编辑成功", function (){
+                            // 关闭
+                            var iframeIndex = parent.layer.getFrameIndex(window.name);
+                            parent.layer.close(iframeIndex);
+                        })
+                    }
+                },
+                error:function (data) {
+                    console.log("error resp:" + JSON.stringify(data))
+                    layer.msg("系统异常");
+                }
+            });
+            return false;
+        });
+
+        form.on('submit(rejectBtn)', function (req) {
+            // alert(localStorage.getItem("dep_edit_info"))
+            layer.confirm('确认拒绝吗？', function () {
+                var id = editInfo.ID
+                // alert(JSON.stringify(req.field))
+                // req.field.id = id
+                // alert(JSON.stringify(req.field))
+                $.ajax({
+                    type: "GET",
+                    url: "/candidate/reject/" + id,
+                    contentType: "application/json;charset=utf-8",
+                    async: false,
+                    success: function (data) {
+                        var resp = JSON.parse(JSON.stringify(data));
+                        if (resp.status == 2000) {
+                            layer.alert("拒绝成功", function () {
+                                // 关闭
+                                var iframeIndex = parent.layer.getFrameIndex(window.name);
+                                parent.layer.close(iframeIndex);
+                            })
+                        }
+                    },
+                    error: function (data) {
+                        console.log("error resp:" + JSON.stringify(data))
+                        layer.msg("系统异常");
+                    }
+                });
+                return false;
+            });
+        });
+
+        form.on('submit(acceptBtn)', function (req) {
+            // alert(localStorage.getItem("dep_edit_info"))
+            layer.confirm('确认录取吗？', function () {
+                var id = editInfo.ID
+                // alert(JSON.stringify(req.field))
+                // req.field.id = id
+                // alert(JSON.stringify(req.field))
+                $.ajax({
+                    type: "GET",
+                    url: "/candidate/accept/" + id,
+                    contentType: "application/json;charset=utf-8",
+                    async: false,
+                    success: function (data) {
+                        var resp = JSON.parse(JSON.stringify(data));
+                        if (resp.status == 2000) {
+                            layer.alert("录取成功", function () {
+                                // 关闭
+                                var iframeIndex = parent.layer.getFrameIndex(window.name);
+                                parent.layer.close(iframeIndex);
+                            })
+                        }
+                    },
+                    error: function (data) {
+                        console.log("error resp:" + JSON.stringify(data))
+                        layer.msg("系统异常");
+                    }
+                });
+                return false;
+            });
+        });
+    });
+</script>
+</body>
+</html>

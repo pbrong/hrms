@@ -140,6 +140,15 @@ func routerInit(server *gin.Engine) {
 	recruitmentGroup.DELETE("/delete/:recruitment_id", handler.DelRecruitmentByRecruitmentId)
 	recruitmentGroup.POST("/edit", handler.UpdateRecruitmentById)
 	recruitmentGroup.GET("/query/:job_name", handler.GetRecruitmentByJobName)
+	// 候选人管理相关
+	candidateGroup := server.Group("/candidate")
+	candidateGroup.POST("/create", handler.CreateCandidate)
+	candidateGroup.DELETE("/delete/:candidate_id", handler.DelCandidateByCandidateId)
+	candidateGroup.POST("/edit", handler.UpdateCandidateById)
+	candidateGroup.GET("/query_by_name/:name", handler.GetCandidateByName)
+	candidateGroup.GET("/query_by_staff_id/:staff_id", handler.GetCandidateByStaffId)
+	candidateGroup.GET("/reject/:id", handler.SetCandidateRejectById)
+	candidateGroup.GET("/accept/:id", handler.SetCandidateAcceptById)
 }
 
 func htmlInit(server *gin.Engine) {
