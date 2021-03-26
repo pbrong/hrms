@@ -28,15 +28,55 @@
           "target": "_self"
         },
         {
+          "title": "考勤管理",
+          "href": "",
+          "icon": "fa fa-home",
+          "target": "_self",
+          "child": [
+            {
+              "title": "考勤上报",
+              "href": "/authority_render/attendance_giving_manage",
+              "icon": "fa fa-tachometer",
+              "target": "_self"
+            },
+            {
+              "title": "考勤历史",
+              "href": "/authority_render/attendance_history_manage",
+              "icon": "fa fa-tachometer",
+              "target": "_self"
+            }
+          ]
+        },
+        {
+          "title": "薪酬管理",
+          "href": "",
+          "icon": "fa fa-home",
+          "target": "_self",
+          "child": [
+            {
+              "title": "工资发放",
+              "href": "/authority_render/salary_giving_manage",
+              "icon": "fa fa-tachometer",
+              "target": "_self"
+            },
+            {
+              "title": "工资套账",
+              "href": "/authority_render/salary_detail_manage",
+              "icon": "fa fa-tachometer",
+              "target": "_self"
+            },
+            {
+              "title": "工资历史",
+              "href": "/authority_render/salary_history_manage",
+              "icon": "fa fa-tachometer",
+              "target": "_self"
+            }
+          ]
+        },
+        {
           "title": "招聘管理",
           "href": "views/menu.html",
           "icon": "fa fa-window-maximize",
-          "target": "_self"
-        },
-        {
-          "title": "工资管理",
-          "href": "",
-          "icon": "fa fa-home",
           "target": "_self"
         },
         {

@@ -29,9 +29,23 @@
         },
         {
           "title": "考勤管理",
-          "href": "views/menu.html",
+          "href": "",
           "icon": "fa fa-window-maximize",
-          "target": "_self"
+          "target": "_self",
+          "child": [
+            {
+              "title": "考勤上报",
+              "href": "/authority_render/normal_attendance_giving_manage",
+              "icon": "fa fa-tachometer",
+              "target": "_self"
+            },
+            {
+              "title": "考勤历史",
+              "href": "/authority_render/normal_attendance_history_manage",
+              "icon": "fa fa-tachometer",
+              "target": "_self"
+            }
+          ]
         },
         {
           "title": "薪酬管理",

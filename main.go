@@ -126,6 +126,14 @@ func routerInit(server *gin.Engine) {
 	salaryRecordGroup.GET("/get_salary_record_is_pay_by_id/:id", handler.GetSalaryRecordIsPayById)
 	salaryRecordGroup.GET("/pay_salary_record_by_id/:id", handler.PaySalaryRecordById)
 	salaryRecordGroup.GET("/query_history/:staff_id", handler.GetHadPaySalaryRecordByStaffId)
+	// 考勤相关
+	attendGroup := server.Group("/attendance_record")
+	attendGroup.POST("/create", handler.CreateAttendRecord)
+	attendGroup.DELETE("/delete/:attendance_id", handler.DelAttendRecordByAttendId)
+	attendGroup.POST("/edit", handler.UpdateAttendRecordById)
+	attendGroup.GET("/query/:staff_id", handler.GetAttendRecordByStaffId)
+	attendGroup.GET("/query_history/:staff_id", handler.GetAttendRecordHistoryByStaffId)
+	attendGroup.GET("/get_attend_record_is_pay/:staff_id/:date", handler.GetAttendRecordIsPayByStaffIdAndDate)
 }
 
 func htmlInit(server *gin.Engine) {

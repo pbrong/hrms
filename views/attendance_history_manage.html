@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>考勤历史</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="/static/lib/layui-v2.5.5/css/layui.css" media="all">
+    <link rel="stylesheet" href="/static/css/public.css" media="all">
+</head>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main">
+
+        {{ if .query }}
+        <fieldset class="table-search-fieldset">
+            <legend>搜索信息</legend>
+            <div style="margin: 10px 10px 10px 10px">
+                <form class="layui-form layui-form-pane" action="">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">员工工号</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="staff_id" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <button type="submit" class="layui-btn layui-btn-primary"  lay-submit lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索</button>
+                    </div>
+                </form>
+
+            </div>
+        </fieldset>
+        {{ else }}
+        {{ end }}
+
+<!--        <script type="text/html" id="toolbarDemo">-->
+<!--            <div class="layui-btn-container">-->
+<!--                {{ if .create }}-->
+<!--                <button id="add_button" class="layui-btn layui-btn-normal layui-btn-sm data-add-btn" lay-event="add"> 添加 </button>-->
+<!--                {{ else }}-->
+<!--                {{ end }}-->
+<!--            </div>-->
+<!--        </script>-->
+
+        <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
+
+<!--        <script type="text/html" id="currentTableBar">-->
+<!--&lt;!&ndash;            {{ if .query }}&ndash;&gt;-->
+<!--&lt;!&ndash;            <a id="query_button" class="layui-btn layui-btn-warm layui-btn-xs data-count-get" lay-event="query">查看</a>&ndash;&gt;-->
+<!--&lt;!&ndash;            {{ else }}&ndash;&gt;-->
+<!--&lt;!&ndash;            {{ end }}&ndash;&gt;-->
+
+<!--            {{ if .update }}-->
+<!--            <a id="edit_button" class="layui-btn layui-btn-normal layui-btn-xs data-count-edit" lay-event="edit">编辑</a>-->
+<!--            {{ else }}-->
+<!--            {{ end }}-->
+
+<!--            {{ if .delete }}-->
+<!--            <a id="delete_button" class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除</a>-->
+<!--            {{ else }}-->
+<!--            {{ end }}-->
+<!--        </script>-->
+
+    </div>
+</div>
+<script src="/static/lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
+<script src="/static/lib/jquery-3.4.1/jquery-3.4.1.min.js" charset="utf-8"></script>
+
+<script>
+        {{ if .query }}
+        layui.use(['form', 'table'], function () {
+            var $ = layui.jquery,
+                form = layui.form,
+                table = layui.table;
+
+            table.render({
+                elem: '#currentTableId',
+                url: '/attendance_record/query_history/all',
+                toolbar: '#toolbarDemo',
+                defaultToolbar: ['filter', 'exports', 'print', {
+                    title: '提示',
+                    layEvent: 'LAYTABLE_TIPS',
+                    icon: 'layui-icon-tips'
+                }],
+                cols: [[
+                    // {type: "checkbox", width: 50},
+                    {field: 'ID', width: 60, title: 'ID', sort: true,  hide:true},
+                    {field: 'attendance_id', width: 10, title: '考勤ID', hide:true},
+                    {field: 'staff_id', width: 150, title: '员工工号'},
+                    {field: 'staff_name', width: 150, title: '员工姓名'},
+                    {field: 'work_days', width: 150, title: '当月出勤(天)'},
+                    {field: 'leave_days', width: 150, title: '当月请假(天)'},
+                    {field: 'overtime_days', width: 150, title: '当月加班(天)'},
+                    {field: 'date', width: 150, title: '月份'},
+                    {field: 'status', width: 150, title: '状态',  templet: isPayFormat}
+                ]],
+                limits: [10, 15, 20, 25, 50, 100],
+                limit: 10,
+                page: true,
+                skin: 'line',
+                parseData: function(res){ //res 即为原始返回的数据
+                    var code = 0, msg = "获取数据成功"
+                    if (res.status != 2000) {
+                        code = -1
+                        msg = "数据不存在"
+                    }
+                    return {
+                        "code": code, //解析接口状态
+                        "msg": msg, //解析提示文本
+                        "count": res.total, //解析数据长度
+                        "data": res.msg //解析数据列表
+                    };
+                }
+            });
+
+            function isPayFormat(data) {
+                return "已发放"
+            }
+            // 监听搜索操作
+            form.on('submit(data-search-btn)', function (data) {
+                layer.msg("搜索成功");
+                var staff_id = data.field.staff_id;
+                var reqUrl = "/attendance_record/query_history/all"
+                if (typeof staff_id != "undefined" && staff_id != null && staff_id != "") {
+                    //执行搜索重载
+                    reqUrl = "/attendance_record/query_history/"+staff_id
+                }
+                table.reload('currentTableId', {
+                    url: reqUrl,
+                    page: {
+                        curr: 1
+                    }
+                }, 'data');
+                return false;
+            });
+
+            /**
+             * toolbar监听事件
+             */
+            table.on('toolbar(currentTableFilter)', function (obj) {
+                if (obj.event === 'add') {  // 监听添加操作
+                    var index = layer.open({
+                        title: '上报考勤',
+                        type: 2,
+                        shade: 0.2,
+                        maxmin:true,
+                        shadeClose: true,
+                        area: ['80%', '80%'],
+                        content: '/views/attendance_record_add.html',
+                        end: function(){
+                            //执行搜索重载
+                            table.reload('currentTableId', {
+                                page: {
+                                    curr: 1
+                                }
+                            }, 'data');
+                        }
+                    });
+                    $(window).on("resize", function () {
+                        layer.full(index);
+                    });
+                }
+            });
+
+            //监听表格复选框选择
+            // table.on('checkbox(currentTableFilter)', function (obj) {
+            //     console.log(obj)
+            // });
+
+            function isPay(staff_id, date)  {
+                // alert(staff_id + "_" +date)
+                var status = false
+                $.ajax({
+                    type: "GET",
+                    url: "/attendance_record/get_attend_record_is_pay/" + staff_id + "/" + date,
+                    async: false,
+                    success:function (data) {
+                        var resp = JSON.parse(JSON.stringify(data));
+                        // alert(JSON.stringify(data))
+                        if (resp.status == 2000 && resp.msg == true) {
+                            // alert("已发放")
+                            status =  true
+                        }
+                    },
+                    error:function (data) {
+                        console.log("error resp:" + JSON.stringify(data))
+                        layer.msg("系统异常");
+                    }
+                });
+                return status
+            }
+            table.on('tool(currentTableFilter)', function (obj) {
+                var id = obj.data.ID;
+                var attendance_id = obj.data.attendance_id;
+                if (obj.event === 'edit') {
+                    // 是否已发放薪资
+                    if (isPay(obj.data.staff_id, obj.data.date)) {
+                        layer.msg("已发放薪资，无法编辑")
+                        return false
+                    }
+                    // 本地缓存需要编辑的通知信息
+                    localStorage.setItem("attendance_edit_info", JSON.stringify(obj.data))
+                    // alert("待编辑：" + localStorage.getItem("attendance_edit_info"))
+                    var index = layer.open({
+                        title: '编辑考勤信息',
+                        type: 2,
+                        shade: 0.2,
+                        maxmin:true,
+                        shadeClose: true,
+                        area: ['80%', '80%'],
+                        content: '/views/attendance_record_edit.html',
+                        end: function(){
+                            //执行搜索重载
+                            table.reload('currentTableId', {
+                                page: {
+                                    curr: 1
+                                }
+                            }, 'data');
+                        }
+                    });
+                    $(window).on("resize", function () {
+                        layer.full(index);
+                    });
+                    return false;
+                } else if (obj.event === 'delete') {
+                    // 是否已发放薪资
+                    if (isPay(obj.data.staff_id, obj.data.date)) {
+                        layer.msg("已发放薪资，无法删除")
+                        return false
+                    }
+                    layer.confirm('确认删除吗？', function () {
+                        // alert(JSON.stringify(obj.data))
+                        // alert(depId)
+                        $.ajax({
+                            type: "DELETE",
+                            url: "/attendance_record/delete/" + attendance_id,
+                            async: false,
+                            success:function (data) {
+                                var resp = JSON.parse(JSON.stringify(data));
+                                if (resp.status == 2000) {
+                                    layer.alert("删除信息成功",function(index) {
+                                        // 重新渲染
+                                        table.reload('currentTableId', {
+                                            page: {
+                                                curr: 1
+                                            }
+                                        }, 'data');
+                                        layer.close(index)
+                                        // alert("layer.close")
+                                    });
+                                }
+                            },
+                            error:function (data) {
+                                console.log("error resp:" + JSON.stringify(data))
+                                layer.msg("系统异常");
+                            }
+                        });
+                    });
+                } else if(obj.event === 'query') {
+                    // alert("查看详情")
+                    // 本地缓存需要查看的通知信息
+                    localStorage.setItem("notification_detail_info", JSON.stringify(obj.data))
+                    // alert("待编辑：" + localStorage.getItem("staff_edit_info"))
+                    var index = layer.open({
+                        title: '通知详情',
+                        type: 2,
+                        shade: 0.2,
+                        maxmin:true,
+                        shadeClose: true,
+                        area: ['80%', '80%'],
+                        content: '/views/admin_notification_detail.html',
+                        end: function(){
+                            //执行搜索重载
+                            table.reload('currentTableId', {
+                                page: {
+                                    curr: 1
+                                }
+                            }, 'data');
+                        }
+                    });
+                    $(window).on("resize", function () {
+                        layer.full(index);
+                    });
+                    return false;
+                }
+
+            });
+
+        });
+        {{ else }}
+        alert("你没有数据查询权限")
+        {{ end }}
+</script>
+
+</body>
+</html>

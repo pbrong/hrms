@@ -96,7 +96,7 @@ func GetNotificationByTitle(c *gin.Context, noticeTitle string, start int, limit
 		if noticeTitle != "all" {
 			err = resource.HrmsDB(c).Where("notice_title like ?", "%"+noticeTitle+"%").Order("date desc").Offset(start).Limit(limit).Find(&notifications).Error
 		} else {
-			err = resource.HrmsDB(c).Order("date desc").Find(&notifications).Error
+			err = resource.HrmsDB(c).Order("date desc").Offset(start).Limit(limit).Find(&notifications).Error
 		}
 	}
 	if err != nil {
@@ -104,6 +104,9 @@ func GetNotificationByTitle(c *gin.Context, noticeTitle string, start int, limit
 	}
 	var total int64
 	resource.HrmsDB(c).Model(&model.Notification{}).Count(&total)
+	if noticeTitle != "all" {
+		total = int64(len(notifications))
+	}
 	return notifications, total, nil
 }
 
@@ -169,7 +172,11 @@ func DelSalaryBySalaryId(c *gin.Context, salaryId string) error {
 func UpdateSalaryById(c *gin.Context, dto *model.SalaryEditDTO) error {
 	var salary model.Salary
 	Transfer(&dto, &salary)
-	if err := resource.HrmsDB(c).Where("id = ?", salary.ID).Updates(&salary).
+	if err := resource.HrmsDB(c).Model(&model.Salary{}).Where("id = ?", salary.ID).
+		Update("staff_id", salary.StaffId).
+		Update("staff_name", salary.StaffName).
+		Update("base", salary.Base).
+		Update("subsidy", salary.Subsidy).
 		Error; err != nil {
 		log.Printf("UpdateSalaryById err = %v", err)
 		return err
@@ -193,7 +200,7 @@ func GetSalaryByStaffId(c *gin.Context, staffId string, start int, limit int) ([
 		if staffId != "all" {
 			err = resource.HrmsDB(c).Where("staff_id = ?", staffId).Offset(start).Limit(limit).Find(&salarys).Error
 		} else {
-			err = resource.HrmsDB(c).Find(&salarys).Error
+			err = resource.HrmsDB(c).Offset(start).Limit(limit).Find(&salarys).Error
 		}
 	}
 	if err != nil {
@@ -201,6 +208,9 @@ func GetSalaryByStaffId(c *gin.Context, staffId string, start int, limit int) ([
 	}
 	var total int64
 	resource.HrmsDB(c).Model(&model.Salary{}).Count(&total)
+	if staffId != "all" {
+		total = int64(len(salarys))
+	}
 	return salarys, total, nil
 }
 
@@ -235,7 +245,14 @@ func UpdateSalaryRecordById(c *gin.Context, dto *model.SalaryRecordEditDTO) erro
 	var salaryRecord model.SalaryRecord
 	Transfer(&dto, &salaryRecord)
 	salaryRecord.Total = salaryRecord.Base + salaryRecord.Subsidy + salaryRecord.Benifits - salaryRecord.Fine
-	if err := resource.HrmsDB(c).Where("id = ?", salaryRecord.ID).Updates(&salaryRecord).
+	if err := resource.HrmsDB(c).Model(&model.SalaryRecord{}).Where("id = ?", salaryRecord.ID).
+		Update("staff_id", salaryRecord.StaffId).
+		Update("staff_name", salaryRecord.StaffName).
+		Update("base", salaryRecord.Base).
+		Update("subsidy", salaryRecord.Subsidy).
+		Update("benifits", salaryRecord.Benifits).
+		Update("fine", salaryRecord.Fine).
+		Update("salary_date", salaryRecord.SalaryDate).
 		Error; err != nil {
 		log.Printf("UpdateSalaryById err = %v", err)
 		return err
@@ -259,7 +276,7 @@ func GetSalaryRecordByStaffId(c *gin.Context, staffId string, start int, limit i
 		if staffId != "all" {
 			err = resource.HrmsDB(c).Where("staff_id = ?", staffId).Offset(start).Limit(limit).Find(&salaryRecords).Error
 		} else {
-			err = resource.HrmsDB(c).Find(&salaryRecords).Error
+			err = resource.HrmsDB(c).Offset(start).Limit(limit).Find(&salaryRecords).Error
 		}
 	}
 	if err != nil {
@@ -267,8 +284,8 @@ func GetSalaryRecordByStaffId(c *gin.Context, staffId string, start int, limit i
 	}
 	var total int64
 	resource.HrmsDB(c).Model(&model.SalaryRecord{}).Count(&total)
-	if staffId == "all" {
-		total = 1
+	if staffId != "all" {
+		total = int64(len(salaryRecords))
 	}
 	return salaryRecords, total, nil
 }
@@ -305,7 +322,7 @@ func GetHadPaySalaryRecordByStaffId(c *gin.Context, staffId string, start int, l
 		if staffId != "all" {
 			err = resource.HrmsDB(c).Where("staff_id = ? and is_pay = 2", staffId).Offset(start).Limit(limit).Find(&salaryRecords).Error
 		} else {
-			err = resource.HrmsDB(c).Where("is_pay = 2").Find(&salaryRecords).Error
+			err = resource.HrmsDB(c).Where("is_pay = 2").Offset(start).Limit(limit).Find(&salaryRecords).Error
 		}
 	}
 	if err != nil {
@@ -313,8 +330,121 @@ func GetHadPaySalaryRecordByStaffId(c *gin.Context, staffId string, start int, l
 	}
 	var total int64
 	resource.HrmsDB(c).Model(&model.SalaryRecord{}).Where("is_pay = 2").Count(&total)
-	if staffId == "all" {
-		total = 1
+	if staffId != "all" {
+		total = int64(len(salaryRecords))
 	}
 	return salaryRecords, total, nil
+}
+
+func CreateAttendanceRecord(c *gin.Context, dto *model.AttendanceRecordCreateDTO) error {
+	var total int64
+	resource.HrmsDB(c).Model(&model.AttendanceRecord{}).Where("staff_id = ? and date = ?", dto.StaffId, dto.Date).Count(&total)
+	if total != 0 {
+		return errors.New(fmt.Sprintf("该月考勤数据已经存在"))
+	}
+	var attendanceRecord model.AttendanceRecord
+	Transfer(&dto, &attendanceRecord)
+	attendanceRecord.AttendanceId = RandomID("attendance_record")
+	if err := resource.HrmsDB(c).Create(&attendanceRecord).Error; err != nil {
+		log.Printf("CreateAttendanceRecord err = %v", err)
+		return err
+	}
+	return nil
+}
+
+func DelAttendRecordByAttendId(c *gin.Context, attendanceId string) error {
+	if err := resource.HrmsDB(c).Where("attendance_id = ?", attendanceId).Delete(&model.AttendanceRecord{}).
+		Error; err != nil {
+		log.Printf("DelAttendRecordByAttendId err = %v", err)
+		return err
+	}
+	return nil
+}
+
+func UpdateAttendRecordById(c *gin.Context, dto *model.AttendanceRecordEditDTO) error {
+	var attentRecord model.AttendanceRecord
+	Transfer(&dto, &attentRecord)
+	if err := resource.HrmsDB(c).Model(&model.AttendanceRecord{}).Where("id = ?", attentRecord.ID).
+		Update("staff_id", attentRecord.StaffId).
+		Update("staff_name", attentRecord.StaffName).
+		Update("overtime_days", attentRecord.OvertimeDays).
+		Update("leave_days", attentRecord.LeaveDays).
+		Update("work_days", attentRecord.WorkDays).
+		Update("date", attentRecord.Date).
+		Error; err != nil {
+		log.Printf("UpdateAttendRecordById err = %v", err)
+		return err
+	}
+	return nil
+}
+
+func GetAttendRecordByStaffId(c *gin.Context, staffId string, start int, limit int) ([]*model.AttendanceRecord, int64, error) {
+	var records []*model.AttendanceRecord
+	var err error
+	if start == -1 && limit == -1 {
+		// 不加分页
+		if staffId != "all" {
+			err = resource.HrmsDB(c).Where("staff_id = ?", staffId).Find(&records).Error
+		} else {
+			err = resource.HrmsDB(c).Find(&records).Error
+		}
+
+	} else {
+		// 加分页
+		if staffId != "all" {
+			err = resource.HrmsDB(c).Where("staff_id = ?", staffId).Offset(start).Limit(limit).Find(&records).Error
+		} else {
+			err = resource.HrmsDB(c).Offset(start).Limit(limit).Find(&records).Error
+		}
+	}
+	if err != nil {
+		return nil, 0, err
+	}
+	var total int64
+	resource.HrmsDB(c).Model(&model.AttendanceRecord{}).Count(&total)
+	if staffId != "all" {
+		total = int64(len(records))
+	}
+	return records, total, nil
+}
+
+func GetAttendRecordHistoryByStaffId(c *gin.Context, staffId string, start int, limit int) ([]*model.AttendanceRecord, int64, error) {
+	var records []*model.AttendanceRecord
+	var err error
+	sqlReq1 := `select * from attendance_record as attend left join salary_record as salary on attend.staff_id = salary.staff_id
+and attend.date = salary.salary_date where salary.is_pay = 2 and attend.staff_id = ?`
+	sqlReq2 := `select * from attendance_record as attend left join salary_record as salary on attend.staff_id = salary.staff_id
+and attend.date = salary.salary_date where salary.is_pay = 2`
+	if start == -1 && limit == -1 {
+		// 不加分页
+		if staffId != "all" {
+			err = resource.HrmsDB(c).Raw(sqlReq1, staffId).Find(&records).Error
+		} else {
+			err = resource.HrmsDB(c).Raw(sqlReq2).Find(&records).Error
+		}
+
+	} else {
+		// 加分页
+		if staffId != "all" {
+			err = resource.HrmsDB(c).Raw(sqlReq1, staffId).Offset(start).Limit(limit).Find(&records).Error
+		} else {
+			err = resource.HrmsDB(c).Raw(sqlReq2).Offset(start).Limit(limit).Find(&records).Error
+		}
+	}
+	if err != nil {
+		return nil, 0, err
+	}
+	var total int64
+	resource.HrmsDB(c).Model(&model.AttendanceRecord{}).Count(&total)
+	if staffId != "all" {
+		total = int64(len(records))
+	}
+	return records, total, nil
+}
+
+// 如果支付过则返回true
+func GetAttendRecordIsPayByStaffIdAndDate(c *gin.Context, staffId string, date string) bool {
+	var total int64
+	resource.HrmsDB(c).Model(&model.SalaryRecord{}).Where("staff_id = ? and salary_date = ? and is_pay = 2", staffId, date).Count(&total)
+	return total != 0
 }

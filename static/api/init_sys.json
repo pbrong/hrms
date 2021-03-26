@@ -31,7 +31,21 @@
           "title": "考勤管理",
           "href": "",
           "icon": "fa fa-home",
-          "target": "_self"
+          "target": "_self",
+          "child": [
+            {
+              "title": "考勤上报",
+              "href": "/authority_render/attendance_giving_manage",
+              "icon": "fa fa-tachometer",
+              "target": "_self"
+            },
+            {
+              "title": "考勤历史",
+              "href": "/authority_render/attendance_history_manage",
+              "icon": "fa fa-tachometer",
+              "target": "_self"
+            }
+          ]
         },
         {
           "title": "薪酬管理",
