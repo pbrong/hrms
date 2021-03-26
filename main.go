@@ -134,6 +134,12 @@ func routerInit(server *gin.Engine) {
 	attendGroup.GET("/query/:staff_id", handler.GetAttendRecordByStaffId)
 	attendGroup.GET("/query_history/:staff_id", handler.GetAttendRecordHistoryByStaffId)
 	attendGroup.GET("/get_attend_record_is_pay/:staff_id/:date", handler.GetAttendRecordIsPayByStaffIdAndDate)
+	// 招聘信息相关
+	recruitmentGroup := server.Group("/recruitment")
+	recruitmentGroup.POST("/create", handler.CreateRecruitment)
+	recruitmentGroup.DELETE("/delete/:recruitment_id", handler.DelRecruitmentByRecruitmentId)
+	recruitmentGroup.POST("/edit", handler.UpdateRecruitmentById)
+	recruitmentGroup.GET("/query/:job_name", handler.GetRecruitmentByJobName)
 }
 
 func htmlInit(server *gin.Engine) {

@@ -75,9 +75,23 @@
         },
         {
           "title": "招聘管理",
-          "href": "views/menu.html",
+          "href": "",
           "icon": "fa fa-window-maximize",
-          "target": "_self"
+          "target": "_self",
+          "child": [
+            {
+              "title": "信息管理",
+              "href": "/authority_render/recruitment_manage",
+              "icon": "fa fa-tachometer",
+              "target": "_self"
+            },
+            {
+              "title": "候选人管理",
+              "href": "/authority_render/candidate_manage",
+              "icon": "fa fa-tachometer",
+              "target": "_self"
+            }
+          ]
         },
         {
           "title": "考试管理",

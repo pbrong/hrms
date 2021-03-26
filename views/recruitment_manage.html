@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>招聘信息管理</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="/static/lib/layui-v2.5.5/css/layui.css" media="all">
+    <link rel="stylesheet" href="/static/css/public.css" media="all">
+</head>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main">
+
+        {{ if .query }}
+        <fieldset class="table-search-fieldset">
+            <legend>搜索信息</legend>
+            <div style="margin: 10px 10px 10px 10px">
+                <form class="layui-form layui-form-pane" action="">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">岗位名称</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="job_name" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <button type="submit" class="layui-btn layui-btn-primary"  lay-submit lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索</button>
+                    </div>
+                </form>
+
+            </div>
+        </fieldset>
+        {{ else }}
+        {{ end }}
+
+        <script type="text/html" id="toolbarDemo">
+            <div class="layui-btn-container">
+                {{ if .create }}
+                <button id="add_button" class="layui-btn layui-btn-normal layui-btn-sm data-add-btn" lay-event="add"> 添加 </button>
+                {{ else }}
+                {{ end }}
+            </div>
+        </script>
+
+        <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
+
+        <script type="text/html" id="currentTableBar">
+            {{ if .query }}
+            <a id="query_button" class="layui-btn layui-btn-warm layui-btn-xs data-count-get" lay-event="query">查看</a>
+            {{ else }}
+            {{ end }}
+
+            {{ if .update }}
+            <a id="edit_button" class="layui-btn layui-btn-normal layui-btn-xs data-count-edit" lay-event="edit">编辑</a>
+            {{ else }}
+            {{ end }}
+
+            {{ if .delete }}
+            <a id="delete_button" class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除</a>
+            {{ else }}
+            {{ end }}
+        </script>
+
+    </div>
+</div>
+<script src="/static/lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
+<script src="/static/lib/jquery-3.4.1/jquery-3.4.1.min.js" charset="utf-8"></script>
+
+<script>
+        {{ if .query }}
+        layui.use(['form', 'table'], function () {
+            var $ = layui.jquery,
+                form = layui.form,
+                table = layui.table;
+
+            table.render({
+                elem: '#currentTableId',
+                url: '/recruitment/query/all',
+                toolbar: '#toolbarDemo',
+                defaultToolbar: ['filter', 'exports', 'print', {
+                    title: '提示',
+                    layEvent: 'LAYTABLE_TIPS',
+                    icon: 'layui-icon-tips'
+                }],
+                cols: [[
+                    // {type: "checkbox", width: 50},
+                    {field: 'ID', width: 60, title: 'ID', sort: true,  hide:true},
+                    {field: 'recruitment_id', width: 150, title: '招聘ID', hide:true},
+                    {field: 'job_name', width: 130, title: '职位'},
+                    {field: 'job_type', width: 100, title: '类别'},
+                    {field: 'base_location', width: 70, title: '地点'},
+                    {field: 'base_salary', width: 100, title: '薪资'},
+                    {field: 'edu_level', width: 100, title: '学历'},
+                    {field: 'experience', width: 100, title: '工作经验'},
+                    {field: 'describe', width: 100, title: '岗位描述', hide: true},
+                    {field: 'email', width: 120, title: '投递邮箱'},
+                    {field: 'CreatedAt', width: 150, title: '发布时间'},
+                    {title: '操作', minWidth: 170, toolbar: '#currentTableBar', align: "center", fixed: 'right'}
+                ]],
+                limits: [10, 15, 20, 25, 50, 100],
+                limit: 10,
+                page: true,
+                skin: 'line',
+                parseData: function(res){ //res 即为原始返回的数据
+                    var code = 0, msg = "获取数据成功"
+                    if (res.status != 2000) {
+                        code = -1
+                        msg = "数据不存在"
+                    }
+                    return {
+                        "code": code, //解析接口状态
+                        "msg": msg, //解析提示文本
+                        "count": res.total, //解析数据长度
+                        "data": res.msg //解析数据列表
+                    };
+                }
+            });
+
+            // 监听搜索操作
+            form.on('submit(data-search-btn)', function (data) {
+                layer.msg("搜索成功");
+                var job_name = data.field.job_name;
+                var reqUrl = "/recruitment/query/all"
+                if (typeof job_name != "undefined" && job_name != null && job_name != "") {
+                    //执行搜索重载
+                    reqUrl = "/recruitment/query/"+job_name
+                }
+                table.reload('currentTableId', {
+                    url: reqUrl,
+                    page: {
+                        curr: 1
+                    }
+                }, 'data');
+                return false;
+            });
+
+            /**
+             * toolbar监听事件
+             */
+            table.on('toolbar(currentTableFilter)', function (obj) {
+                if (obj.event === 'add') {  // 监听添加操作
+                    var index = layer.open({
+                        title: '添加招聘信息',
+                        type: 2,
+                        shade: 0.2,
+                        maxmin:true,
+                        shadeClose: true,
+                        area: ['80%', '80%'],
+                        content: '/views/recruitment_add.html',
+                        end: function(){
+                            //执行搜索重载
+                            table.reload('currentTableId', {
+                                page: {
+                                    curr: 1
+                                }
+                            }, 'data');
+                        }
+                    });
+                    $(window).on("resize", function () {
+                        layer.full(index);
+                    });
+                }
+            });
+
+            //监听表格复选框选择
+            // table.on('checkbox(currentTableFilter)', function (obj) {
+            //     console.log(obj)
+            // });
+
+            table.on('tool(currentTableFilter)', function (obj) {
+                var id = obj.data.ID;
+                var recruitment_id = obj.data.recruitment_id;
+                if (obj.event === 'edit') {
+                    // 本地缓存需要编辑的通知信息
+                    localStorage.setItem("recruitment_edit_info", JSON.stringify(obj.data))
+                    // alert("待编辑：" + localStorage.getItem("recruitment_edit_info"))
+                    var index = layer.open({
+                        title: '编辑招聘信息',
+                        type: 2,
+                        shade: 0.2,
+                        maxmin:true,
+                        shadeClose: true,
+                        area: ['80%', '80%'],
+                        content: '/views/recruitment_edit.html',
+                        end: function(){
+                            //执行搜索重载
+                            table.reload('currentTableId', {
+                                page: {
+                                    curr: 1
+                                }
+                            }, 'data');
+                        }
+                    });
+                    $(window).on("resize", function () {
+                        layer.full(index);
+                    });
+                    return false;
+                } else if (obj.event === 'delete') {
+                    layer.confirm('确认删除吗？', function () {
+                        // alert(JSON.stringify(obj.data))
+                        // alert(depId)
+                        $.ajax({
+                            type: "DELETE",
+                            url: "/recruitment/delete/" + recruitment_id,
+                            async: false,
+                            success:function (data) {
+                                var resp = JSON.parse(JSON.stringify(data));
+                                if (resp.status == 2000) {
+                                    layer.alert("删除信息成功",function(index) {
+                                        // 重新渲染
+                                        table.reload('currentTableId', {
+                                            page: {
+                                                curr: 1
+                                            }
+                                        }, 'data');
+                                        layer.close(index)
+                                        // alert("layer.close")
+                                    });
+                                }
+                            },
+                            error:function (data) {
+                                console.log("error resp:" + JSON.stringify(data))
+                                layer.msg("系统异常");
+                            }
+                        });
+                    });
+                } else if(obj.event === 'query') {
+                    // alert("查看详情")
+                    // 本地缓存需要查看的通知信息
+                    localStorage.setItem("recruitment_detail", JSON.stringify(obj.data))
+                    // alert("待编辑：" + localStorage.getItem("staff_edit_info"))
+                    var index = layer.open({
+                        title: '招聘信息详情',
+                        type: 2,
+                        shade: 0.2,
+                        maxmin:true,
+                        shadeClose: true,
+                        area: ['80%', '80%'],
+                        content: '/views/recruitment_detail.html',
+                        end: function(){
+                            //执行搜索重载
+                            table.reload('currentTableId', {
+                                page: {
+                                    curr: 1
+                                }
+                            }, 'data');
+                        }
+                    });
+                    $(window).on("resize", function () {
+                        layer.full(index);
+                    });
+                    return false;
+                }
+
+            });
+
+        });
+        {{ else }}
+        alert("你没有数据查询权限")
+        {{ end }}
+</script>
+
+</body>
+</html>
