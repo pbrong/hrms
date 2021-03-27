@@ -17,80 +17,16 @@
 <body>
 <div class="layui-form layuimini-form">
     <div class="layui-form-item">
-        <label class="layui-form-label required">候选人姓名</label>
+            <label class="layui-form-label required">面试官工号</label>
         <div class="layui-input-block">
-            <input type="text" name="name" id="name" lay-verify="required" lay-reqtext="候选人姓名不能为空" placeholder="请输入候选人姓名" value="" class="layui-input">
-        </div>
-    </div>
-    <div class="layui-form-item">
-        <label class="layui-form-label required">应聘岗位</label>
-        <div class="layui-input-block">
-            <input type="text" name="job_name" id="job_name" lay-verify="required" lay-reqtext="应聘岗位不能为空" placeholder="请输入应聘岗位" value="" class="layui-input">
+            <input type="text" name="staff_id" id="staff_id" lay-verify="required" lay-reqtext="面试官工号不能为空" placeholder="请输入面试官工号" value="" class="layui-input">
         </div>
     </div>
 
-    <div class="layui-form-item">
-        <label class="layui-form-label">最高学历</label>
-        <div class="layui-input-block">
-            <input type="text" name="edu_level" id="edu_level"  placeholder="请输入最高学历" value="" class="layui-input">
-        </div>
-    </div>
-
-    <div class="layui-form-item">
-        <label class="layui-form-label">毕业专业</label>
-        <div class="layui-input-block">
-            <input type="text" name="major" id="major"  placeholder="请输入毕业专业"  value="" class="layui-input">
-        </div>
-    </div>
-
-    <div class="layui-form-item">
-        <label class="layui-form-label">工作经验</label>
-        <div class="layui-input-block">
-            <input type="text" name="experience" id="experience"   placeholder="请输入工作经验" value="" class="layui-input">
-        </div>
-    </div>
-
-    <div class="layui-form-item">
-        <label class="layui-form-label">技能描述</label>
-        <div class="layui-input-block">
-            <textarea style="height: 200px" type="text" name="describe"  id="describe"  placeholder="请输入技能描述" value="" class="layui-input"></textarea>
-        </div>
-    </div>
-
-
-    <div class="layui-form-item">
-        <label class="layui-form-label">投递邮箱</label>
-        <div class="layui-input-block">
-            <input type="text" name="email" id="email"  placeholder="请输入投递邮箱"  value="" class="layui-input">
-        </div>
-    </div>
-
-    <div class="layui-form-item">
-        <label class="layui-form-label">面试官</label>
-        <div class="layui-input-block">
-            <input readonly="readonly" type="text" name="staff_id"  id="staff_id"  placeholder="请输入面试官工号"  value="" class="layui-input">
-        </div>
-    </div>
-
-    <div class="layui-form-item">
-        <label class="layui-form-label">面试评价</label>
-        <div class="layui-input-block">
-            <textarea style="height: 200px" type="text" name="evaluation"  id="evaluation" placeholder="请输入面试评价" value="" class="layui-input"></textarea>
-        </div>
-    </div>
-
-    <div class="layui-form-item">
-        <label class="layui-form-label">应聘状态</label>
-        <div class="layui-input-block">
-            <input readonly="readonly" type="text" name="status"  id="status" class="layui-input">
-        </div>
-    </div>
 
     <div class="layui-form-item">
         <div class="layui-input-block">
             <button class="layui-btn layui-btn-normal" lay-submit lay-filter="saveBtn">保 存</button>
-            <button class="layui-btn layui-btn-danger" lay-submit lay-filter="rejectBtn">拒 绝</button>
-            <button class="layui-btn layui-btn-warm" lay-submit lay-filter="acceptBtn">录 取</button>
         </div>
     </div>
 </div>
@@ -101,17 +37,17 @@
         var form = layui.form,
             layer = layui.layer,
             $ = layui.$;
-        var editInfo = JSON.parse(localStorage.getItem("candidate_edit_info"));
+        var editInfo = JSON.parse(localStorage.getItem("candidate_interview_info"));
         // alert(editInfo)
         $("#staff_id").val(editInfo.staff_id)
-        $("#name").val(editInfo.name)
-        $("#job_name").val(editInfo.job_name)
-        $("#edu_level").val(editInfo.edu_level)
-        $("#major").val(editInfo.major)
-        $("#experience").val(editInfo.experience)
-        $("#describe").val(editInfo.describe)
-        $("#email").val(editInfo.email)
-        $("#evaluation").val(editInfo.evaluation)
+        // $("#name").val(editInfo.name)
+        // $("#job_name").val(editInfo.job_name)
+        // $("#edu_level").val(editInfo.edu_level)
+        // $("#major").val(editInfo.major)
+        // $("#experience").val(editInfo.experience)
+        // $("#describe").val(editInfo.describe)
+        // $("#email").val(editInfo.email)
+        // $("#evaluation").val(editInfo.evaluation)
 
         function statusQuery(status) {
             if (status == 0) {
@@ -124,7 +60,7 @@
                 return "已录取"
             }
         }
-        $("#status").val(statusQuery(editInfo.status))
+        // $("#status").val(statusQuery(editInfo.status))
         // $("#status").val(editInfo.status)
 
         //监听提交

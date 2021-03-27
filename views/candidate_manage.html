@@ -46,6 +46,11 @@
         <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
 
         <script type="text/html" id="currentTableBar">
+            {{ if .update }}
+            <a id="interview_button" class="layui-btn layui-btn-normal layui-btn-xs data-count-get" lay-event="interview">面试</a>
+            {{ else }}
+            {{ end }}
+
             {{ if .query }}
             <a id="query_button" class="layui-btn layui-btn-warm layui-btn-xs data-count-get" lay-event="query">查看</a>
             {{ else }}
@@ -93,11 +98,11 @@
                     {field: 'major', width: 120, title: '专业'},
                     {field: 'experience', width: 100, title: '工作经验'},
                     {field: 'describe', width: 100, title: '个人描述', hide:true},
-                    {field: 'email', width: 120, title: '投递邮箱'},
+                    {field: 'email', width: 120, title: '投递邮箱', hide:true},
                     {field: 'evaluation', width: 120, title: '面试评价', hide:true},
                     {field: 'staff_id', width: 120, title: '面试官'},
                     {field: 'status', width: 120, title: '状态', templet: statusQuery , fixed: 'right'},
-                    {title: '操作', minWidth: 170, toolbar: '#currentTableBar', align: "center", fixed: 'right'}
+                    {title: '操作', minWidth: 210, toolbar: '#currentTableBar', align: "center", fixed: 'right'}
                 ]],
                 limits: [10, 15, 20, 25, 50, 100],
                 limit: 10,
@@ -256,6 +261,29 @@
                         shadeClose: true,
                         area: ['80%', '80%'],
                         content: '/views/candidate_detail.html',
+                        end: function(){
+                            //执行搜索重载
+                            table.reload('currentTableId', {
+                                page: {
+                                    curr: 1
+                                }
+                            }, 'data');
+                        }
+                    });
+                    $(window).on("resize", function () {
+                        layer.full(index);
+                    });
+                    return false;
+                } else if(obj.event === 'interview') {
+                    localStorage.setItem("candidate_interview_info", JSON.stringify(obj.data))
+                    var index = layer.open({
+                        title: '指定面试官工号',
+                        type: 2,
+                        shade: 0.2,
+                        maxmin:true,
+                        shadeClose: true,
+                        area: ['50%', '50%'],
+                        content: '/views/candidate_interview.html',
                         end: function(){
                             //执行搜索重载
                             table.reload('currentTableId', {
