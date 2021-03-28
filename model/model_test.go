@@ -1,7 +1,10 @@
 package model
 
 import (
+	"encoding/base64"
+	"encoding/json"
 	"fmt"
+	"github.com/tealeg/xlsx"
 	"math/rand"
 	"testing"
 	"time"
@@ -30,4 +33,42 @@ func TestIdenLenSplit(t *testing.T) {
 	ident := "460034199905215518"
 	identLen := len(ident)
 	fmt.Println("pass: " + ident[identLen-6:identLen])
+}
+
+func TestExampleExcelParse(t *testing.T) {
+	xfile, err := xlsx.OpenFile("/Users/arong/MyFile/毕业设计/试题测试.xlsx")
+	if err != nil {
+		panic(err)
+	}
+	var items []*ExampleItem
+	for _, sheet := range xfile.Sheets {
+		// 遍历行读取
+		for number, row := range sheet.Rows[1:] {
+			item := &ExampleItem{Num: number + 1}
+			// 遍历每行的列读取
+			for index, cell := range row.Cells {
+				cur := cell.String()
+				if index == 0 {
+					item.Title = cur
+				} else if index > 0 && index < len(row.Cells)-1 {
+					item.Items = append(item.Items, cur)
+				} else {
+					item.Ans = cur
+				}
+			}
+			items = append(items, item)
+		}
+		bytes, _ := json.Marshal(&items)
+		content := string(bytes)
+		fmt.Println(content)
+		var itemResps []ExampleItem
+		_ = json.Unmarshal([]byte(content), &itemResps)
+		fmt.Println(itemResps)
+	}
+}
+
+func TestBase(t *testing.T) {
+	name := "彭博荣"
+	toString := base64.StdEncoding.EncodeToString([]byte(name))
+	fmt.Println(toString)
 }

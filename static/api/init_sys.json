@@ -95,9 +95,23 @@
         },
         {
           "title": "考试管理",
-          "href": "views/setting.html",
+          "href": "",
           "icon": "fa fa-gears",
-          "target": "_self"
+          "target": "_self",
+          "child": [
+            {
+              "title": "考试信息",
+              "href": "/authority_render/example_manage",
+              "icon": "fa fa-tachometer",
+              "target": "_self"
+            },
+            {
+              "title": "考试历史",
+              "href": "/authority_render/example_history",
+              "icon": "fa fa-tachometer",
+              "target": "_self"
+            }
+          ]
         }
       ]
     }

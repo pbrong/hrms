@@ -149,6 +149,19 @@ func routerInit(server *gin.Engine) {
 	candidateGroup.GET("/query_by_staff_id/:staff_id", handler.GetCandidateByStaffId)
 	candidateGroup.GET("/reject/:id", handler.SetCandidateRejectById)
 	candidateGroup.GET("/accept/:id", handler.SetCandidateAcceptById)
+	// 考试管理相关
+	exampleGroup := server.Group("/example")
+	exampleGroup.POST("/create", handler.CreateExample)
+	exampleGroup.POST("/parse_example_content", handler.ParseExampleContent)
+	exampleGroup.DELETE("/delete/:example_id", handler.DelExample)
+	exampleGroup.POST("/edit", handler.UpdateExampleById)
+	exampleGroup.GET("/query/:name", handler.GetExampleByName)
+	exampleGroup.GET("/render_example/:id", handler.RenderExample)
+	// 考试成绩相关
+	exampleScoreGroup := server.Group("/example_score")
+	exampleScoreGroup.POST("/create", handler.CreateExampleScore)
+	exampleScoreGroup.GET("/query_by_name/:name", handler.GetExampleHistoryByName)
+	exampleScoreGroup.GET("/query_by_staff_id/:staff_id", handler.GetExampleHistoryByStafId)
 }
 
 func htmlInit(server *gin.Engine) {

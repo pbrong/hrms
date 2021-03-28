@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>编辑</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="/static/lib/layui-v2.5.5/css/layui.css" media="all">
+    <link rel="stylesheet" href="/static/css/public.css" media="all">
+    <style>
+        body {
+            background-color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+<div class="layui-form layuimini-form">
+    <div class="layui-form-item">
+        <label class="layui-form-label required">考试名称</label>
+        <div class="layui-input-block">
+            <input type="text" name="name" id="name" lay-verify="required" lay-reqtext="考试名称不能为空" placeholder="请输入考试名称" value="" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label">考试介绍</label>
+        <div class="layui-input-block">
+            <textarea style="height: 100px" type="text" name="describe" id="describe" lay-verify="required" placeholder="请输入考试介绍" value="" class="layui-input"></textarea>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label required">考试日期</label>
+        <div class="layui-input-block">
+            <input type="date" name="date" id="date" placeholder="请输入考试日期" lay-reqtext="考试日期不能为空" lay-verify="required" value="" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label required">限制时间(分钟)</label>
+        <div class="layui-input-block">
+            <input type="number" name="limit" id="limit" placeholder="请输入限制时间" lay-reqtext="限制时间不能为空" lay-verify="required" value="" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <div class="layui-input-block">
+            <button class="layui-btn layui-btn-normal" lay-submit lay-filter="saveBtn">保 存</button>
+        </div>
+    </div>
+</div>
+
+<script src="/static/lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
+<script>
+    layui.use(['form'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.$;
+        var editInfo = JSON.parse(localStorage.getItem("example_edit_info"));
+        // alert(editInfo)
+        $("#name").val(editInfo.name)
+        $("#describe").val(editInfo.describe)
+        $("#date").val(editInfo.date)
+        $("#limit").val(editInfo.limit)
+
+        //监听提交
+        form.on('submit(saveBtn)', function (req) {
+            // alert(localStorage.getItem("dep_edit_info"))
+            var id = editInfo.ID
+            // alert(JSON.stringify(req.field))
+            req.field.id = id
+            req.field.limit = parseInt(req.field.limit)
+            // alert(JSON.stringify(req.field))
+            $.ajax({
+                type: "POST",
+                url: "/example/edit",
+                contentType: "application/json;charset=utf-8",
+                data: JSON.stringify(req.field),
+                dataType: "json",
+                async: false,
+                success:function (data) {
+                    var resp = JSON.parse(JSON.stringify(data));
+                    if (resp.status == 2000) {
+                        layer.alert("编辑成功", function (){
+                            // 关闭
+                            var iframeIndex = parent.layer.getFrameIndex(window.name);
+                            parent.layer.close(iframeIndex);
+                        })
+                    }
+                },
+                error:function (data) {
+                    console.log("error resp:" + JSON.stringify(data))
+                    layer.msg("系统异常");
+                }
+            });
+            return false;
+        });
+
+    });
+</script>
+</body>
+</html>
