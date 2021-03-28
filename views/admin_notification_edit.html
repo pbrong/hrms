@@ -83,7 +83,7 @@
         //编辑器外部操作
         var active = {
             content: function(){
-                alert(layedit.getContent(index)); //获取编辑器内容
+               //  alert(layedit.getContent(index)); //获取编辑器内容
             }
         };
 
@@ -104,7 +104,7 @@
             // alert(JSON.stringify(req.field))
             req.field.notice_content = layedit.getContent(index)
             req.field.ID = editInfo.ID
-            alert(JSON.stringify(req.field))
+            // alert(JSON.stringify(req.field))
             $.ajax({
                 type: "POST",
                 url: "/notification/edit",

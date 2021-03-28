@@ -83,24 +83,38 @@
                 }],
                 cols: [[
                     // {type: "checkbox", width: 50},
-                    {field: 'ID', width: 60, title: 'ID', sort: true},
-                    {field: 'staff_id', width: 150, title: '员工ID'},
+                    {field: 'ID', width: 60, title: 'ID', sort: true, hide: true},
+                    {field: 'staff_id', width: 100, title: '员工ID', hide: true},
+                    {width: 60, title: '序号', sort: true, type:'numbers'},
                     {field: 'staff_name', width: 150, title: '员工姓名'},
-                    {field: 'birthday', width: 150, title: '出生日期', templet: dateFormat1},
-                    {field: 'identity_num', width: 150, title: '身份证号'},
-                    {field: 'sex', width: 150, title: '性别', templet: sexFormat},
-                    {field: 'nation', width: 150, title: '民族'},
+                    {field: 'birthday', width: 150, title: '出生日期', templet: function(data) {
+                            return data.birthday.slice(0, 10)
+                        }},
+                    {field: 'identity_num', width: 180, title: '身份证号'},
+                    {field: 'sex', width: 60, title: '性别', templet: function (data) {
+                            var sex = data.sex;
+                            var sexStr
+                            if (sex == 1) {
+                                sexStr = "男"
+                            } else {
+                                sexStr = "女"
+                            }
+                            return sexStr
+                        }},
+                    {field: 'nation', width: 60, title: '民族'},
                     {field: 'school', title: '毕业院校', minWidth: 150},
                     {field: 'major', title: '毕业专业', minWidth: 150},
                     {field: 'edu_level', title: '最高学历', minWidth: 150},
                     {field: 'base_salary', title: '基本工资', minWidth: 150},
-                    {field: 'card_num', title: '银行卡号', minWidth: 150},
+                    {field: 'card_num', title: '银行卡号', minWidth: 180},
                     {field: 'rank_id', title: '职位ID', minWidth: 150, hide:true},
                     {field: 'rank_name', title: '职位名称', minWidth: 150},
                     {field: 'dep_id', title: '部门ID', minWidth: 150, hide:true},
                     {field: 'dep_name', title: '部门名称', minWidth: 150},
-                    {field: 'email', title: '电子邮箱', minWidth: 150},
-                    {field: 'entry_date', title: '入职时间', minWidth: 150, templet: dateFormat2},
+                    {field: 'email', title: '电子邮箱', minWidth: 170},
+                    {field: 'entry_date', title: '入职时间', minWidth: 150,templet: function(data) {
+                            return data.birthday.slice(0, 10)
+                        }},
                     {title: '操作', minWidth: 200, toolbar: '#currentTableBar', align: "center", fixed: 'right'}
                 ]],
                 limits: [10, 15, 20, 25, 50, 100],
@@ -121,33 +135,6 @@
                     };
                 }
             });
-
-
-
-            // 性别格式化
-            function sexFormat(data) {
-                var sex = data.sex;
-                var sexStr
-                if (sex == 1) {
-                    sexStr = "男"
-                } else {
-                    sexStr = "女"
-                }
-                return sexStr
-            }
-
-            // 时间格式化
-            function dateFormat1(data) {
-                if (data.birthday != "undefined") {
-                    return data.birthday.slice(0, 10)
-                }
-            }
-
-            function dateFormat2(data) {
-                if (data.entry_date != "undefined") {
-                    return data.entry_date.slice(0, 10)
-                }
-            }
 
             // 监听搜索操作
             form.on('submit(data-search-btn)', function (data) {

@@ -21,3 +21,8 @@ type Department struct {
 	DepDescribe string `gorm:"column:dep_describe" json:"dep_describe"`
 	DepName     string `gorm:"column:dep_name" db:"column:dep_name" json:"dep_name"`
 }
+
+func (d *Department) AfterFind(tx *gorm.DB) (err error) {
+
+	return nil
+}

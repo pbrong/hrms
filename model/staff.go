@@ -54,6 +54,7 @@ type StaffEditDTO struct {
 	BirthdayStr  string `json:"birthday_str"`
 	IdentityNum  string `json:"identity_num"`
 	SexStr       string `json:"sex_str"`
+	Sex          int64  `gorm:"column:sex" json:"sex"`
 	Nation       string `json:"nation"`
 	School       string `json:"school"`
 	Major        string `json:"major"`

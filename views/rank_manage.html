@@ -57,12 +57,17 @@
             }],
             cols: [[
                 // {type: "checkbox", width: 50},
-                {field: 'ID', width: 60, title: 'ID', sort: true},
-                {field: 'rank_id', width: 150, title: '职级ID'},
-                {field: 'rank_name', width: 150, title: '职级名称'},
-                {field: 'CreatedAt', title: '创建时间', minWidth: 150, sort: true},
-                {field: 'UpdatedAt', width: 150, title: '更新时间', sort: true},
-                {title: '操作', minWidth: 150, toolbar: '#currentTableBar', align: "center"}
+                {field: 'ID', width: 60, title: 'ID', sort: true, hide:true},
+                {field: 'rank_id', width: 150, title: '职级ID', hide:true},
+                {width: 150, title: '序号', sort: true, type:'numbers'},
+                {field: 'rank_name', width: 250, title: '职级名称'},
+                {field: 'CreatedAt', title: '创建时间', minWidth: 150, sort: true, templet: function(data) {
+                        return data.CreatedAt.slice(0, 10)
+                    }},
+                {field: 'UpdatedAt', width: 150, title: '更新时间', sort: true, templet: function(data) {
+                        return data.UpdatedAt.slice(0, 10)
+                    }},
+                {title: '操作', minWidth: 150, toolbar: '#currentTableBar', align: "center", fixed: 'right'}
             ]],
             limits: [10, 15, 20, 25, 50, 100],
             limit: 10,

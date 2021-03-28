@@ -71,10 +71,10 @@ func Time2Str(curTime time.Time, typ int) string {
 
 func SexStr2Int64(sexStr string) int64 {
 	var sex int64
-	if sexStr == "男" {
+	if sexStr == "1" || sexStr == "男" {
 		sex = 1
 	}
-	if sexStr == "女" {
+	if sexStr == "2" || sexStr == "女" {
 		sex = 2
 	}
 	return sex

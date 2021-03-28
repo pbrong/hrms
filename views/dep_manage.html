@@ -13,35 +13,35 @@
 <div class="layuimini-container">
     <div class="layuimini-main">
 
-        <fieldset class="table-search-fieldset">
-            <legend>搜索信息</legend>
-            <div style="margin: 10px 10px 10px 10px">
-                <form class="layui-form layui-form-pane" action="">
-                    <div class="layui-inline">
-                        <label class="layui-form-label">部门ID</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="dep_id" autocomplete="off" class="layui-input">
-                        </div>
-                    </div>
-                    <!--                    <div class="layui-form-item">-->
-                    <!--                        <div class="layui-inline">-->
-                    <!--                            <label class="layui-form-label">部门名称</label>-->
-                    <!--                            <div class="layui-input-inline">-->
-                    <!--                                <input type="text" name="dep_name" autocomplete="off" class="layui-input">-->
-                    <!--                            </div>-->
-                    <!--                        </div>-->
+<!--        <fieldset class="table-search-fieldset">-->
+<!--            <legend>搜索信息</legend>-->
+<!--            <div style="margin: 10px 10px 10px 10px">-->
+<!--                <form class="layui-form layui-form-pane" action="">-->
+<!--                    <div class="layui-inline">-->
+<!--                        <label class="layui-form-label">部门ID</label>-->
+<!--                        <div class="layui-input-inline">-->
+<!--                            <input type="text" name="dep_id" autocomplete="off" class="layui-input">-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    &lt;!&ndash;                    <div class="layui-form-item">&ndash;&gt;-->
+<!--                    &lt;!&ndash;                        <div class="layui-inline">&ndash;&gt;-->
+<!--                    &lt;!&ndash;                            <label class="layui-form-label">部门名称</label>&ndash;&gt;-->
+<!--                    &lt;!&ndash;                            <div class="layui-input-inline">&ndash;&gt;-->
+<!--                    &lt;!&ndash;                                <input type="text" name="dep_name" autocomplete="off" class="layui-input">&ndash;&gt;-->
+<!--                    &lt;!&ndash;                            </div>&ndash;&gt;-->
+<!--                    &lt;!&ndash;                        </div>&ndash;&gt;-->
 
-                    <!--                        <div class="layui-inline">-->
-                    <!--                            <label class="layui-form-label">上级部门ID</label>-->
-                    <!--                            <div class="layui-input-inline">-->
-                    <!--                                <input type="text" name="pre_dep_id" autocomplete="off" class="layui-input">-->
-                    <!--                            </div>-->
-                    <!--                        </div>-->
-                    <div class="layui-inline">
-                        <button type="submit" class="layui-btn layui-btn-primary"  lay-submit lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索</button>
-                    </div>
-                    <!--                    </div>-->
-        </fieldset>
+<!--                    &lt;!&ndash;                        <div class="layui-inline">&ndash;&gt;-->
+<!--                    &lt;!&ndash;                            <label class="layui-form-label">上级部门ID</label>&ndash;&gt;-->
+<!--                    &lt;!&ndash;                            <div class="layui-input-inline">&ndash;&gt;-->
+<!--                    &lt;!&ndash;                                <input type="text" name="pre_dep_id" autocomplete="off" class="layui-input">&ndash;&gt;-->
+<!--                    &lt;!&ndash;                            </div>&ndash;&gt;-->
+<!--                    &lt;!&ndash;                        </div>&ndash;&gt;-->
+<!--                    <div class="layui-inline">-->
+<!--                        <button type="submit" class="layui-btn layui-btn-primary"  lay-submit lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索</button>-->
+<!--                    </div>-->
+<!--                    &lt;!&ndash;                    </div>&ndash;&gt;-->
+<!--        </fieldset>-->
 
 
         <script type="text/html" id="toolbarDemo">
@@ -88,13 +88,18 @@
             }],
             cols: [[
                 // {type: "checkbox", width: 50},
-                {field: 'ID', width: 60, title: 'ID', sort: true},
-                {field: 'dep_id', width: 150, title: '部门ID'},
+                {field: 'ID', width: 60, title: 'ID', sort: true, hide:true},
+                {field: 'dep_id', width: 150, title: '部门ID', hide:true},
+                {width: 60, title: '序号', sort: true, type:'numbers'},
                 {field: 'dep_name', width: 150, title: '部门名称'},
-                {field: 'dep_describe', width: 200, title: '部门描述'},
-                {field: 'CreatedAt', title: '创建时间', minWidth: 150, sort: true},
-                {field: 'UpdatedAt', width: 150, title: '更新时间', sort: true},
-                {title: '操作', minWidth: 150, toolbar: '#currentTableBar', align: "center"}
+                {field: 'dep_describe', width: 300, title: '部门描述'},
+                {field: 'CreatedAt', title: '创建时间', minWidth: 150, sort: true, templet: function(data) {
+                        return data.CreatedAt.slice(0, 10)
+                    }},
+                {field: 'UpdatedAt', width: 150, title: '更新时间', sort: true, templet: function(data) {
+                        return data.UpdatedAt.slice(0, 10)
+                    }},
+                {title: '操作', minWidth: 150, toolbar: '#currentTableBar', align: "center", fixed: 'right'}
             ]],
             limits: [10, 15, 20, 25, 50, 100],
             limit: 10,

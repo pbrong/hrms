@@ -183,7 +183,7 @@
                 if (obj.event === 'edit') {
                     // 本地缓存需要编辑的通知信息
                     localStorage.setItem("salary_edit_info", JSON.stringify(obj.data))
-                    alert("待编辑：" + localStorage.getItem("salary_edit_info"))
+                    // alert("待编辑：" + localStorage.getItem("salary_edit_info"))
                     var index = layer.open({
                         title: '编辑工资信息',
                         type: 2,

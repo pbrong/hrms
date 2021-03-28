@@ -58,7 +58,7 @@
                     <a href="javascript:;">{{.staff_name}} - {{.staff_id}}</a>
                     <dl class="layui-nav-child">
                         <dd>
-                            <a href="javascript:;" layuimini-content-href="user-password.html" data-title="修改密码" data-icon="fa fa-gears">修改密码</a>
+                            <a href="javascript:;" class="change-password" data-title="修改密码" data-icon="fa fa-gears">修改密码</a>
                         </dd>
                         <dd>
                             <hr>
@@ -176,6 +176,44 @@
         //         'layuimini-onepage.99php.cn',
         //     ],
         // });
+
+        function getCookie2(cname)
+        {
+            var name = cname + "=";
+            var ca = document.cookie.split(';');
+            for(var i=0; i<ca.length; i++)
+            {
+                var c = ca[i].trim();
+                if (c.indexOf(name)==0) return c.substring(name.length,c.length);
+            }
+            return "";
+        }
+
+        $('.change-password').on("click", function (obj) {
+            localStorage.setItem("password_staff_id",  getCookie2("user_cookie").split("_")[1])
+            // alert("localStorage, staff_id=" + obj.data.staff_id)
+            var index = layer.open({
+                title: '编辑密码',
+                type: 2,
+                shade: 0.2,
+                maxmin:true,
+                shadeClose: true,
+                area: ['50%', '50%'],
+                content: '/views/password_edit.html',
+                end: function(){
+                    //执行搜索重载
+                    table.reload('currentTableId', {
+                        page: {
+                            curr: 1
+                        }
+                    }, 'data');
+                }
+            });
+            $(window).on("resize", function () {
+                layer.full(index);
+            });
+            return false;
+        });
 
         $('.login-out').on("click", function () {
             layer.msg('正在退出登陆中...', function () {
