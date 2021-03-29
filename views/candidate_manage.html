@@ -92,6 +92,7 @@
                     // {type: "checkbox", width: 50},
                     {field: 'ID', width: 60, title: 'ID', sort: true,  hide:true},
                     {field: 'candidate_id', width: 150, title: '候选人ID', hide:true},
+                    {width: 60, title: '序号', sort: true, type:'numbers'},
                     {field: 'name', width: 100, title: '姓名'},
                     {field: 'job_name', width: 130, title: '应聘职位'},
                     {field: 'edu_level', width: 80, title: '学历'},
@@ -100,8 +101,8 @@
                     {field: 'describe', width: 100, title: '个人描述', hide:true},
                     {field: 'email', width: 120, title: '投递邮箱', hide:true},
                     {field: 'evaluation', width: 120, title: '面试评价', hide:true},
-                    {field: 'staff_id', width: 120, title: '面试官'},
-                    {field: 'status', width: 120, title: '状态', templet: statusQuery , fixed: 'right'},
+                    {field: 'staff_id', width: 260, title: '面试官', templet: staffQuery },
+                    {field: 'status', width: 90, title: '状态', templet: statusQuery , fixed: 'right'},
                     {title: '操作', minWidth: 210, toolbar: '#currentTableBar', align: "center", fixed: 'right'}
                 ]],
                 limits: [10, 15, 20, 25, 50, 100],
@@ -122,6 +123,29 @@
                     };
                 }
             });
+
+            function staffQuery(req) {
+                var staffId = req.staff_id;
+                var result = "未指定面试官"
+                $.ajax({
+                    type: "GET",
+                    url: "/staff/query_by_staff_id/" + staffId,
+                    async:false,
+                    success:function (data) {
+                        var resp = JSON.parse(JSON.stringify(data));
+                        var array = resp.msg;
+                        if (array[0] == "undefined" || array[0] == "") {
+                            return result
+                        }
+                        // alert(JSON.stringify(array[0]))
+                        var staffName = array[0].staff_name;
+                        var depName = array[0].dep_name;
+                        var rankName = array[0].rank_name;
+                        result = staffName+"-"+depName+"-"+rankName
+                    }
+                });
+                return result
+            }
 
             function statusQuery(data) {
                 var status = data.status;

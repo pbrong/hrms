@@ -265,3 +265,21 @@ func StaffDel(c *gin.Context) {
 		"status": 2000,
 	})
 }
+
+func StaffQueryByStaffId(c *gin.Context) {
+	var total int64 = 1
+	code := 2000
+	staffId := c.Param("staff_id")
+	var staffs []model.Staff
+	resource.HrmsDB(c).Where("staff_id = ?", staffId).Find(&staffs)
+	if len(staffs) == 0 {
+		// 不存在
+		code = 2001
+	}
+	total = int64(len(staffs))
+	c.JSON(http.StatusOK, gin.H{
+		"status": code,
+		"total":  total,
+		"msg":    convert2VO(c, staffs),
+	})
+}

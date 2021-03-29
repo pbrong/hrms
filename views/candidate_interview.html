@@ -16,10 +16,13 @@
 </head>
 <body>
 <div class="layui-form layuimini-form">
+
     <div class="layui-form-item">
-            <label class="layui-form-label required">面试官工号</label>
+        <label class="layui-form-label required">指定面试官</label>
         <div class="layui-input-block">
-            <input type="text" name="staff_id" id="staff_id" lay-verify="required" lay-reqtext="面试官工号不能为空" placeholder="请输入面试官工号" value="" class="layui-input">
+            <select name="staff_id" id="staff_select" lay-verify="required" lay-search>
+                <option value="-1">不指定面试官</option>
+            </select>
         </div>
     </div>
 
@@ -33,39 +36,36 @@
 
 <script src="/static/lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
 <script>
+
+    function loadStaffSelect(staffId) {
+        $ = layui.$
+        $.ajax({
+            type: "GET",
+            url: "/staff/query/all",
+            success:function (data) {
+                var resp = JSON.parse(JSON.stringify(data));
+                $.each(resp.msg, function (index, item) {
+                    $('#staff_select').append(new Option(item.staff_name+"-"+item.dep_name+"-"+item.rank_name, item.staff_id));// 下拉菜单里添加元素
+                });
+                $('#staff_select').val(staffId)
+                layui.form.render("select");
+            }});
+    }
+
     layui.use(['form'], function () {
         var form = layui.form,
             layer = layui.layer,
             $ = layui.$;
         var editInfo = JSON.parse(localStorage.getItem("candidate_interview_info"));
-        // alert(editInfo)
-        $("#staff_id").val(editInfo.staff_id)
-        // $("#name").val(editInfo.name)
-        // $("#job_name").val(editInfo.job_name)
-        // $("#edu_level").val(editInfo.edu_level)
-        // $("#major").val(editInfo.major)
-        // $("#experience").val(editInfo.experience)
-        // $("#describe").val(editInfo.describe)
-        // $("#email").val(editInfo.email)
-        // $("#evaluation").val(editInfo.evaluation)
 
-        function statusQuery(status) {
-            if (status == 0) {
-                return "面试中"
-            }
-            if (status == 1) {
-                return "已拒绝"
-            }
-            if (status == 2) {
-                return "已录取"
-            }
-        }
+        loadStaffSelect(editInfo.staff_id)
+
+
         // $("#status").val(statusQuery(editInfo.status))
         // $("#status").val(editInfo.status)
 
         //监听提交
         form.on('submit(saveBtn)', function (req) {
-            // alert(localStorage.getItem("dep_edit_info"))
             var id = editInfo.ID
             // alert(JSON.stringify(req.field))
             req.field.id = id

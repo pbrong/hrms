@@ -27,14 +27,20 @@
         <div class="layui-form-item">
             <label class="layui-form-label required">通知类型</label>
             <div class="layui-input-block">
-                <input type="text" name="type" lay-verify="required" lay-reqtext="通知类型不能为空" placeholder="新闻、紧急通知、一般通知" value="" class="layui-input">
+<!--                <input type="text" name="type" lay-verify="required" lay-reqtext="通知类型不能为空" placeholder="新闻、紧急通知、一般通知" value="" class="layui-input">-->
+                <select name="type" lay-verify="required">
+                    <option value="新闻通知">新闻通知</option>
+                    <option value="培训通知">培训通知</option>
+                    <option value="紧急通知">紧急通知</option>
+                    <option value="公司通知">公司通知</option>
+                </select>
             </div>
         </div>
 
         <div class="layui-form-item">
             <label class="layui-form-label required">通知时间</label>
             <div class="layui-input-block">
-                <input type="text" name="date" lay-verify="required" lay-reqtext="通知时间不能为空"  value="" class="layui-input">
+                <input type="date" name="date" lay-verify="required" lay-reqtext="通知时间不能为空"  value="" class="layui-input">
             </div>
         </div>
 
@@ -89,7 +95,7 @@
         //编辑器外部操作
         var active = {
             content: function(){
-                alert(layedit.getContent(index)); //获取编辑器内容
+                // alert(layedit.getContent(index)); //获取编辑器内容
             }
         };
 
@@ -100,10 +106,10 @@
 
         //监听提交
         form.on('submit(saveBtn)', function (req) {
-            alert(JSON.stringify(req.field))
-            alert(layedit.getContent(index))
+            // alert(JSON.stringify(req.field))
+            // alert(layedit.getContent(index))
             req.field.notice_content = layedit.getContent(index)
-            alert(JSON.stringify(req.field))
+            // alert(JSON.stringify(req.field))
             $.ajax({
                 type: "POST",
                 url: "/notification/create",

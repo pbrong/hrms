@@ -97,7 +97,7 @@
         $("#notice_title").val(editInfo.notice_title)
         $("#type").val(editInfo.type)
         $("#LAY_demo1").val(editInfo.notice_content)
-        $("#date").val(editInfo.date)
+        $("#date").val(editInfo.date.slice(0, 10))
         //监听提交
         form.on('submit(saveBtn)', function (req) {
             // alert(localStorage.getItem("dep_edit_info"))

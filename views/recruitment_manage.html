@@ -87,6 +87,7 @@
                     // {type: "checkbox", width: 50},
                     {field: 'ID', width: 60, title: 'ID', sort: true,  hide:true},
                     {field: 'recruitment_id', width: 150, title: '招聘ID', hide:true},
+                    {width: 60, title: '序号', sort: true, type:'numbers'},
                     {field: 'job_name', width: 130, title: '职位'},
                     {field: 'job_type', width: 100, title: '类别'},
                     {field: 'base_location', width: 70, title: '地点'},
@@ -95,7 +96,9 @@
                     {field: 'experience', width: 100, title: '工作经验'},
                     {field: 'describe', width: 100, title: '岗位描述', hide: true},
                     {field: 'email', width: 120, title: '投递邮箱'},
-                    {field: 'CreatedAt', width: 150, title: '发布时间'},
+                    {field: 'CreatedAt', width: 150, title: '发布时间', templet: function(data) {
+                            return data.CreatedAt.slice(0, 10)
+                        }},
                     {title: '操作', minWidth: 170, toolbar: '#currentTableBar', align: "center", fixed: 'right'}
                 ]],
                 limits: [10, 15, 20, 25, 50, 100],
