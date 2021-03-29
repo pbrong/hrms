@@ -20,3 +20,7 @@ cp -R config hrms_app/config
 cp -R static hrms_app/static
 cp -R views hrms_app/views
 echo "[copy folder success]"
+
+echo "[start to build zip file]"
+zip -r -m hrms_app/app.zip hrms_app/*
+echo "[build zip file success]"
