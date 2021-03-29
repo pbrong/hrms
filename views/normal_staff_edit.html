@@ -26,10 +26,10 @@
     <div class="layui-form-item">
         <label class="layui-form-label">员工性别</label>
         <div class="layui-input-block">
-            <div class="layui-input-block" readonly="readonly">
-                <input type="radio" name="sex_str" value="1" title="男" checked>
-                <input type="radio" name="sex_str" value="2" title="女">
-            </div>
+            <select disabled="disabled" id="sex_str" name="sex_str" lay-verify="required">
+                <option value="1">男</option>
+                <option value="2">女</option>
+            </select>
         </div>
     </div>
 
@@ -92,14 +92,17 @@
     <div class="layui-form-item">
         <label class="layui-form-label">职位</label>
         <div class="layui-input-block">
-            <input type="text" name="rank_id" readonly="readonly" class="layui-input">
+            <select  disabled="disabled" name="rank_id" id="rank_select" lay-verify="required" lay-search>
+
+            </select>
         </div>
     </div>
 
     <div class="layui-form-item">
         <label class="layui-form-label">部门</label>
         <div class="layui-input-block">
-            <input type="text" name="dep_id" readonly="readonly" class="layui-input">
+            <select disabled="disabled" name="dep_id" id="dep_select" lay-verify="required" lay-search>
+            </select>
         </div>
     </div>
 
@@ -126,6 +129,38 @@
 
 <script src="/static/lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
 <script>
+
+    function loadRankSelect(rankId) {
+        $ = layui.$
+        $.ajax({
+            type: "GET",
+            url: "/rank/query/all",
+            success:function (data) {
+                var resp = JSON.parse(JSON.stringify(data));
+                $.each(resp.msg, function (index, item) {
+                    $('#rank_select').append(new Option(item.rank_name, item.rank_id));// 下拉菜单里添加元素
+                });
+                // 选中所属职位
+                $('#rank_select').val(rankId)
+                layui.form.render("select");
+            }});
+    }
+
+    function loadDepSelect(depId) {
+        $ = layui.$
+        $.ajax({
+            type: "GET",
+            url: "/depart/query/all",
+            success:function (data) {
+                var resp = JSON.parse(JSON.stringify(data));
+                $.each(resp.msg, function (index, item) {
+                    $('#dep_select').append(new Option(item.dep_name, item.dep_id));// 下拉菜单里添加元素
+                });
+                $('#dep_select').val(depId)
+                layui.form.render("select");
+            }});
+    }
+
     layui.use(['form'], function () {
         var form = layui.form,
             layer = layui.layer,
@@ -141,7 +176,7 @@
             var staffId = JSON.parse(editInfo).staff_id
             req.staff_id = staffId
             req.base_salary = parseInt(req.base_salary)
-            alert(JSON.stringify(req))
+            // alert(JSON.stringify(req))
             $.ajax({
                 type: "POST",
                 url: "/staff/edit",
@@ -169,23 +204,26 @@
     });
 
     function recallData(editInfo) {
-        alert(editInfo)
+        // alert(editInfo)
         var $ = layui.$
         editInfo = JSON.parse(editInfo)
         $("input[name=staff_name]").val(editInfo.staff_name)
-        $("input[type='radio'][name='sex_str'][value='"+editInfo.sex+"']").attr("checked", true)
+        $("#sex_str").val(editInfo.sex)
+        layui.form.render("select")
         $("input[name=identity_num]").val(editInfo.identity_num)
-        $("input[name=birthday_str]").val(editInfo.birthday)
+        $("input[name=birthday_str]").val(editInfo.birthday.slice(0, 10))
         $("input[name=nation]").val(editInfo.nation)
         $("input[name=school]").val(editInfo.school)
         $("input[name=major]").val(editInfo.major)
         $("input[name=edu_level]").val(editInfo.edu_level)
         $("input[name=base_salary]").val(editInfo.base_salary)
         $("input[name=card_num]").val(editInfo.card_num)
-        $("input[name=rank_id]").val(editInfo.rank_id)
-        $("input[name=dep_id]").val(editInfo.dep_id)
+        // $("input[name=rank_id]").val(editInfo.rank_id)
+        loadRankSelect(editInfo.rank_id)
+        loadDepSelect(editInfo.dep_id)
+        // $("input[name=dep_id]").val(editInfo.dep_id)
         $("input[name=email]").val(editInfo.email)
-        $("input[name=entry_date_str]").val(editInfo.entry_date)
+        $("input[name=entry_date_str]").val(editInfo.entry_date.slice(0, 10))
     }
 </script>
 </body>
