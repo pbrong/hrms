@@ -23,7 +23,7 @@ func Index(c *gin.Context) {
 	// 判断是否存在cookie
 	cookie, err := c.Cookie("user_cookie")
 	if err != nil || cookie == "" {
-		c.HTML(http.StatusOK, "login-1.html", nil)
+		c.HTML(http.StatusOK, "login.html", nil)
 		return
 	}
 	// 已登陆
@@ -52,7 +52,7 @@ func base64Decode(name string) string {
 func RenderAuthority(c *gin.Context) {
 	cookie, err := c.Cookie("user_cookie")
 	if err != nil || cookie == "" {
-		c.HTML(http.StatusOK, "login-1.html", nil)
+		c.HTML(http.StatusOK, "login.html", nil)
 		return
 	}
 	modelName := c.Param("modelName")
@@ -63,7 +63,7 @@ func RenderAuthority(c *gin.Context) {
 	}
 	autoContent, err := service.GetAuthorityDetailByUserTypeAndModel(c, dto)
 	if err != nil {
-		c.HTML(http.StatusOK, "login-1.html", nil)
+		c.HTML(http.StatusOK, "login.html", nil)
 		return
 	}
 	autoMap := make(map[string]bool)

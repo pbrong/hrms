@@ -125,7 +125,7 @@ func RenderExample(c *gin.Context) {
 	result, err := service.RenderExample(c, int64(id))
 	if err != nil {
 		log.Printf("[RenderExample] err = %v", err)
-		c.Redirect(http.StatusInternalServerError, "login-1.html")
+		c.Redirect(http.StatusInternalServerError, "login.html")
 	}
 	c.HTML(http.StatusOK, "example_doing.html", result)
 }

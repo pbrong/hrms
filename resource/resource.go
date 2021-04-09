@@ -25,7 +25,7 @@ type Gin struct {
 func HrmsDB(c *gin.Context) *gorm.DB {
 	cookie, err := c.Cookie("user_cookie")
 	if err != nil || cookie == "" {
-		c.HTML(http.StatusOK, "login-1.html", nil)
+		c.HTML(http.StatusOK, "login.html", nil)
 		return nil
 	}
 	branchId := strings.Split(cookie, "_")[2]
@@ -33,7 +33,7 @@ func HrmsDB(c *gin.Context) *gorm.DB {
 	if db, ok := DbMapper[dbName]; ok {
 		return db
 	}
-	c.HTML(http.StatusOK, "login-1.html", nil)
+	c.HTML(http.StatusOK, "login.html", nil)
 	return nil
 }
 
