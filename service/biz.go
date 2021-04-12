@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	httpReq "github.com/kirinlabs/HttpRequest"
 	"hrms/model"
 	"hrms/resource"
 	"log"
@@ -115,4 +116,35 @@ func Transfer(from, to interface{}) error {
 		return err
 	}
 	return nil
+}
+
+const SMS_URL = "https://api.apishop.net/communication/sms/send"
+
+func sendNoticeMsg(msgType string, phone int64, content []string) {
+	if phone == 0 {
+		return
+	}
+	var templateID string
+	switch msgType {
+	case "notice":
+		templateID = "10713"
+	case "salary":
+		templateID = "10714"
+	}
+	var resp *httpReq.Response
+	reqJSON := map[string]interface{}{
+		"apiKey":     "IBIMUBn846955ab1be1d10738e67fdb7214c5fef9a626c6",
+		"phoneNum":   phone,
+		"templateID": templateID,
+		"params":     content,
+	}
+	datas, _ := json.Marshal(&reqJSON)
+	var err error
+	log.Printf("[sendNoticeMsg] req data = %v", string(datas))
+	resp, err = httpReq.Post(SMS_URL, reqJSON)
+	if err != nil {
+		log.Printf("[sendNoticeMsg] err = %v", err)
+	}
+	body, _ := resp.Body()
+	log.Printf("[sendNoticeMsg] resp = %v", string(body))
 }

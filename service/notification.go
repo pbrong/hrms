@@ -1,12 +1,10 @@
 package service
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"hrms/model"
 	"hrms/resource"
 	"log"
-	"net/http"
 )
 
 func GetNotificationByTitle(c *gin.Context, noticeTitle string, start int, limit int) ([]*model.Notification, int64, error) {
@@ -60,36 +58,11 @@ func CreateNotification(c *gin.Context, dto *model.NotificationDTO) error {
 		}
 		// 获取员工手机号，发送紧急通知短信
 		for _, staff := range staffs {
-			sendNoticeMsg("notice", staff.Phone, notification.NoticeTitle)
+			content := []string{notification.NoticeTitle}
+			sendNoticeMsg("notice", staff.Phone, content)
 		}
 	}
 	return nil
-}
-
-//https://api.apishop.net/communication/sms/send?apiKey=IBIMUBn846955ab1be1d10738e67fdb7214c5fef9a626c6&phoneNum=15521306934&templateID= 10713&params=["紧急通知"]
-const SMS_URL = "https://api.apishop.net/communication/sms/send?" +
-	"apiKey=IBIMUBn846955ab1be1d10738e67fdb7214c5fef9a626c6&phoneNum=%v&templateID=%v"
-
-func sendNoticeMsg(msgType string, phone int64, noticeTitle string) {
-	if phone != 15521306934 {
-		return
-	}
-	var err error
-	if msgType == "notice" {
-		// 紧急通知
-		reqUrl := fmt.Sprint(SMS_URL, phone, 10713) + "&params=[" + noticeTitle + "]"
-		log.Printf("[sendNoticeMsg] reqUrl = %v", reqUrl)
-		_, err = http.Post(reqUrl, "application/json", nil)
-	}
-	if msgType == "salary" {
-		// 发薪通知
-		reqUrl := fmt.Sprint(SMS_URL, phone, 10714) + "&params=[" + noticeTitle + "]"
-		log.Printf("[sendNoticeMsg] reqUrl = %v", reqUrl)
-		_, err = http.Post(reqUrl, "application/json", nil)
-	}
-	if err != nil {
-		log.Printf("[sendNoticeMsg] err = %v", err)
-	}
 }
 
 func DelNotificationById(c *gin.Context, notice_id string) error {
