@@ -252,8 +252,17 @@ func StaffQueryByDep(c *gin.Context) {
 }
 
 func StaffDel(c *gin.Context) {
-	rankId := c.Param("staff_id")
-	if err := resource.HrmsDB(c).Where("staff_id = ?", rankId).Delete(&model.Staff{}).Error; err != nil {
+	staffId := c.Param("staff_id")
+	if err := resource.HrmsDB(c).Where("staff_id = ?", staffId).Delete(&model.Staff{}).Error; err != nil {
+		log.Printf("[StaffDel] err = %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"status": 5001,
+			"msg":    err,
+		})
+		return
+	}
+	// 密码删除
+	if err := resource.HrmsDB(c).Where("staff_id = ?", staffId).Delete(&model.Authority{}).Error; err != nil {
 		log.Printf("[StaffDel] err = %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"status": 5001,
