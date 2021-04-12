@@ -24,6 +24,14 @@
     </div>
 
     <div class="layui-form-item">
+        <label class="layui-form-label required">员工上级</label>
+        <div class="layui-input-block">
+            <select name="leader_staff_id" id="staff_select" lay-verify="required" lay-search>
+            </select>
+        </div>
+    </div>
+
+    <div class="layui-form-item">
         <label class="layui-form-label required">员工性别</label>
         <div class="layui-input-block">
             <select id="sex_str" name="sex_str" lay-verify="required">
@@ -114,6 +122,14 @@
     </div>
 
     <div class="layui-form-item">
+        <label class="layui-form-label required">手机号</label>
+        <div class="layui-input-block">
+            <input type="text" name="phone" lay-verify="required"  value="" class="layui-input">
+        </div>
+    </div>
+
+
+    <div class="layui-form-item">
         <label class="layui-form-label required">入职日期</label>
         <div class="layui-input-block">
             <input type="date" name="entry_date_str" lay-verify="required"  value="" class="layui-input">
@@ -129,6 +145,20 @@
 
 <script src="/static/lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
 <script>
+    function loadStaffSelect(staffId) {
+        $ = layui.$
+        $.ajax({
+            type: "GET",
+            url: "/staff/query/all",
+            success:function (data) {
+                var resp = JSON.parse(JSON.stringify(data));
+                $.each(resp.msg, function (index, item) {
+                    $('#staff_select').append(new Option(item.staff_name+"-"+item.dep_name+"-"+item.rank_name, item.staff_id));// 下拉菜单里添加元素
+                });
+                $('#staff_select').val(staffId)
+                layui.form.render("select");
+            }});
+    }
 
     function loadRankSelect(rankId) {
         $ = layui.$
@@ -176,6 +206,7 @@
             var staffId = JSON.parse(editInfo).staff_id
             req.staff_id = staffId
             req.base_salary = parseInt(req.base_salary)
+            req.phone = parseInt(req.phone)
             // alert(JSON.stringify(req))
             $.ajax({
                 type: "POST",
@@ -218,9 +249,11 @@
         $("input[name=edu_level]").val(editInfo.edu_level)
         $("input[name=base_salary]").val(editInfo.base_salary)
         $("input[name=card_num]").val(editInfo.card_num)
+        $("input[name=phone]").val(editInfo.phone)
         // $("input[name=rank_id]").val(editInfo.rank_id)
         loadRankSelect(editInfo.rank_id)
         loadDepSelect(editInfo.dep_id)
+        loadStaffSelect(editInfo.leader_staff_id)
         // $("input[name=dep_id]").val(editInfo.dep_id)
         $("input[name=email]").val(editInfo.email)
         $("input[name=entry_date_str]").val(editInfo.entry_date.slice(0, 10))

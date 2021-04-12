@@ -25,21 +25,23 @@ func StaffCreate(c *gin.Context) {
 	staffId := service.RandomStaffId()
 	// 创建员工信息
 	staff := model.Staff{
-		StaffId:     staffId,
-		StaffName:   staffCreateDto.StaffName,
-		Birthday:    service.Str2Time(staffCreateDto.BirthdayStr, 0),
-		IdentityNum: staffCreateDto.IdentityNum,
-		Sex:         service.SexStr2Int64(staffCreateDto.SexStr),
-		Nation:      staffCreateDto.Nation,
-		School:      staffCreateDto.School,
-		Major:       staffCreateDto.Major,
-		EduLevel:    staffCreateDto.EduLevel,
-		BaseSalary:  staffCreateDto.BaseSalary,
-		CardNum:     staffCreateDto.CardNum,
-		RankId:      staffCreateDto.RankId,
-		DepId:       staffCreateDto.DepId,
-		Email:       staffCreateDto.Email,
-		EntryDate:   service.Str2Time(staffCreateDto.EntryDateStr, 0),
+		StaffId:       staffId,
+		StaffName:     staffCreateDto.StaffName,
+		LeaderStaffId: staffCreateDto.LeaderStaffId,
+		Phone:         staffCreateDto.Phone,
+		Birthday:      service.Str2Time(staffCreateDto.BirthdayStr, 0),
+		IdentityNum:   staffCreateDto.IdentityNum,
+		Sex:           service.SexStr2Int64(staffCreateDto.SexStr),
+		Nation:        staffCreateDto.Nation,
+		School:        staffCreateDto.School,
+		Major:         staffCreateDto.Major,
+		EduLevel:      staffCreateDto.EduLevel,
+		BaseSalary:    staffCreateDto.BaseSalary,
+		CardNum:       staffCreateDto.CardNum,
+		RankId:        staffCreateDto.RankId,
+		DepId:         staffCreateDto.DepId,
+		Email:         staffCreateDto.Email,
+		EntryDate:     service.Str2Time(staffCreateDto.EntryDateStr, 0),
 	}
 	var exist int64
 	resource.HrmsDB(c).Model(&model.Staff{}).Where("identity_num = ? or staff_id = ?", staffCreateDto.IdentityNum, staffId).Count(&exist)
@@ -50,6 +52,10 @@ func StaffCreate(c *gin.Context) {
 		})
 		return
 	}
+	// 查询leader名称
+	var leader model.Staff
+	resource.HrmsDB(c).Where("staff_id = ?", staffCreateDto.LeaderStaffId).Find(&leader)
+	staff.LeaderName = leader.StaffName
 	// 创建登陆信息，密码为身份证后六位
 	identLen := len(staff.IdentityNum)
 	login := model.Authority{
@@ -93,24 +99,31 @@ func StaffEdit(c *gin.Context) {
 		return
 	}
 	log.Printf("[StaffEdit staff = %v]", staffEditDTO)
+	staff := model.Staff{
+		StaffId:       staffEditDTO.StaffId,
+		StaffName:     staffEditDTO.StaffName,
+		LeaderStaffId: staffEditDTO.LeaderStaffId,
+		Phone:         staffEditDTO.Phone,
+		Birthday:      service.Str2Time(staffEditDTO.BirthdayStr, 0),
+		IdentityNum:   staffEditDTO.IdentityNum,
+		Sex:           service.SexStr2Int64(staffEditDTO.SexStr),
+		Nation:        staffEditDTO.Nation,
+		School:        staffEditDTO.School,
+		Major:         staffEditDTO.Major,
+		EduLevel:      staffEditDTO.EduLevel,
+		BaseSalary:    staffEditDTO.BaseSalary,
+		CardNum:       staffEditDTO.CardNum,
+		RankId:        staffEditDTO.RankId,
+		DepId:         staffEditDTO.DepId,
+		Email:         staffEditDTO.Email,
+		EntryDate:     service.Str2Time(staffEditDTO.EntryDateStr, 0),
+	}
+	// 查询leader名称
+	var leader model.Staff
+	resource.HrmsDB(c).Where("staff_id = ?", staffEditDTO.LeaderStaffId).Find(&leader)
+	staff.LeaderName = leader.StaffName
 	resource.HrmsDB(c).Model(&model.Staff{}).Where("staff_id = ?", staffEditDTO.StaffId).
-		Updates(&model.Staff{
-			StaffId:     staffEditDTO.StaffId,
-			StaffName:   staffEditDTO.StaffName,
-			Birthday:    service.Str2Time(staffEditDTO.BirthdayStr, 0),
-			IdentityNum: staffEditDTO.IdentityNum,
-			Sex:         service.SexStr2Int64(staffEditDTO.SexStr),
-			Nation:      staffEditDTO.Nation,
-			School:      staffEditDTO.School,
-			Major:       staffEditDTO.Major,
-			EduLevel:    staffEditDTO.EduLevel,
-			BaseSalary:  staffEditDTO.BaseSalary,
-			CardNum:     staffEditDTO.CardNum,
-			RankId:      staffEditDTO.RankId,
-			DepId:       staffEditDTO.DepId,
-			Email:       staffEditDTO.Email,
-			EntryDate:   service.Str2Time(staffEditDTO.EntryDateStr, 0),
-		})
+		Updates(&staff)
 	c.JSON(200, gin.H{
 		"status": 2000,
 	})
@@ -233,7 +246,7 @@ func StaffQueryByDep(c *gin.Context) {
 	code := 2000
 	depName := c.Param("dep_name")
 	var staffs []model.Staff
-	reqSql := `select * from staff as staff left join department as dep on staff.dep_id = dep.dep_id where dep.dep_name like "%v"`
+	reqSql := `select * from staff as staff left join department as dep on staff.dep_id = dep.dep_id where staff.deleted_at is null and dep.dep_name like "%v"`
 	if start != -1 && limit != -1 {
 		reqSql += fmt.Sprintf(` limit %v,%v`, start, limit)
 	}
@@ -252,8 +265,17 @@ func StaffQueryByDep(c *gin.Context) {
 }
 
 func StaffDel(c *gin.Context) {
-	rankId := c.Param("staff_id")
-	if err := resource.HrmsDB(c).Where("staff_id = ?", rankId).Delete(&model.Staff{}).Error; err != nil {
+	staffId := c.Param("staff_id")
+	if err := resource.HrmsDB(c).Where("staff_id = ?", staffId).Delete(&model.Staff{}).Error; err != nil {
+		log.Printf("[StaffDel] err = %v", err)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"status": 5001,
+			"msg":    err,
+		})
+		return
+	}
+	// 密码删除
+	if err := resource.HrmsDB(c).Where("staff_id = ?", staffId).Delete(&model.Authority{}).Error; err != nil {
 		log.Printf("[StaffDel] err = %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"status": 5001,
