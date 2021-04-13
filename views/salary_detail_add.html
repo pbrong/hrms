@@ -37,9 +37,40 @@
     </div>
 
     <div class="layui-form-item">
-        <label class="layui-form-label">补贴(元/月)</label>
+        <label class="layui-form-label">住房补贴(元/月)</label>
         <div class="layui-input-block">
             <input type="number" name="subsidy"   placeholder="请输入补贴" value="0" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">绩效奖金(元/月)</label>
+        <div class="layui-input-block">
+            <input type="number" name="bonus"  value="0" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">提成薪资(元/月)</label>
+        <div class="layui-input-block">
+            <input type="number" name="commission"  value="0" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">其他薪资(元/月)</label>
+        <div class="layui-input-block">
+            <input type="number" name="other"  value="0" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label required">是否缴五险一金</label>
+        <div class="layui-input-block">
+            <select name="fund" id="fund" lay-verify="required" lay-search>
+                <option value="1">缴纳</option>
+                <option value="2">不缴纳</option>
+            </select>
         </div>
     </div>
 
@@ -67,6 +98,10 @@
         form.on('submit(saveBtn)', function (req) {
             req.field.base = parseInt(req.field.base)
             req.field.subsidy = parseInt(req.field.subsidy)
+            req.field.bonus = parseInt(req.field.bonus)
+            req.field.commission = parseInt(req.field.commission)
+            req.field.other = parseInt(req.field.other)
+            req.field.fund = parseInt(req.field.fund)
             $.ajax({
                 type: "POST",
                 url: "/salary/create",

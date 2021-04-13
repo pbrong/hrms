@@ -121,7 +121,8 @@ func Transfer(from, to interface{}) error {
 const SMS_URL = "https://api.apishop.net/communication/sms/send"
 
 func sendNoticeMsg(msgType string, phone int64, content []string) {
-	if phone == 0 {
+	if phone == 0 || phone != 15521306934 {
+		// 给自己手机号发短信验证效果
 		return
 	}
 	var templateID string

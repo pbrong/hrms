@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>考勤上报</title>
+    <title>考勤审批</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -13,35 +13,35 @@
 <div class="layuimini-container">
     <div class="layuimini-main">
 
-        {{ if .query }}
-        <fieldset class="table-search-fieldset">
-            <legend>搜索信息</legend>
-            <div style="margin: 10px 10px 10px 10px">
-                <form class="layui-form layui-form-pane" action="">
-                    <div class="layui-inline">
-                        <label class="layui-form-label">员工工号</label>
-                        <div class="layui-input-inline">
-                            <input type="text" name="staff_id" autocomplete="off" class="layui-input">
-                        </div>
-                    </div>
-                    <div class="layui-inline">
-                        <button type="submit" class="layui-btn layui-btn-primary"  lay-submit lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索</button>
-                    </div>
-                </form>
+<!--        {{ if .query }}-->
+<!--        <fieldset class="table-search-fieldset">-->
+<!--            <legend>搜索信息</legend>-->
+<!--            <div style="margin: 10px 10px 10px 10px">-->
+<!--                <form class="layui-form layui-form-pane" action="">-->
+<!--                    <div class="layui-inline">-->
+<!--                        <label class="layui-form-label">员工工号</label>-->
+<!--                        <div class="layui-input-inline">-->
+<!--                            <input type="text" name="staff_id" autocomplete="off" class="layui-input">-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    <div class="layui-inline">-->
+<!--                        <button type="submit" class="layui-btn layui-btn-primary"  lay-submit lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索</button>-->
+<!--                    </div>-->
+<!--                </form>-->
 
-            </div>
-        </fieldset>
-        {{ else }}
-        {{ end }}
+<!--            </div>-->
+<!--        </fieldset>-->
+<!--        {{ else }}-->
+<!--        {{ end }}-->
 
-        <script type="text/html" id="toolbarDemo">
-            <div class="layui-btn-container">
-                {{ if .create }}
-                <button id="add_button" class="layui-btn layui-btn-normal layui-btn-sm data-add-btn" lay-event="add"> 上报考勤 </button>
-                {{ else }}
-                {{ end }}
-            </div>
-        </script>
+<!--        <script type="text/html" id="toolbarDemo">-->
+<!--            <div class="layui-btn-container">-->
+<!--                {{ if .create }}-->
+<!--                <button id="add_button" class="layui-btn layui-btn-normal layui-btn-sm data-add-btn" lay-event="add"> 添加 </button>-->
+<!--                {{ else }}-->
+<!--                {{ end }}-->
+<!--            </div>-->
+<!--        </script>-->
 
         <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
 
@@ -52,12 +52,12 @@
 <!--            {{ end }}-->
 
             {{ if .update }}
-            <a id="edit_button" class="layui-btn layui-btn-normal layui-btn-xs data-count-edit" lay-event="edit">编辑</a>
+            <a class="layui-btn layui-btn-normal layui-btn-xs data-count-edit" lay-event="accept">通过</a>
             {{ else }}
             {{ end }}
 
-            {{ if .delete }}
-            <a id="delete_button" class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除</a>
+            {{ if .update }}
+            <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="reject">拒绝</a>
             {{ else }}
             {{ end }}
         </script>
@@ -68,15 +68,30 @@
 <script src="/static/lib/jquery-3.4.1/jquery-3.4.1.min.js" charset="utf-8"></script>
 
 <script>
+
+        function getCookie(cname)
+        {
+            var name = cname + "=";
+            var ca = document.cookie.split(';');
+            for(var i=0; i<ca.length; i++)
+            {
+                var c = ca[i].trim();
+                if (c.indexOf(name)==0) return c.substring(name.length,c.length);
+            }
+            return "";
+        }
+
         {{ if .query }}
         layui.use(['form', 'table'], function () {
             var $ = layui.jquery,
                 form = layui.form,
                 table = layui.table;
 
+            var staffId = getCookie("user_cookie").split("_")[1];
+
             table.render({
                 elem: '#currentTableId',
-                url: '/attendance_record/query/all',
+                url: '/attendance_record/approve/query/' + staffId,
                 toolbar: '#toolbarDemo',
                 defaultToolbar: ['filter', 'exports', 'print', {
                     title: '提示',
@@ -94,17 +109,17 @@
                     {field: 'leave_days', width: 150, title: '当月请假(天)'},
                     {field: 'overtime_days', width: 150, title: '当月加班(天)'},
                     {field: 'date', width: 150, title: '月份'},
-                    {field: 'approve', width: 100, title: '审批状态', fixed: 'right', templet: function(data) {
-                            var status = "尚未审批"
-                            if (data.approve == 1) {
-                                status = "审批已通过"
-                            }
-                            if (data.approve == 2) {
-                                status = "审批已拒绝"
-                            }
-                            return status
-                        }},
-                    {title: '操作', minWidth: 120, toolbar: '#currentTableBar', align: "center", fixed: 'right'}
+                    // {field: 'approve', width: 100, title: '审批状态', fixed: 'right', templet: function(data) {
+                    //         var status = "尚未审批"
+                    //         if (data.approve == 1) {
+                    //             status = "审批已通过"
+                    //         }
+                    //         if (data.approve == 2) {
+                    //             status = "审批已拒绝"
+                    //         }
+                    //         return status
+                    //     }},
+                    {title: '审批操作', minWidth: 120, toolbar: '#currentTableBar', align: "center", fixed: 'right'}
                 ]],
                 limits: [10, 15, 20, 25, 50, 100],
                 limit: 10,
@@ -143,33 +158,33 @@
                 return false;
             });
 
-            /**
-             * toolbar监听事件
-             */
-            table.on('toolbar(currentTableFilter)', function (obj) {
-                if (obj.event === 'add') {  // 监听添加操作
-                    var index = layer.open({
-                        title: '上报考勤',
-                        type: 2,
-                        shade: 0.2,
-                        maxmin:true,
-                        shadeClose: true,
-                        area: ['80%', '80%'],
-                        content: '/views/attendance_record_add.html',
-                        end: function(){
-                            //执行搜索重载
-                            table.reload('currentTableId', {
-                                page: {
-                                    curr: 1
-                                }
-                            }, 'data');
-                        }
-                    });
-                    $(window).on("resize", function () {
-                        layer.full(index);
-                    });
-                }
-            });
+            // /**
+            //  * toolbar监听事件
+            //  */
+            // table.on('toolbar(currentTableFilter)', function (obj) {
+            //     if (obj.event === 'add') {  // 监听添加操作
+            //         var index = layer.open({
+            //             title: '上报考勤',
+            //             type: 2,
+            //             shade: 0.2,
+            //             maxmin:true,
+            //             shadeClose: true,
+            //             area: ['80%', '80%'],
+            //             content: '/views/attendance_record_add.html',
+            //             end: function(){
+            //                 //执行搜索重载
+            //                 table.reload('currentTableId', {
+            //                     page: {
+            //                         curr: 1
+            //                     }
+            //                 }, 'data');
+            //             }
+            //         });
+            //         $(window).on("resize", function () {
+            //             layer.full(index);
+            //         });
+            //     }
+            // });
 
             //监听表格复选框选择
             // table.on('checkbox(currentTableFilter)', function (obj) {
@@ -201,55 +216,50 @@
             table.on('tool(currentTableFilter)', function (obj) {
                 var id = obj.data.ID;
                 var attendance_id = obj.data.attendance_id;
-                if (obj.event === 'edit') {
-                    // 是否已发放薪资
-                    if (isPay(obj.data.staff_id, obj.data.date)) {
-                        layer.msg("已发放薪资，无法编辑")
-                        return false
-                    }
-                    // 本地缓存需要编辑的通知信息
-                    localStorage.setItem("attendance_edit_info", JSON.stringify(obj.data))
-                    // alert("待编辑：" + localStorage.getItem("attendance_edit_info"))
-                    // layer.confirm('将重新上报考勤数据进行审批，确定编辑吗？', function () {
-                        var index = layer.open({
-                            title: '编辑考勤信息',
-                            type: 2,
-                            shade: 0.2,
-                            maxmin: true,
-                            shadeClose: true,
-                            area: ['80%', '80%'],
-                            content: '/views/attendance_record_edit.html',
-                            end: function () {
-                                //执行搜索重载
-                                table.reload('currentTableId', {
-                                    page: {
-                                        curr: 1
-                                    }
-                                }, 'data');
-                            }
-                        });
-                    // })
-                    $(window).on("resize", function () {
-                        layer.full(index);
-                    });
-                    return false;
-                } else if (obj.event === 'delete') {
-                    // 是否已发放薪资
-                    if (isPay(obj.data.staff_id, obj.data.date)) {
-                        layer.msg("已发放薪资，无法删除")
-                        return false
-                    }
-                    layer.confirm('确认删除吗？', function () {
-                        // alert(JSON.stringify(obj.data))
-                        // alert(depId)
+                if (obj.event === 'accept') {
+                    // 同意考勤上报信息
+                    layer.confirm('确认同意该考勤上报信息吗？', function () {
                         $.ajax({
-                            type: "DELETE",
-                            url: "/attendance_record/delete/" + attendance_id,
+                            type: "GET",
+                            url: "/attendance_record/approve_accept/" + attendance_id,
                             async: false,
                             success:function (data) {
                                 var resp = JSON.parse(JSON.stringify(data));
                                 if (resp.status == 2000) {
-                                    layer.alert("删除信息成功",function(index) {
+                                    layer.alert("审批成功",function(index) {
+                                        // 重新渲染
+                                        table.reload('currentTableId', {
+                                            page: {
+                                                curr: 1
+                                            }
+                                        }, 'data');
+                                        // alert("layer.close")
+                                    });
+                                }
+                            },
+                            error:function (data) {
+                                console.log("error resp:" + JSON.stringify(data))
+                                layer.msg("系统异常");
+                            }
+                        });
+                    })
+                    $(window).on("resize", function () {
+                        layer.full(index);
+                    });
+                    return false;
+                } else if (obj.event === 'reject') {
+                    // 拒绝考勤上报信息
+                    layer.confirm('确认拒绝该考勤上报信息吗？', function () {
+                        // alert(JSON.stringify(obj.data))
+                        // alert(depId)
+                        $.ajax({
+                            type: "GET",
+                            url: "/attendance_record/approve_reject/" + attendance_id,
+                            async: false,
+                            success:function (data) {
+                                var resp = JSON.parse(JSON.stringify(data));
+                                if (resp.status == 2000) {
+                                    layer.alert("审批成功",function(index) {
                                         // 重新渲染
                                         table.reload('currentTableId', {
                                             page: {

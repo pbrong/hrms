@@ -6,26 +6,38 @@ import (
 
 type Salary struct {
 	gorm.Model
-	SalaryId  string `gorm:"column:salary_id" json:"salary_id"`
-	StaffId   string `gorm:"column:staff_id" json:"staff_id"`
-	StaffName string `gorm:"column:staff_name" json:"staff_name"`
-	Base      int64  `gorm:"column:base" json:"base"`
-	Subsidy   int64  `gorm:"column:subsidy" json:"subsidy"`
+	SalaryId   string `gorm:"column:salary_id" json:"salary_id"`
+	StaffId    string `gorm:"column:staff_id" json:"staff_id"`
+	StaffName  string `gorm:"column:staff_name" json:"staff_name"`
+	Base       int64  `gorm:"column:base" json:"base"`
+	Subsidy    int64  `gorm:"column:subsidy" json:"subsidy"`
+	Bonus      int64  `gorm:"column:bonus" json:"bonus"`
+	Commission int64  `gorm:"column:commission" json:"commission"`
+	Other      int64  `gorm:"column:other" json:"other"`
+	Fund       int64  `gorm:"column:fund" json:"fund"`
 }
 
 type SalaryCreateDTO struct {
-	StaffId   string `gorm:"column:staff_id" json:"staff_id"`
-	StaffName string `gorm:"column:staff_name" json:"staff_name"`
-	Base      int64  `gorm:"column:base" json:"base"`
-	Subsidy   int64  `gorm:"column:subsidy" json:"subsidy"`
+	StaffId    string `gorm:"column:staff_id" json:"staff_id"`
+	StaffName  string `gorm:"column:staff_name" json:"staff_name"`
+	Base       int64  `gorm:"column:base" json:"base"`
+	Subsidy    int64  `gorm:"column:subsidy" json:"subsidy"`
+	Bonus      int64  `gorm:"column:bonus" json:"bonus"`
+	Commission int64  `gorm:"column:commission" json:"commission"`
+	Other      int64  `gorm:"column:other" json:"other"`
+	Fund       int64  `gorm:"column:fund" json:"fund"`
 }
 
 type SalaryEditDTO struct {
-	Id        int64
-	StaffId   string `gorm:"column:staff_id" json:"staff_id"`
-	StaffName string `gorm:"column:staff_name" json:"staff_name"`
-	Base      int64  `gorm:"column:base" json:"base"`
-	Subsidy   int64  `gorm:"column:subsidy" json:"subsidy"`
+	Id         int64
+	StaffId    string `gorm:"column:staff_id" json:"staff_id"`
+	StaffName  string `gorm:"column:staff_name" json:"staff_name"`
+	Base       int64  `gorm:"column:base" json:"base"`
+	Subsidy    int64  `gorm:"column:subsidy" json:"subsidy"`
+	Bonus      int64  `gorm:"column:bonus" json:"bonus"`
+	Commission int64  `gorm:"column:commission" json:"commission"`
+	Other      int64  `gorm:"column:other" json:"other"`
+	Fund       int64  `gorm:"column:fund" json:"fund"`
 }
 
 type SalaryRecord struct {
