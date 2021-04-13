@@ -84,3 +84,12 @@ func TestSMS(t *testing.T) {
 	body, _ := resp.Body()
 	log.Printf("[sendNoticeMsg] resp = %v", string(body))
 }
+
+func TestComputeSalary(t *testing.T) {
+	leaveDays := 2
+	var bonus int64 = 500
+	x := float64(5-leaveDays) / 5.0
+	bonus = int64(float64(bonus) * x)
+	fmt.Println(x)
+	fmt.Println(bonus)
+}

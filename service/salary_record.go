@@ -59,17 +59,17 @@ func GetSalaryRecordByStaffId(c *gin.Context, staffId string, start int, limit i
 	if start == -1 && limit == -1 {
 		// 不加分页
 		if staffId != "all" {
-			err = resource.HrmsDB(c).Where("staff_id = ?", staffId).Find(&salaryRecords).Error
+			err = resource.HrmsDB(c).Where("staff_id = ?", staffId).Order("salary_date desc").Find(&salaryRecords).Error
 		} else {
-			err = resource.HrmsDB(c).Find(&salaryRecords).Error
+			err = resource.HrmsDB(c).Order("salary_date desc").Find(&salaryRecords).Error
 		}
 
 	} else {
 		// 加分页
 		if staffId != "all" {
-			err = resource.HrmsDB(c).Where("staff_id = ?", staffId).Offset(start).Limit(limit).Find(&salaryRecords).Error
+			err = resource.HrmsDB(c).Where("staff_id = ?", staffId).Offset(start).Limit(limit).Order("salary_date desc").Find(&salaryRecords).Error
 		} else {
-			err = resource.HrmsDB(c).Offset(start).Limit(limit).Find(&salaryRecords).Error
+			err = resource.HrmsDB(c).Offset(start).Limit(limit).Order("salary_date desc").Find(&salaryRecords).Error
 		}
 	}
 	if err != nil {
@@ -96,7 +96,23 @@ func PaySalaryRecordById(c *gin.Context, id int64) error {
 		log.Printf("PaySalaryRecordById err = %v", err)
 		return err
 	}
+	var salarys []*model.SalaryRecord
+	resource.HrmsDB(c).Where("id = ?", id).Find(&salarys)
+	if len(salarys) > 0 && salarys[0].IsPay == 2 {
+		// 发送短信通知员工薪资已发放
+		date := salarys[0].SalaryDate
+		sendNoticeMsg("salary", getStaffPhoneByStaffId(c, salarys[0].StaffId), []string{date})
+	}
 	return nil
+}
+
+func getStaffPhoneByStaffId(c *gin.Context, staffId string) int64 {
+	var staffs []*model.Staff
+	resource.HrmsDB(c).Where("staff_id = ?", staffId).Find(&staffs)
+	if len(staffs) == 0 {
+		return 15521306934
+	}
+	return staffs[0].Phone
 }
 
 func GetHadPaySalaryRecordByStaffId(c *gin.Context, staffId string, start int, limit int) ([]*model.SalaryRecord, int64, error) {
@@ -105,17 +121,17 @@ func GetHadPaySalaryRecordByStaffId(c *gin.Context, staffId string, start int, l
 	if start == -1 && limit == -1 {
 		// 不加分页
 		if staffId != "all" {
-			err = resource.HrmsDB(c).Where("staff_id = ? and is_pay = 2", staffId).Find(&salaryRecords).Error
+			err = resource.HrmsDB(c).Where("staff_id = ? and is_pay = 2", staffId).Order("salary_date desc").Find(&salaryRecords).Error
 		} else {
-			err = resource.HrmsDB(c).Where("is_pay = 2").Find(&salaryRecords).Error
+			err = resource.HrmsDB(c).Where("is_pay = 2").Order("salary_date desc").Find(&salaryRecords).Error
 		}
 
 	} else {
 		// 加分页
 		if staffId != "all" {
-			err = resource.HrmsDB(c).Where("staff_id = ? and is_pay = 2", staffId).Offset(start).Limit(limit).Find(&salaryRecords).Error
+			err = resource.HrmsDB(c).Where("staff_id = ? and is_pay = 2", staffId).Offset(start).Limit(limit).Order("salary_date desc").Find(&salaryRecords).Error
 		} else {
-			err = resource.HrmsDB(c).Where("is_pay = 2").Offset(start).Limit(limit).Find(&salaryRecords).Error
+			err = resource.HrmsDB(c).Where("is_pay = 2").Offset(start).Limit(limit).Order("salary_date desc").Find(&salaryRecords).Error
 		}
 	}
 	if err != nil {
