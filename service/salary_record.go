@@ -1,31 +1,29 @@
 package service
 
 import (
-	"errors"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"hrms/model"
 	"hrms/resource"
 	"log"
 )
 
-func CreateSalaryRecord(c *gin.Context, dto *model.SalaryRecordCreateDTO) error {
-	var total int64
-	resource.HrmsDB(c).Model(&model.SalaryRecord{}).Where("staff_id = ? and salary_date = ?", dto.StaffId, dto.SalaryDate).Count(&total)
-	if total != 0 {
-		return errors.New(fmt.Sprintf("该员工薪资数据已经存在"))
-	}
-	var salaryRecord model.SalaryRecord
-	Transfer(&dto, &salaryRecord)
-	salaryRecord.SalaryRecordId = RandomID("salary_record")
-	salaryRecord.Total = salaryRecord.Base + salaryRecord.Subsidy + salaryRecord.Benifits - salaryRecord.Fine
-	salaryRecord.IsPay = 1 // 1未发放 2发放
-	if err := resource.HrmsDB(c).Create(&salaryRecord).Error; err != nil {
-		log.Printf("CreateSalaryRecord err = %v", err)
-		return err
-	}
-	return nil
-}
+//func CreateSalaryRecord(c *gin.Context, dto *model.SalaryRecordCreateDTO) error {
+//	var total int64
+//	resource.HrmsDB(c).Model(&model.SalaryRecord{}).Where("staff_id = ? and salary_date = ?", dto.StaffId, dto.SalaryDate).Count(&total)
+//	if total != 0 {
+//		return errors.New(fmt.Sprintf("该员工薪资数据已经存在"))
+//	}
+//	var salaryRecord model.SalaryRecord
+//	Transfer(&dto, &salaryRecord)
+//	salaryRecord.SalaryRecordId = RandomID("salary_record")
+//	salaryRecord.Total = salaryRecord.Base + salaryRecord.Subsidy + salaryRecord.Benifits - salaryRecord.Fine
+//	salaryRecord.IsPay = 1 // 1未发放 2发放
+//	if err := resource.HrmsDB(c).Create(&salaryRecord).Error; err != nil {
+//		log.Printf("CreateSalaryRecord err = %v", err)
+//		return err
+//	}
+//	return nil
+//}
 
 func DelSalaryRecordBySalaryRecordId(c *gin.Context, salaryRecordId string) error {
 	if err := resource.HrmsDB(c).Where("salary_record_id = ?", salaryRecordId).Delete(&model.SalaryRecord{}).
@@ -36,24 +34,24 @@ func DelSalaryRecordBySalaryRecordId(c *gin.Context, salaryRecordId string) erro
 	return nil
 }
 
-func UpdateSalaryRecordById(c *gin.Context, dto *model.SalaryRecordEditDTO) error {
-	var salaryRecord model.SalaryRecord
-	Transfer(&dto, &salaryRecord)
-	salaryRecord.Total = salaryRecord.Base + salaryRecord.Subsidy + salaryRecord.Benifits - salaryRecord.Fine
-	if err := resource.HrmsDB(c).Model(&model.SalaryRecord{}).Where("id = ?", salaryRecord.ID).
-		Update("staff_id", salaryRecord.StaffId).
-		Update("staff_name", salaryRecord.StaffName).
-		Update("base", salaryRecord.Base).
-		Update("subsidy", salaryRecord.Subsidy).
-		Update("benifits", salaryRecord.Benifits).
-		Update("fine", salaryRecord.Fine).
-		Update("salary_date", salaryRecord.SalaryDate).
-		Error; err != nil {
-		log.Printf("UpdateSalaryById err = %v", err)
-		return err
-	}
-	return nil
-}
+//func UpdateSalaryRecordById(c *gin.Context, dto *model.SalaryRecordEditDTO) error {
+//	var salaryRecord model.SalaryRecord
+//	Transfer(&dto, &salaryRecord)
+//	salaryRecord.Total = salaryRecord.Base + salaryRecord.Subsidy + salaryRecord.Benifits - salaryRecord.Fine
+//	if err := resource.HrmsDB(c).Model(&model.SalaryRecord{}).Where("id = ?", salaryRecord.ID).
+//		Update("staff_id", salaryRecord.StaffId).
+//		Update("staff_name", salaryRecord.StaffName).
+//		Update("base", salaryRecord.Base).
+//		Update("subsidy", salaryRecord.Subsidy).
+//		Update("benifits", salaryRecord.Benifits).
+//		Update("fine", salaryRecord.Fine).
+//		Update("salary_date", salaryRecord.SalaryDate).
+//		Error; err != nil {
+//		log.Printf("UpdateSalaryById err = %v", err)
+//		return err
+//	}
+//	return nil
+//}
 
 func GetSalaryRecordByStaffId(c *gin.Context, staffId string, start int, limit int) ([]*model.SalaryRecord, int64, error) {
 	var salaryRecords []*model.SalaryRecord

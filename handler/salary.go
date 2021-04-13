@@ -100,75 +100,75 @@ func GetSalaryByStaffId(c *gin.Context) {
 	})
 }
 
-func DelSalaryRecord(c *gin.Context) {
-	// 参数绑定
-	salaryId := c.Param("salary_record_id")
-	// 业务处理
-	err := service.DelSalaryRecordBySalaryRecordId(c, salaryId)
-	if err != nil {
-		log.Printf("[DelSalaryRecord] err = %v", err)
-		c.JSON(200, gin.H{
-			"status": 5002,
-			"result": err.Error(),
-		})
-		return
-	}
-	c.JSON(200, gin.H{
-		"status": 2000,
-	})
-}
-
-func CreateSalaryRecord(c *gin.Context) {
-	// 参数绑定
-	var dto model.SalaryRecordCreateDTO
-	if err := c.ShouldBindJSON(&dto); err != nil {
-		log.Printf("[CreateSalaryRecord] err = %v", err)
-		c.JSON(200, gin.H{
-			"status": 5001,
-			"result": err.Error(),
-		})
-		return
-	}
-	// 业务处理
-	err := service.CreateSalaryRecord(c, &dto)
-	if err != nil {
-		log.Printf("[CreateSalaryRecord] err = %v", err)
-		c.JSON(200, gin.H{
-			"status": 5002,
-			"result": err.Error(),
-		})
-		return
-	}
-	c.JSON(200, gin.H{
-		"status": 2000,
-	})
-}
-
-func UpdateSalaryRecordById(c *gin.Context) {
-	// 参数绑定
-	var dto model.SalaryRecordEditDTO
-	if err := c.ShouldBindJSON(&dto); err != nil {
-		log.Printf("[UpdateSalaryRecordById] err = %v", err)
-		c.JSON(200, gin.H{
-			"status": 5001,
-			"result": err.Error(),
-		})
-		return
-	}
-	// 业务处理
-	err := service.UpdateSalaryRecordById(c, &dto)
-	if err != nil {
-		log.Printf("[UpdateSalaryRecordById] err = %v", err)
-		c.JSON(200, gin.H{
-			"status": 5002,
-			"result": err.Error(),
-		})
-		return
-	}
-	c.JSON(200, gin.H{
-		"status": 2000,
-	})
-}
+//func DelSalaryRecord(c *gin.Context) {
+//	// 参数绑定
+//	salaryId := c.Param("salary_record_id")
+//	// 业务处理
+//	err := service.DelSalaryRecordBySalaryRecordId(c, salaryId)
+//	if err != nil {
+//		log.Printf("[DelSalaryRecord] err = %v", err)
+//		c.JSON(200, gin.H{
+//			"status": 5002,
+//			"result": err.Error(),
+//		})
+//		return
+//	}
+//	c.JSON(200, gin.H{
+//		"status": 2000,
+//	})
+//}
+//
+//func CreateSalaryRecord(c *gin.Context) {
+//	// 参数绑定
+//	var dto model.SalaryRecordCreateDTO
+//	if err := c.ShouldBindJSON(&dto); err != nil {
+//		log.Printf("[CreateSalaryRecord] err = %v", err)
+//		c.JSON(200, gin.H{
+//			"status": 5001,
+//			"result": err.Error(),
+//		})
+//		return
+//	}
+//	// 业务处理
+//	err := service.CreateSalaryRecord(c, &dto)
+//	if err != nil {
+//		log.Printf("[CreateSalaryRecord] err = %v", err)
+//		c.JSON(200, gin.H{
+//			"status": 5002,
+//			"result": err.Error(),
+//		})
+//		return
+//	}
+//	c.JSON(200, gin.H{
+//		"status": 2000,
+//	})
+//}
+//
+//func UpdateSalaryRecordById(c *gin.Context) {
+//	// 参数绑定
+//	var dto model.SalaryRecordEditDTO
+//	if err := c.ShouldBindJSON(&dto); err != nil {
+//		log.Printf("[UpdateSalaryRecordById] err = %v", err)
+//		c.JSON(200, gin.H{
+//			"status": 5001,
+//			"result": err.Error(),
+//		})
+//		return
+//	}
+//	// 业务处理
+//	err := service.UpdateSalaryRecordById(c, &dto)
+//	if err != nil {
+//		log.Printf("[UpdateSalaryRecordById] err = %v", err)
+//		c.JSON(200, gin.H{
+//			"status": 5002,
+//			"result": err.Error(),
+//		})
+//		return
+//	}
+//	c.JSON(200, gin.H{
+//		"status": 2000,
+//	})
+//}
 
 func GetSalaryRecordByStaffId(c *gin.Context) {
 	// 参数绑定
