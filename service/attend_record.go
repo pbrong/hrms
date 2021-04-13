@@ -44,6 +44,7 @@ func UpdateAttendRecordById(c *gin.Context, dto *model.AttendanceRecordEditDTO) 
 		Update("leave_days", attentRecord.LeaveDays).
 		Update("work_days", attentRecord.WorkDays).
 		Update("date", attentRecord.Date).
+		Update("approve", 0).
 		Error; err != nil {
 		log.Printf("UpdateAttendRecordById err = %v", err)
 		return err
@@ -120,4 +121,30 @@ func GetAttendRecordIsPayByStaffIdAndDate(c *gin.Context, staffId string, date s
 	var total int64
 	resource.HrmsDB(c).Model(&model.SalaryRecord{}).Where("staff_id = ? and salary_date = ? and is_pay = 2", staffId, date).Count(&total)
 	return total != 0
+}
+
+// 通过leader_staff_id查询下属提交的考勤上报数据进行审批
+func GetAttendRecordApproveByLeaderStaffId(c *gin.Context, leaderStaffId string) ([]*model.AttendanceRecord, int64, error) {
+	// 查询下属staff_id
+	var staffs []*model.Staff
+	resource.HrmsDB(c).Where("leader_staff_id = ?", leaderStaffId).Find(&staffs)
+	if len(staffs) == 0 {
+		return nil, 0, nil
+	}
+	// 查询下属是否有未审批的考勤申请
+	var err error
+	var attends []*model.AttendanceRecord
+	for _, staff := range staffs {
+		var attend []*model.AttendanceRecord
+		staffId := staff.StaffId
+		resource.HrmsDB(c).Where("staff_id = ? and approve = 0", staffId).Find(&attend)
+		if attend != nil {
+			attends = append(attends, attend...)
+		}
+	}
+	if err != nil {
+		return nil, 0, err
+	}
+	total := int64(len(attends))
+	return attends, total, nil
 }
