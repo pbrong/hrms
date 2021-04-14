@@ -31,8 +31,8 @@
                 <select name="type" lay-verify="required">
                     <option value="新闻通知">新闻通知</option>
                     <option value="培训通知">培训通知</option>
-                    <option value="紧急通知">紧急通知</option>
                     <option value="公司通知">公司通知</option>
+                    <option value="紧急通知">紧急通知</option>
                 </select>
             </div>
         </div>
@@ -110,6 +110,36 @@
             // alert(layedit.getContent(index))
             req.field.notice_content = layedit.getContent(index)
             // alert(JSON.stringify(req.field))
+            // 紧急通知
+            if (req.field.type == "紧急通知") {
+                layer.confirm('发布紧急通知将会通过短信提醒所有员工，确认发布吗？', function () {
+                    $.ajax({
+                        type: "POST",
+                        url: "/notification/create",
+                        contentType: "application/json;charset=utf-8",
+                        data: JSON.stringify(req.field),
+                        dataType: "json",
+                        async: false,
+                        success:function (data) {
+                            var resp = JSON.parse(JSON.stringify(data));
+                            if (resp.status == 2000) {
+                                layer.alert("添加通知成功", function (){
+                                    // 关闭
+                                    var iframeIndex = parent.layer.getFrameIndex(window.name);
+                                    parent.layer.close(iframeIndex);
+                                })
+                            } else if (resp.status == 2001) {
+                                layer.alert("通知已存在")
+                            }
+                        },
+                        error:function (data) {
+                            console.log("error resp:" + JSON.stringify(data))
+                            layer.msg("系统异常,添加失败");
+                        }
+                    });
+                })
+                return false
+            }
             $.ajax({
                 type: "POST",
                 url: "/notification/create",
@@ -134,7 +164,6 @@
                     layer.msg("系统异常,添加失败");
                 }
             });
-
             return false;
         });
 

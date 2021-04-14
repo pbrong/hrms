@@ -32,14 +32,45 @@
     <div class="layui-form-item">
         <label class="layui-form-label required">基本薪资(元/月)</label>
         <div class="layui-input-block">
-            <input type="number" name="base" id="base" lay-verify="required" lay-reqtext="基本薪资不能为空" placeholder="请输入基本薪资" value="" class="layui-input">
+            <input type="number" id="base" name="base" lay-verify="required" lay-reqtext="基本薪资不能为空" placeholder="请输入基本薪资" value="" class="layui-input">
         </div>
     </div>
 
     <div class="layui-form-item">
-        <label class="layui-form-label">补贴(元/月)</label>
+        <label class="layui-form-label">住房补贴(元/月)</label>
         <div class="layui-input-block">
-            <input type="number" name="subsidy" id="subsidy" lay-verify="required" lay-reqtext="基本薪资不能为空" placeholder="请输入补贴" value="0" class="layui-input">
+            <input type="number" name="subsidy"  id="subsidy"   placeholder="请输入补贴" value="0" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">绩效奖金(元/月)</label>
+        <div class="layui-input-block">
+            <input type="number" name="bonus" id="bonus"  value="0" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">提成薪资(元/月)</label>
+        <div class="layui-input-block">
+            <input type="number" name="commission" id="commission" value="0" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">其他薪资(元/月)</label>
+        <div class="layui-input-block">
+            <input type="number" name="other" id="other"  value="0" class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label required">是否缴五险一金</label>
+        <div class="layui-input-block">
+            <select name="fund" id="fund" lay-verify="required" lay-search>
+                <option value="1">缴纳</option>
+                <option value="2">不缴纳</option>
+            </select>
         </div>
     </div>
 
@@ -62,6 +93,11 @@
         $("#staff_name").val(editInfo.staff_name)
         $("#base").val(editInfo.base)
         $("#subsidy").val(editInfo.subsidy)
+        $("#bonus").val(editInfo.bonus)
+        $("#commission").val(editInfo.commission)
+        $("#other").val(editInfo.other)
+        $("#fund").val(editInfo.fund)
+        layui.form.render("select")
         //监听提交
         form.on('submit(saveBtn)', function (req) {
             // alert(localStorage.getItem("dep_edit_info"))
@@ -70,6 +106,10 @@
             req.field.id = id
             req.field.base = parseInt(req.field.base)
             req.field.subsidy = parseInt(req.field.subsidy)
+            req.field.bonus = parseInt(req.field.bonus)
+            req.field.commission = parseInt(req.field.commission)
+            req.field.other = parseInt(req.field.other)
+            req.field.fund = parseInt(req.field.fund)
             // alert(JSON.stringify(req.field))
             $.ajax({
                 type: "POST",

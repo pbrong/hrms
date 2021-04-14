@@ -11,6 +11,7 @@ type AttendanceRecord struct {
 	WorkDays     int64  `gorm:"column:work_days" json:"work_days"`
 	LeaveDays    int64  `gorm:"column:leave_days" json:"leave_days"`
 	OvertimeDays int64  `gorm:"column:overtime_days" json:"overtime_days"`
+	Approve      int64  `gorm:"column:approve" json:"approve"`
 }
 
 type AttendanceRecordCreateDTO struct {

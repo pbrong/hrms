@@ -86,7 +86,9 @@
                     {field: 'ID', width: 60, title: 'ID', sort: true, hide: true},
                     {width: 60, title: '序号', sort: true, type:'numbers'},
                     {field: 'staff_id', width: 100, title: '员工工号'},
-                    {field: 'staff_name', width: 150, title: '员工姓名'},
+                    {field: 'staff_name', width: 100, title: '员工姓名'},
+                    {field: 'leader_staff_id', width: 100, title: '上级工号'},
+                    {field: 'leader_name', width: 100, title: '上级姓名'},
                     {field: 'birthday', width: 150, title: '出生日期', templet: function(data) {
                             return data.birthday.slice(0, 10)
                         }},
@@ -112,6 +114,7 @@
                     {field: 'dep_id', title: '部门ID', minWidth: 150, hide:true},
                     {field: 'dep_name', title: '部门名称', minWidth: 150},
                     {field: 'email', title: '电子邮箱', minWidth: 170},
+                    {field: 'phone', width: 150, title: '手机号'},
                     {field: 'entry_date', title: '入职时间', minWidth: 150,templet: function(data) {
                             return data.birthday.slice(0, 10)
                         }},

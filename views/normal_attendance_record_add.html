@@ -16,64 +16,46 @@
 </head>
 <body>
 <div class="layui-form layuimini-form">
+<!--    <div class="layui-form-item">-->
+<!--        <label class="layui-form-label required">员工工号</label>-->
+<!--        <div class="layui-input-block">-->
+<!--            <input type="text" name="staff_id" lay-verify="required" lay-reqtext="员工工号不能为空" placeholder="请输入员工工号" value="" class="layui-input">-->
+<!--        </div>-->
+<!--    </div>-->
+<!--    <div class="layui-form-item">-->
+<!--        <label class="layui-form-label required">员工姓名</label>-->
+<!--        <div class="layui-input-block">-->
+<!--            <input type="text" name="staff_name" lay-verify="required" lay-reqtext="员工姓名不能为空" placeholder="请输入员工姓名" value="" class="layui-input">-->
+<!--        </div>-->
+<!--    </div>-->
+
     <div class="layui-form-item">
-        <label class="layui-form-label required">员工工号</label>
+        <label class="layui-form-label required">当月出勤(天)</label>
         <div class="layui-input-block">
-            <input type="text" name="staff_id" lay-verify="required" lay-reqtext="员工工号不能为空" placeholder="请输入员工工号" value="" class="layui-input">
-        </div>
-    </div>
-    <div class="layui-form-item">
-        <label class="layui-form-label required">员工姓名</label>
-        <div class="layui-input-block">
-            <input type="text" name="staff_name" lay-verify="required" lay-reqtext="员工姓名不能为空" placeholder="请输入员工姓名" value="" class="layui-input">
+            <input type="number" name="work_days" lay-verify="required" lay-reqtext="当月出勤不能为空" placeholder="请输入当月出勤" value="" class="layui-input">
         </div>
     </div>
 
     <div class="layui-form-item">
-        <label class="layui-form-label required">基本薪资(元/月)</label>
+        <label class="layui-form-label">当月缺勤(天)</label>
         <div class="layui-input-block">
-            <input type="number" name="base" lay-verify="required" lay-reqtext="基本薪资不能为空" placeholder="请输入基本薪资" value="" class="layui-input">
+            <input type="number" name="leave_days"   placeholder="请输入补贴" value="0" class="layui-input">
         </div>
     </div>
 
     <div class="layui-form-item">
-        <label class="layui-form-label">住房补贴(元/月)</label>
+        <label class="layui-form-label">当月加班(天)</label>
         <div class="layui-input-block">
-            <input type="number" name="subsidy"   placeholder="请输入补贴" value="0" class="layui-input">
+            <input type="number" name="overtime_days"   placeholder="请输入补贴" value="0" class="layui-input">
         </div>
     </div>
 
     <div class="layui-form-item">
-        <label class="layui-form-label">绩效奖金(元/月)</label>
+        <label class="layui-form-label required">月份</label>
         <div class="layui-input-block">
-            <input type="number" name="bonus"  value="0" class="layui-input">
+            <input type="month" name="date" lay-verify="required" lay-reqtext="月份不能为空" placeholder="请输入月份" value="" class="layui-input">
         </div>
     </div>
-
-    <div class="layui-form-item">
-        <label class="layui-form-label">提成薪资(元/月)</label>
-        <div class="layui-input-block">
-            <input type="number" name="commission"  value="0" class="layui-input">
-        </div>
-    </div>
-
-    <div class="layui-form-item">
-        <label class="layui-form-label">其他薪资(元/月)</label>
-        <div class="layui-input-block">
-            <input type="number" name="other"  value="0" class="layui-input">
-        </div>
-    </div>
-
-    <div class="layui-form-item">
-        <label class="layui-form-label required">是否缴五险一金</label>
-        <div class="layui-input-block">
-            <select name="fund" id="fund" lay-verify="required" lay-search>
-                <option value="1">缴纳</option>
-                <option value="2">不缴纳</option>
-            </select>
-        </div>
-    </div>
-
     <!--    <div class="layui-form-item">-->
 <!--        <label class="layui-form-label required">性别</label>-->
 <!--        <div class="layui-input-block">-->
@@ -83,28 +65,43 @@
 <!--    </div>-->
     <div class="layui-form-item">
         <div class="layui-input-block">
-            <button class="layui-btn layui-btn-normal" lay-submit lay-filter="saveBtn">添 加</button>
+            <button class="layui-btn layui-btn-normal" lay-submit lay-filter="saveBtn">上 报</button>
         </div>
     </div>
 </div>
 <script src="/static/lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
+<script src="/static/js/base64.js" charset="utf-8"></script>
 <script>
     layui.use(['form'], function () {
         var form = layui.form,
             layer = layui.layer,
             $ = layui.$;
 
+        function getCookie(cname)
+        {
+            var name = cname + "=";
+            var ca = document.cookie.split(';');
+            for(var i=0; i<ca.length; i++)
+            {
+                var c = ca[i].trim();
+                if (c.indexOf(name)==0) return c.substring(name.length,c.length);
+            }
+            return "";
+        }
+
+        var staffId = getCookie("user_cookie").split("_")[1];
+        var staffName = getCookie("user_cookie").split("_")[3];
+        staffName = BASE64.decode(staffName)
         //监听提交
         form.on('submit(saveBtn)', function (req) {
-            req.field.base = parseInt(req.field.base)
-            req.field.subsidy = parseInt(req.field.subsidy)
-            req.field.bonus = parseInt(req.field.bonus)
-            req.field.commission = parseInt(req.field.commission)
-            req.field.other = parseInt(req.field.other)
-            req.field.fund = parseInt(req.field.fund)
+            req.field.staff_id = staffId
+            req.field.staff_name = staffName
+            req.field.leave_days = parseInt(req.field.leave_days)
+            req.field.work_days = parseInt(req.field.work_days)
+            req.field.overtime_days = parseInt(req.field.overtime_days)
             $.ajax({
                 type: "POST",
-                url: "/salary/create",
+                url: "/attendance_record/create",
                 contentType: "application/json;charset=utf-8",
                 data: JSON.stringify(req.field),
                 dataType: "json",
@@ -118,7 +115,7 @@
                             parent.layer.close(iframeIndex);
                         })
                     } else {
-                        layer.alert("员工薪资已存在")
+                        layer.alert("当月出勤数据已存在")
                     }
                 },
                 error:function (data) {

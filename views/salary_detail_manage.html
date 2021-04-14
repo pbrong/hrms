@@ -88,10 +88,19 @@
                     {field: 'ID', width: 60, title: 'ID', sort: true,  hide:true},
                     {field: 'salary_id', width: 150, title: '工资ID', hide:true},
                     {width: 60, title: '序号', sort: true, type:'numbers'},
-                    {field: 'staff_id', width: 150, title: '员工工号'},
-                    {field: 'staff_name', width: 200, title: '员工姓名'},
-                    {field: 'base', width: 170, title: '基本工资(元/月)'},
-                    {field: 'subsidy', width: 150, title: '补贴(元/月)'},
+                    {field: 'staff_id', width: 100, title: '员工工号'},
+                    {field: 'staff_name', width: 100, title: '员工姓名'},
+                    {field: 'base', width: 100, title: '基本工资'},
+                    {field: 'subsidy', width: 100, title: '住房补贴'},
+                    {field: 'bonus', width: 100, title: '绩效奖金'},
+                    {field: 'commission', width: 100, title: '提成薪资'},
+                    {field: 'other', width: 100, title: '其他薪资'},
+                    {field: 'fund', width: 100, title: '五险一金', templet: function(data) {
+                            if (data.fund == 1) {
+                                return "缴纳"
+                            }
+                            return "不缴纳"
+                        }},
                     {title: '操作', minWidth: 150, toolbar: '#currentTableBar', align: "center", fixed: 'right'}
                 ]],
                 limits: [10, 15, 20, 25, 50, 100],
@@ -137,7 +146,7 @@
             table.on('toolbar(currentTableFilter)', function (obj) {
                 if (obj.event === 'add') {  // 监听添加操作
                     var index = layer.open({
-                        title: '添加通知',
+                        title: '添加工资套账',
                         type: 2,
                         shade: 0.2,
                         maxmin:true,

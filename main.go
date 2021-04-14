@@ -120,9 +120,9 @@ func routerInit(server *gin.Engine) {
 	salaryGroup.GET("/query/:staff_id", handler.GetSalaryByStaffId)
 	// 薪资发放相关
 	salaryRecordGroup := server.Group("/salary_record")
-	salaryRecordGroup.POST("/create", handler.CreateSalaryRecord)
-	salaryRecordGroup.DELETE("/delete/:salary_record_id", handler.DelSalaryRecord)
-	salaryRecordGroup.POST("/edit", handler.UpdateSalaryRecordById)
+	//salaryRecordGroup.POST("/create", handler.CreateSalaryRecord)
+	//salaryRecordGroup.DELETE("/delete/:salary_record_id", handler.DelSalaryRecord)
+	//salaryRecordGroup.POST("/edit", handler.UpdateSalaryRecordById)
 	salaryRecordGroup.GET("/query/:staff_id", handler.GetSalaryRecordByStaffId)
 	salaryRecordGroup.GET("/get_salary_record_is_pay_by_id/:id", handler.GetSalaryRecordIsPayById)
 	salaryRecordGroup.GET("/pay_salary_record_by_id/:id", handler.PaySalaryRecordById)
@@ -135,6 +135,9 @@ func routerInit(server *gin.Engine) {
 	attendGroup.GET("/query/:staff_id", handler.GetAttendRecordByStaffId)
 	attendGroup.GET("/query_history/:staff_id", handler.GetAttendRecordHistoryByStaffId)
 	attendGroup.GET("/get_attend_record_is_pay/:staff_id/:date", handler.GetAttendRecordIsPayByStaffIdAndDate)
+	attendGroup.GET("/approve/query/:leader_staff_id", handler.GetAttendRecordApproveByLeaderStaffId)
+	attendGroup.GET("/approve_accept/:attendId", handler.ApproveAccept)
+	attendGroup.GET("/approve_reject/:attendId", handler.ApproveReject)
 	// 招聘信息相关
 	recruitmentGroup := server.Group("/recruitment")
 	recruitmentGroup.POST("/create", handler.CreateRecruitment)

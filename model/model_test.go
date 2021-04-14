@@ -1,10 +1,11 @@
 package model
 
 import (
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	httpReq "github.com/kirinlabs/HttpRequest"
 	"github.com/tealeg/xlsx"
+	"log"
 	"math/rand"
 	"testing"
 	"time"
@@ -67,8 +68,28 @@ func TestExampleExcelParse(t *testing.T) {
 	}
 }
 
-func TestBase(t *testing.T) {
-	name := "彭博荣"
-	toString := base64.StdEncoding.EncodeToString([]byte(name))
-	fmt.Println(toString)
+func TestSMS(t *testing.T) {
+	reqJSON := map[string]interface{}{
+		"apiKey":     "IBIMUBn846955ab1be1d10738e67fdb7214c5fef9a626c6",
+		"phoneNum":   15521306934,
+		"templateID": "10713",
+		"params":     "[\"测试通知\"]",
+	}
+	datas, _ := json.Marshal(&reqJSON)
+	log.Printf("[sendNoticeMsg] req data = %v", string(datas))
+	resp, err := httpReq.Post("https://api.apishop.net/communication/sms/send", reqJSON)
+	if err != nil {
+		fmt.Printf("err = %v", err)
+	}
+	body, _ := resp.Body()
+	log.Printf("[sendNoticeMsg] resp = %v", string(body))
+}
+
+func TestComputeSalary(t *testing.T) {
+	leaveDays := 2
+	var bonus int64 = 500
+	x := float64(5-leaveDays) / 5.0
+	bonus = int64(float64(bonus) * x)
+	fmt.Println(x)
+	fmt.Println(bonus)
 }

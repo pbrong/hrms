@@ -11,7 +11,7 @@ import (
 
 func CreateSalary(c *gin.Context, dto *model.SalaryCreateDTO) error {
 	var total int64
-	resource.HrmsDB(c).Model(&model.Salary{}).Where("staff_id = ?", dto.StaffId).Count(&total)
+	resource.HrmsDB(c).Model(&model.Salary{}).Where("staff_id = ? and deleted_at is null", dto.StaffId).Count(&total)
 	if total != 0 {
 		return errors.New(fmt.Sprintf("该员工薪资数据已经存在"))
 	}

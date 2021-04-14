@@ -45,11 +45,11 @@
 
         <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
 
-<!--        <script type="text/html" id="currentTableBar">-->
-<!--            {{ if .query }}-->
-<!--            <a id="query_button" class="layui-btn layui-btn-warm layui-btn-xs data-count-get" lay-event="query">查看</a>-->
-<!--            {{ else }}-->
-<!--            {{ end }}-->
+        <script type="text/html" id="currentTableBar">
+            {{ if .query }}
+            <a id="query_button" class="layui-btn layui-btn-warm layui-btn-xs data-count-get" lay-event="query">查看</a>
+            {{ else }}
+            {{ end }}
 
 <!--            {{ if .update }}-->
 <!--            <a id="edit_button" class="layui-btn layui-btn-normal layui-btn-xs data-count-edit" lay-event="edit">编辑</a>-->
@@ -60,7 +60,7 @@
 <!--            <a id="delete_button" class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除</a>-->
 <!--            {{ else }}-->
 <!--            {{ end }}-->
-<!--        </script>-->
+        </script>
 
     </div>
 </div>
@@ -88,15 +88,23 @@
                     {field: 'ID', width: 60, title: 'ID', sort: true,  hide:true},
                     {field: 'salary_record_id', width: 120, title: '工资ID', hide:true},
                     {width: 60, title: '序号', sort: true, type:'numbers'},
-                    {field: 'staff_id', width: 95, title: '工号'},
+                    {field: 'staff_id', width: 100, title: '工号'},
                     {field: 'staff_name', width: 120, title: '姓名'},
-                    {field: 'base', width: 120, title: '基本(元)'},
-                    {field: 'subsidy', width: 120, title: '补贴(元)'},
-                    {field: 'benifits', width: 120, title: '福利(元)'},
-                    {field: 'fine', width: 120, title: '罚款(元)'},
-                    {field: 'total', width: 120, title: '合计(元)'},
-                    {field: 'salary_date', width: 120, title: '月份'},
-                    {field: 'is_pay', width: 120, title: '状态', templet: isPayFormat, fixed:'right'},
+                    {field: 'base', width: 100, title: '基本薪资'},
+                    {field: 'subsidy', width: 100, title: '住房补贴'},
+                    {field: 'bonus', width: 100, title: '绩效奖金'},
+                    {field: 'commission', width: 100, title: '提成薪资'},
+                    {field: 'other', width: 100, title: '其他薪资'},
+                    {field: 'overtime', width: 100, title: '加班薪资'},
+                    {field: 'pension_insurance', width: 100, title: '养老保险'},
+                    {field: 'unemployment_insurance', width: 100, title: '失业保险'},
+                    {field: 'medical_insurance', width: 100, title: '医疗保险'},
+                    {field: 'housing_fund', width: 100, title: '住房公积金'},
+                    {field: 'tax', width: 100, title: '个人所得税'},
+                    {field: 'total', width: 100, title: '税后薪资'},
+                    {field: 'salary_date', width: 100, title: '月份', fixed: 'right'},
+                    {field: 'is_pay', width: 100, title: '状态', templet: isPayFormat, fixed: 'right'},
+                    {title: '操作', minWidth: 160, toolbar: '#currentTableBar', align: "center", fixed: 'right'}
                 ]],
                 limits: [10, 15, 20, 25, 50, 100],
                 limit: 10,
@@ -236,16 +244,16 @@
                 } else if(obj.event === 'query') {
                     // alert("查看详情")
                     // 本地缓存需要查看的通知信息
-                    localStorage.setItem("notification_detail_info", JSON.stringify(obj.data))
+                    localStorage.setItem("salary_giving_info", JSON.stringify(obj.data))
                     // alert("待编辑：" + localStorage.getItem("staff_edit_info"))
                     var index = layer.open({
-                        title: '通知详情',
+                        title: '薪资详情',
                         type: 2,
                         shade: 0.2,
                         maxmin:true,
                         shadeClose: true,
-                        area: ['80%', '80%'],
-                        content: '/views/admin_notification_detail.html',
+                        area: ['90%', '90%'],
+                        content: '/views/salary_giving_detail.html',
                         end: function(){
                             //执行搜索重载
                             table.reload('currentTableId', {

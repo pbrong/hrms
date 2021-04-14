@@ -37,7 +37,7 @@
         <script type="text/html" id="toolbarDemo">
             <div class="layui-btn-container">
                 {{ if .create }}
-                <button id="add_button" class="layui-btn layui-btn-normal layui-btn-sm data-add-btn" lay-event="add"> 添加 </button>
+                <button id="add_button" class="layui-btn layui-btn-normal layui-btn-sm data-add-btn" lay-event="add"> 上报 </button>
                 {{ else }}
                 {{ end }}
             </div>
@@ -108,7 +108,17 @@
                     {field: 'leave_days', width: 150, title: '当月请假(天)'},
                     {field: 'overtime_days', width: 150, title: '当月加班(天)'},
                     {field: 'date', width: 150, title: '月份'},
-                    {title: '操作', minWidth: 150, toolbar: '#currentTableBar', align: "center", fixed: 'right'}
+                    {field: 'approve', width: 100, title: '审批状态', fixed: 'right', templet: function(data) {
+                            var status = "尚未审批"
+                            if (data.approve == 1) {
+                                status = "审批已通过"
+                            }
+                            if (data.approve == 2) {
+                                status = "审批已拒绝"
+                            }
+                            return status
+                        }},
+                    {title: '操作', minWidth: 120, toolbar: '#currentTableBar', align: "center", fixed: 'right'}
                 ]],
                 limits: [10, 15, 20, 25, 50, 100],
                 limit: 10,
@@ -159,7 +169,7 @@
                         maxmin:true,
                         shadeClose: true,
                         area: ['80%', '80%'],
-                        content: '/views/attendance_record_add.html',
+                        content: '/views/normal_attendance_record_add.html',
                         end: function(){
                             //执行搜索重载
                             table.reload('currentTableId', {
@@ -214,23 +224,26 @@
                     // 本地缓存需要编辑的通知信息
                     localStorage.setItem("attendance_edit_info", JSON.stringify(obj.data))
                     // alert("待编辑：" + localStorage.getItem("attendance_edit_info"))
-                    var index = layer.open({
-                        title: '编辑考勤信息',
-                        type: 2,
-                        shade: 0.2,
-                        maxmin:true,
-                        shadeClose: true,
-                        area: ['80%', '80%'],
-                        content: '/views/attendance_record_edit.html',
-                        end: function(){
-                            //执行搜索重载
-                            table.reload('currentTableId', {
-                                page: {
-                                    curr: 1
-                                }
-                            }, 'data');
-                        }
-                    });
+                    // layer.confirm('将重新上报考勤数据进行审批，确定编辑吗？', function () {
+                         var index = layer.open({
+                            title: '编辑考勤信息',
+                            type: 2,
+                            shade: 0.2,
+                            maxmin: true,
+                            shadeClose: true,
+                            area: ['80%', '80%'],
+                            content: '/views/attendance_record_edit.html',
+                            end: function () {
+                                //执行搜索重载
+                                table.reload('currentTableId', {
+                                    page: {
+                                        curr: 1
+                                    }
+                                }, 'data');
+                            }
+                        });
+                    // })
+
                     $(window).on("resize", function () {
                         layer.full(index);
                     });

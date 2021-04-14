@@ -48,6 +48,20 @@ func CreateNotification(c *gin.Context, dto *model.NotificationDTO) error {
 		log.Printf("CreateNotification err = %v", err)
 		return err
 	}
+
+	// 紧急通知，获取公司员工列表，发放短信
+	if notification.Type == "紧急通知" {
+		var staffs []*model.Staff
+		if err := resource.HrmsDB(c).Find(&staffs).Error; err != nil {
+			log.Printf("CreateNotification err = %v", err)
+			return err
+		}
+		// 获取员工手机号，发送紧急通知短信
+		for _, staff := range staffs {
+			content := []string{notification.NoticeTitle}
+			sendNoticeMsg("notice", staff.Phone, content)
+		}
+	}
 	return nil
 }
 

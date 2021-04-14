@@ -44,6 +44,12 @@
               "href": "/authority_render/attendance_history_manage",
               "icon": "fa fa-tachometer",
               "target": "_self"
+            },
+            {
+              "title": "考勤审批",
+              "href": "/authority_render/attendance_approve_manage",
+              "icon": "fa fa-tachometer",
+              "target": "_self"
             }
           ]
         },
