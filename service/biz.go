@@ -1,6 +1,8 @@
 package service
 
 import (
+	"crypto/md5"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -120,6 +122,7 @@ func Transfer(from, to interface{}) error {
 
 const SMS_URL = "https://api.apishop.net/communication/sms/send"
 
+// 向指定手机号发放短信通知
 func sendNoticeMsg(msgType string, phone int64, content []string) {
 	if phone == 0 || phone != 15521306934 {
 		// 给自己手机号发短信验证效果
@@ -148,4 +151,12 @@ func sendNoticeMsg(msgType string, phone int64, content []string) {
 	}
 	body, _ := resp.Body()
 	log.Printf("[sendNoticeMsg] resp = %v", string(body))
+}
+
+func MD5(input string) string {
+	data := []byte(input)
+	md5Ctx := md5.New()
+	md5Ctx.Write(data)
+	cipherStr := md5Ctx.Sum(nil)
+	return hex.EncodeToString(cipherStr)
 }

@@ -61,9 +61,9 @@ func StaffCreate(c *gin.Context) {
 	login := model.Authority{
 		AuthorityId:  service.RandomID("auth"),
 		StaffId:      staffId,
-		UserPassword: staff.IdentityNum[identLen-6 : identLen],
-		Aval:         1,
-		UserType:     "normal", // 暂时只能创建普通员工
+		UserPassword: service.MD5(staff.IdentityNum[identLen-6 : identLen]),
+		//Aval:         1,
+		UserType: "normal", // 暂时只能创建普通员工
 	}
 	err := resource.HrmsDB(c).Transaction(func(tx *gorm.DB) error {
 		if err := tx.Create(&staff).Error; err != nil {

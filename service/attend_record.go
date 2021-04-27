@@ -151,7 +151,7 @@ func GetAttendRecordApproveByLeaderStaffId(c *gin.Context, leaderStaffId string)
 }
 
 // 通过考勤审批信息，修改考勤信息为通过，并且按该员工工资套账进行相应的薪资详情计算，得到五险一金税后薪资
-func ApproveAccept(c *gin.Context, attendId string) error {
+func Compute(c *gin.Context, attendId string) error {
 	err := resource.HrmsDB(c).Transaction(func(tx *gorm.DB) error {
 		// 更新考勤信息为审批通过状态
 		if err := tx.Model(&model.AttendanceRecord{}).Where("attendance_id = ?", attendId).Update("approve", 1).Error; err != nil {
@@ -259,9 +259,15 @@ func ApproveAccept(c *gin.Context, attendId string) error {
 		if err = tx.Create(&salaryRecord).Error; err != nil {
 			return err
 		}
+		// 通过税务系统上报税款并将工资发放至员工银行卡中
+		payStaffSalaryAndTax(salaryRecord)
 		return nil
 	})
 	return err
+}
+
+func payStaffSalaryAndTax(record model.SalaryRecord) {
+	// 需要对接银行系统及税务系统
 }
 
 func getCurMonthWorkdays() float64 {
