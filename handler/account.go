@@ -101,7 +101,7 @@ func Login(c *gin.Context) {
 	var loginDb model.Authority
 	var staff model.Staff
 	hrmsDB.Where("staff_id = ? and user_password = ?",
-		loginR.UserNo, loginR.UserPassword).First(&loginDb)
+		loginR.UserNo, service.MD5(loginR.UserPassword)).First(&loginDb)
 	if loginDb.StaffId != loginR.UserNo {
 		log.Printf("[handler.Login] user login fail, user = %v", loginR)
 		c.JSON(200, gin.H{

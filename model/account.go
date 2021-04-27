@@ -15,8 +15,8 @@ type Authority struct {
 	AuthorityId  string `gorm:"column:authority_id" json:"authority_id"`
 	StaffId      string `gorm:"column:staff_id" json:"staff_id"`
 	UserPassword string `gorm:"column:user_password" json:"user_password"`
-	Aval         int64  `gorm:"column:aval" json:"aval"`
-	UserType     string `gorm:"column:user_type" json:"user_type"`
+	//Aval         int64  `gorm:"column:aval" json:"aval"`
+	UserType string `gorm:"column:user_type" json:"user_type"`
 }
 
 type PasswordQueryVO struct {

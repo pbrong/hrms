@@ -151,7 +151,7 @@ func GetAttendRecordApproveByLeaderStaffId(c *gin.Context, leaderStaffId string)
 }
 
 // 通过考勤审批信息，修改考勤信息为通过，并且按该员工工资套账进行相应的薪资详情计算，得到五险一金税后薪资
-func ApproveAccept(c *gin.Context, attendId string) error {
+func Compute(c *gin.Context, attendId string) error {
 	err := resource.HrmsDB(c).Transaction(func(tx *gorm.DB) error {
 		// 更新考勤信息为审批通过状态
 		if err := tx.Model(&model.AttendanceRecord{}).Where("attendance_id = ?", attendId).Update("approve", 1).Error; err != nil {
@@ -195,7 +195,7 @@ func ApproveAccept(c *gin.Context, attendId string) error {
 		overtimeSalary := int64((float64(base) / getCurMonthWorkdays()) * 2.0 * float64(overtimeDays))
 		// 判断是否交五险一金，不交的话不计算三险
 		salaryRecord := model.SalaryRecord{}
-		amount := overtimeSalary + base + subsidy + bonus + commission + other
+		amount := float64(overtimeSalary + base + subsidy + bonus + commission + other)
 		if fund == 1 {
 			// 缴纳五险一金，计算个人需缴纳养老保险、失业保险和医疗保险及住房公积金
 			//养老保险金：   800.00 (8%)   1900.00    (19%)
@@ -205,33 +205,33 @@ func ApproveAccept(c *gin.Context, attendId string) error {
 			//补充住房公积金： 0.00   (0%)   0.00   (0%)
 			//工伤保险金：       0         40.00  (0.4%)
 			///生育保险金：      0         80.00  (0.8%)
-			salaryRecord.PensionInsurance = int64(float64(amount) * 0.08)
-			salaryRecord.MedicalInsurance = int64(float64(amount) * 0.02)
-			salaryRecord.UnemploymentInsurance = int64(float64(amount) * 0.002)
-			salaryRecord.HousingFund = int64(float64(amount) * 0.12)
+			salaryRecord.PensionInsurance = amount * 0.08
+			salaryRecord.MedicalInsurance = amount * 0.02
+			salaryRecord.UnemploymentInsurance = amount * 0.002
+			salaryRecord.HousingFund = amount * 0.12
 		}
 		// 计算扣除三险及住房公积金后薪资，并以此计算扣税金额
 		amount = amount - salaryRecord.PensionInsurance - salaryRecord.MedicalInsurance -
 			salaryRecord.UnemploymentInsurance - salaryRecord.HousingFund
 		// 以最新税法，起征点5000元计算，七级扣税
-		var tax int64 = 0
+		var tax float64 = 0
 		if amount > 5000 {
 			total := amount - 5000
 			// 按法定税率扣税
 			if total <= 3000 {
-				tax = int64(float64(total) * 0.03)
+				tax = total * 0.03
 			} else if total <= 12000 {
-				tax = int64(float64(total)*0.10) - 210
+				tax = total*0.10 - 210
 			} else if total <= 25000 {
-				tax = int64(float64(total)*0.20) - 1410
+				tax = total*0.20 - 1410
 			} else if total <= 35000 {
-				tax = int64(float64(total)*0.25) - 2660
+				tax = total*0.25 - 2660
 			} else if total <= 55000 {
-				tax = int64(float64(total)*0.30) - 4410
+				tax = total*0.30 - 4410
 			} else if total <= 80000 {
-				tax = int64(float64(total)*0.35) - 7160
+				tax = total*0.35 - 7160
 			} else if total > 80000 {
-				tax = int64(float64(total)*0.45) - 15160
+				tax = total*0.45 - 15160
 			}
 		}
 		// 计算税后工资

@@ -103,7 +103,13 @@ func PaySalaryRecordById(c *gin.Context, id int64) error {
 		date := salarys[0].SalaryDate
 		sendNoticeMsg("salary", getStaffPhoneByStaffId(c, salarys[0].StaffId), []string{date})
 	}
+	// 通过税务系统上报税款并将工资发放至员工银行卡中
+	payStaffSalaryAndTax(salarys[0])
 	return nil
+}
+
+func payStaffSalaryAndTax(record *model.SalaryRecord) {
+	// 需要对接银行系统及税务系统
 }
 
 func getStaffPhoneByStaffId(c *gin.Context, staffId string) int64 {

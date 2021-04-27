@@ -1,6 +1,8 @@
 package model
 
 import (
+	"crypto/md5"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	httpReq "github.com/kirinlabs/HttpRequest"
@@ -86,10 +88,9 @@ func TestSMS(t *testing.T) {
 }
 
 func TestComputeSalary(t *testing.T) {
-	leaveDays := 2
-	var bonus int64 = 500
-	x := float64(5-leaveDays) / 5.0
-	bonus = int64(float64(bonus) * x)
-	fmt.Println(x)
-	fmt.Println(bonus)
+	data := []byte("215517test")
+	md5Ctx := md5.New()
+	md5Ctx.Write(data)
+	cipherStr := md5Ctx.Sum(nil)
+	fmt.Println(hex.EncodeToString(cipherStr))
 }

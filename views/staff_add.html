@@ -231,7 +231,7 @@
         form.on('submit(saveBtn)', function (req) {
             req.field.base_salary = parseInt(req.field.base_salary)
             req.field.phone = parseInt(req.field.phone)
-            alert(JSON.stringify(req.field))
+            // alert(JSON.stringify(req.field))
             $.ajax({
                 type: "POST",
                 url: "/staff/create",

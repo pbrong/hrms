@@ -153,7 +153,7 @@ func GetAttendRecordApproveByLeaderStaffId(c *gin.Context) {
 // 审批通过考勤信息
 func ApproveAccept(c *gin.Context) {
 	attendId := c.Param("attendId")
-	if err := service.ApproveAccept(c, attendId); err != nil {
+	if err := service.Compute(c, attendId); err != nil {
 		c.JSON(200, gin.H{
 			"status": 5000,
 			"err":    err,

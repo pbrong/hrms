@@ -88,7 +88,9 @@
                     {width: 60, title: '序号', sort: true, type:'numbers'},
                     {field: 'notice_title', width: 250, title: '通知标题'},
                     {field: 'type', width: 150, title: '通知类别'},
-                    {field: 'date', width: 170, title: '生效日期'},
+                    {field: 'date', width: 170, title: '生效日期', templet: function(data) {
+                            return data.date.slice(0, 10)
+                        }},
                     {field: 'notice_content', width: 150, title: '通知内容'},
                     {title: '操作', minWidth: 150, toolbar: '#currentTableBar', align: "center", fixed: 'right'}
                 ]],

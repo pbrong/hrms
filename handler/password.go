@@ -89,7 +89,7 @@ func PasswordEdit(c *gin.Context) {
 		return
 	}
 	staffId := passwordEditDTO.StaffId
-	password := passwordEditDTO.Password
+	password := service.MD5(passwordEditDTO.Password)
 	if err := resource.HrmsDB(c).Where("staff_id = ?", staffId).Updates(&model.Authority{
 		UserPassword: password,
 	}).Error; err != nil {
