@@ -1,8 +1,10 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/qiniu/qmgo"
 	"github.com/spf13/viper"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -218,6 +220,20 @@ func InitGorm() error {
 	log.Printf("[InitGorm] success")
 	return nil
 }
+
+func InitMongo() error {
+	mongo := resource.HrmsConf.Mongo
+	var err error
+	resource.MongoClient, err = qmgo.NewClient(context.Background(), &qmgo.Config{
+		Uri:      fmt.Sprintf("mongodb://%v:%v", mongo.IP, mongo.Port),
+		Database: mongo.Dataset,
+	})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func main() {
 	if err := InitConfig(); err != nil {
 		panic(err)
@@ -226,6 +242,9 @@ func main() {
 		panic(err)
 	}
 	if err := InitGin(); err != nil {
+		panic(err)
+	}
+	if err := InitMongo(); err != nil {
 		panic(err)
 	}
 }

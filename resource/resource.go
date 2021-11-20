@@ -3,6 +3,7 @@ package resource
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/qiniu/qmgo"
 	"gorm.io/gorm"
 	"net/http"
 	"strings"
@@ -45,7 +46,16 @@ type Db struct {
 	DbName   string `json:"dbNname"`
 }
 
+type Mongo struct {
+	IP      string `json:"ip"`
+	Port    int64  `json:"port"`
+	Dataset string `json:"dataset"`
+}
+
+var MongoClient *qmgo.Client
+
 type Config struct {
-	Gin `json:"gin"`
-	Db  `json:"db"`
+	Gin   `json:"gin"`
+	Db    `json:"db"`
+	Mongo `json:"mongo"`
 }

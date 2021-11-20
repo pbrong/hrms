@@ -1,8 +1,12 @@
 gin:
   port: 8888
 db:
-  user: arong
-  password: 123
-  host: 10.211.55.30
+  user: arong123
+  password: ARong123!
+  host: 112.74.99.205
   port: 3306
-  dbName: hrms_prod
+  dbName: hrms_C001,hrms_C002
+mongo:
+  ip: 112.74.99.205
+  port: 27017
+  dataset: hrms
