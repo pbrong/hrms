@@ -4,11 +4,29 @@
 # 使用方式
 - git clone https://github.com/pbrong/hrms.git
 - cd hrms && go mod tidy
+- 按照sql文件的两个配置，分别建hrms1和hrms2分公司数据库
 - 更新conf配置文件配置
 - sh build.sh 执行脚本编译可执行文件执行 或 直接启动main.go运行
 
 # 功能结构
 ![](https://github.com/pbrong/pbrong/blob/main/Screenshot%20at%20Dec%2015%2021-47-31.png)
+
+
+# 系统架构
+![](https://github.com/pbrong/pbrong/blob/main/Screenshot%20at%20Jan%2001%2012-32-26.png)
+
+# 数据库设计
+共14张数据库表，ER关系如下：
+![](https://github.com/pbrong/pbrong/blob/main/Screenshot%20at%20Jan%2001%2012-29-52.png)
+
+# 分公司分库设计
+![](https://github.com/pbrong/pbrong/blob/main/Screenshot%20at%20Jan%2001%2012-58-07.png)
+![](https://github.com/pbrong/pbrong/blob/main/Screenshot%20at%20Jan%2001%2012-58-27.png)
+
+# 权限设计
+![](https://github.com/pbrong/pbrong/blob/main/Screenshot%20at%20Jan%2001%2012-32-41.png)
+![](https://github.com/pbrong/pbrong/blob/main/Screenshot%20at%20Jan%2001%2012-32-15.png)
+![](https://github.com/pbrong/pbrong/blob/main/Screenshot%20at%20Jan%2001%2012-32-51.png)
 
 # 界面展示
 - 分公司员工登陆
