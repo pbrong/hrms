@@ -2,7 +2,25 @@
 本项目用于Go爱好者学习和参考，不能直接用于生产环境，转载使用请说明出处。如想交流欢迎加微信号 arong2048，备注github。
 
 # hrms
-基于go、gorm、gin、mysql及layui构建的人力资源管理系统。提供员工管理、考试管理、薪资考勤管理、权限管理及分公司分库数据隔离等功能。欢迎Star或提Issue。
+基于go、gorm、gin、mysql及layui构建的人力资源管理系统。提供员工管理、考试管理、通知管理、薪资考勤管理、招聘管理、权限管理及分公司分库数据隔离等功能。欢迎Star或提Issue。
+
+# TodoList
+- [x] 完成需求分析设计、数据库设计及项目搭建(go、gin、gorm、layui)
+- [x] 完成RBAC及模板引擎实现分权限化模块管理设计开发（supersys、admin、normal)
+- [x] 完成部门管理、职级管理及员工管理模块设计开发
+- [x] 完成新闻管理及发布通知模块设计开发
+- [x] 完成分公司分库数据隔离模块设计开发（数据库实例动态筛选）
+- [x] 完成薪酬管理、薪资发放、薪资套账模块设计开发
+- [x] 完成考勤管理、考勤上报模块设计开发
+- [x] 完成招聘管理、候选人管理模块设计开发
+- [ ] 基于gRPC将服务进行拆分（接入层、数据层、核心服务层）
+- [ ] 基于consul完成动态服务发现，避免硬编码ip地址
+- [ ] 基于rocketmq实现短信发布服务的异步解耦
+- [ ] 基于mongodb实现系统操作日志存储模块
+- [ ] 将通知数据双写到elasticSearch中，提供全文检索功能
+- [ ] 基于sqlite实现分IP化数据隔离改造及云部署Demo
+- [ ] 分公司数据库配置从硬编码迁移到nacos中实现动态配置
+- [ ] 完成微服务化改造，监控、告警、BI分析等
 
 # 使用方式
 - git clone https://github.com/pbrong/hrms.git
@@ -55,4 +73,3 @@
 ![](https://github.com/pbrong/pbrong/blob/main/Screenshot%20at%20Dec%2015%2021-56-47.png)
 - 考试答题
 ![](https://github.com/pbrong/pbrong/blob/main/Screenshot%20at%20Dec%2015%2021-57-01.png)
-
