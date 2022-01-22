@@ -1,8 +1,8 @@
-# 开源声明
-本项目用于Go爱好者学习和参考，不能直接用于生产环境，转载使用请说明出处。如想交流欢迎加微信号 arong2048，备注github。
-
 # hrms
 基于go、gorm、gin、mysql及layui构建的人力资源管理系统。提供员工管理、考试管理、通知管理、薪资考勤管理、招聘管理、权限管理及分公司分库数据隔离等功能。欢迎Star或提Issue。
+
+# 开源声明
+本项目用于Go爱好者学习和参考，不能直接用于生产环境，转载使用请说明出处。如想交流欢迎加微信号 arong2048，备注github。
 
 # TodoList
 - [x] 完成需求分析设计、数据库设计及项目搭建(go、gin、gorm、layui)
@@ -21,7 +21,22 @@
 - [ ] 基于sqlite实现分IP化数据隔离改造及云部署Demo
 - [ ] 分公司数据库配置从硬编码迁移到nacos中实现动态配置
 - [ ] 完成微服务化改造，监控、告警、BI分析等
-
+# 项目分层
+.
+├── README.md// 项目说明
+├── build.sh // 编译脚本
+├── config   // 配置文件
+├── go.mod   // go依赖列表文件
+├── go.sum   // go依赖校验文件
+├── handler  // 路由层
+├── hrms_app // 编译后的打包文件
+├── main.go  // 启动文件
+├── model    // 实体层
+├── resource // 配置层
+├── service  // 业务层
+├── sql      // 所用到的sql文件
+├── static   // 静态资源
+└── views    // 前端文件
 # 使用方式
 - git clone https://github.com/pbrong/hrms.git
 - cd hrms && go mod tidy
