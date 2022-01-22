@@ -22,21 +22,20 @@
 - [ ] 分公司数据库配置从硬编码迁移到nacos中实现动态配置
 - [ ] 完成微服务化改造，监控、告警、BI分析等
 # 项目分层
-.
-├── README.md// 项目说明
-├── build.sh // 编译脚本
-├── config   // 配置文件
-├── go.mod   // go依赖列表文件
-├── go.sum   // go依赖校验文件
-├── handler  // 路由层
-├── hrms_app // 编译后的打包文件
-├── main.go  // 启动文件
-├── model    // 实体层
-├── resource // 配置层
-├── service  // 业务层
-├── sql      // 所用到的sql文件
-├── static   // 静态资源
-└── views    // 前端文件
+- README.md// 项目说明
+- build.sh // 编译脚本
+- config   // 配置文件
+- go.mod   // go依赖列表文件
+- go.sum   // go依赖校验文件
+- handler  // 路由层
+- hrms_app // 编译后的打包文件
+- main.go  // 启动文件
+- model    // 实体层
+- resource // 配置层
+- service  // 业务层
+- sql      // 所用到的sql文件
+- static   // 静态资源
+- views    // 前端文件
 # 使用方式
 - git clone https://github.com/pbrong/hrms.git
 - cd hrms && go mod tidy
