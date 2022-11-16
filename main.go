@@ -33,6 +33,10 @@ func InitConfig() error {
 		// 生产环境
 		vip.SetConfigName("config-prod")
 	}
+	if env == "self" {
+		// 生产环境
+		vip.SetConfigName("config-self")
+	}
 	err := vip.ReadInConfig()
 	if err != nil {
 		log.Printf("[config.Init] err = %v", err)
@@ -236,15 +240,15 @@ func InitMongo() error {
 
 func main() {
 	if err := InitConfig(); err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 	if err := InitGorm(); err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 	if err := InitGin(); err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 	if err := InitMongo(); err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 }
