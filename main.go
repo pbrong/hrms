@@ -1,10 +1,8 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/qiniu/qmgo"
 	"github.com/spf13/viper"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -91,6 +89,7 @@ func routerInit(server *gin.Engine) {
 	// 员工信息相关
 	staffGroup := server.Group("/staff")
 	staffGroup.POST("/create", handler.StaffCreate)
+	staffGroup.POST("/excel_export", handler.ExcelExport)
 	staffGroup.DELETE("/del/:staff_id", handler.StaffDel)
 	staffGroup.POST("/edit", handler.StaffEdit)
 	staffGroup.GET("/query/:staff_id", handler.StaffQuery)
@@ -225,18 +224,18 @@ func InitGorm() error {
 	return nil
 }
 
-func InitMongo() error {
-	mongo := resource.HrmsConf.Mongo
-	var err error
-	resource.MongoClient, err = qmgo.NewClient(context.Background(), &qmgo.Config{
-		Uri:      fmt.Sprintf("mongodb://%v:%v", mongo.IP, mongo.Port),
-		Database: mongo.Dataset,
-	})
-	if err != nil {
-		return err
-	}
-	return nil
-}
+//func InitMongo() error {
+//	mongo := resource.HrmsConf.Mongo
+//	var err error
+//	resource.MongoClient, err = qmgo.NewClient(context.Background(), &qmgo.Config{
+//		Uri:      fmt.Sprintf("mongodb://%v:%v", mongo.IP, mongo.Port),
+//		Database: mongo.Dataset,
+//	})
+//	if err != nil {
+//		return err
+//	}
+//	return nil
+//}
 
 func main() {
 	if err := InitConfig(); err != nil {
@@ -248,7 +247,7 @@ func main() {
 	if err := InitGin(); err != nil {
 		log.Fatal(err)
 	}
-	if err := InitMongo(); err != nil {
-		log.Fatal(err)
-	}
+	//if err := InitMongo(); err != nil {
+	//	log.Fatal(err)
+	//}
 }

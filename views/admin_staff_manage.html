@@ -41,7 +41,8 @@
         <script type="text/html" id="toolbarDemo">
             <div class="layui-btn-container">
                 {{ if .create }}
-                <button id="add_button" class="layui-btn layui-btn-normal layui-btn-sm data-add-btn" lay-event="add"> 添加 </button>
+                <button id="add_button" class="layui-btn layui-btn-normal layui-btn-sm data-add-btn" lay-event="add"> 录入信息 </button>
+                <button id="excel_add_button" class="layui-btn layui-btn-normal layui-btn-sm data-add-btn" lay-event="excel_add"> Excel导入 </button>
                 {{ else }}
                 {{ end }}
             </div>
@@ -74,9 +75,10 @@
 
 <script>
         {{ if .query }}
-        layui.use(['form', 'table'], function () {
+        layui.use(['form', 'table', 'upload'], function () {
             var $ = layui.jquery,
                 form = layui.form,
+                upload = layui.upload,
                 table = layui.table;
 
             table.render({
@@ -317,6 +319,29 @@
                     });
                     return false;
                 }
+            });
+
+            upload.render({
+                elem: '#excel_add_button' //绑定元素
+                ,url: '/staff/excel_export' //上传接口
+                ,accept: 'file',
+                exts:'xlsx',
+                field:'excel_staffs',
+                done: function(resp, index, upload){
+                    //上传完毕回调
+                    layer.msg(resp.msg)
+                    table.reload('currentTableId', {
+                        url: "/staff/query/all",
+                        page: {
+                            curr: 1
+                        }
+                    }, 'data');
+                }
+                ,error: function(){
+                    //请求异常回调
+                    layer.msg("导入员工信息失败")
+                }
+
             });
 
         });

@@ -1,14 +1,20 @@
 package handler
 
 import (
+	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/tealeg/xlsx"
+	"golang.org/x/sync/errgroup"
 	"gorm.io/gorm"
 	"hrms/model"
 	"hrms/resource"
 	"hrms/service"
+	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
+	"sync/atomic"
 )
 
 func StaffCreate(c *gin.Context) {
@@ -22,10 +28,25 @@ func StaffCreate(c *gin.Context) {
 		return
 	}
 	log.Printf("[StaffCreate staff = %v]", staffCreateDto)
-	staffId := service.RandomStaffId()
-	// 创建员工信息
+	// 创建员工信息落表
+	if staff, err := buildStaffInfoSaveDB(c, staffCreateDto); err != nil {
+		log.Printf("[StaffCreate err = %v]", err)
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"status": 5001,
+			"msg":    err.Error(),
+		})
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"status": 2000,
+			"msg":    staff,
+		})
+	}
+}
+
+func buildStaffInfoSaveDB(c *gin.Context, staffCreateDto model.StaffCreateDTO) (model.Staff, error) {
+	staffID := service.RandomStaffId()
 	staff := model.Staff{
-		StaffId:       staffId,
+		StaffId:       staffID,
 		StaffName:     staffCreateDto.StaffName,
 		LeaderStaffId: staffCreateDto.LeaderStaffId,
 		Phone:         staffCreateDto.Phone,
@@ -44,13 +65,9 @@ func StaffCreate(c *gin.Context) {
 		EntryDate:     service.Str2Time(staffCreateDto.EntryDateStr, 0),
 	}
 	var exist int64
-	resource.HrmsDB(c).Model(&model.Staff{}).Where("identity_num = ? or staff_id = ?", staffCreateDto.IdentityNum, staffId).Count(&exist)
+	resource.HrmsDB(c).Model(&model.Staff{}).Where("identity_num = ? or staff_id = ?", staffCreateDto.IdentityNum, staffID).Count(&exist)
 	if exist != 0 {
-		c.JSON(http.StatusOK, gin.H{
-			"status": 2001,
-			"msg":    "已经存在",
-		})
-		return
+		return staff, errors.New("已经存在该员工")
 	}
 	// 查询leader名称
 	var leader model.Staff
@@ -60,7 +77,7 @@ func StaffCreate(c *gin.Context) {
 	identLen := len(staff.IdentityNum)
 	login := model.Authority{
 		AuthorityId:  service.RandomID("auth"),
-		StaffId:      staffId,
+		StaffId:      staffID,
 		UserPassword: service.MD5(staff.IdentityNum[identLen-6 : identLen]),
 		//Aval:         1,
 		UserType: "normal", // 暂时只能创建普通员工
@@ -74,18 +91,8 @@ func StaffCreate(c *gin.Context) {
 		}
 		return nil
 	})
-	if err != nil {
-		log.Printf("[StaffCreate err = %v]", err)
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"status": 5001,
-			"msg":    err.Error(),
-		})
-		return
-	}
-	c.JSON(http.StatusOK, gin.H{
-		"status": 2000,
-		"msg":    staff,
-	})
+
+	return staff, err
 }
 
 func StaffEdit(c *gin.Context) {
@@ -304,4 +311,136 @@ func StaffQueryByStaffId(c *gin.Context) {
 		"total":  total,
 		"msg":    convert2VO(c, staffs),
 	})
+}
+
+func ExcelExport(c *gin.Context) {
+	var err error
+	defer func() {
+		if err != nil {
+			log.Printf("[ExcelExport err = %v]", err)
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"status": 5001,
+				"msg":    err.Error(),
+			})
+			return
+		}
+	}()
+	file, err := c.FormFile("excel_staffs")
+	if err != nil {
+		log.Printf("ExcelExport err = %v", err)
+		return
+	}
+	if strings.Split(file.Filename, ".")[1] != "xlsx" {
+		log.Printf("ExcelExport 只可上传xlsx格式文件")
+		return
+	}
+	fileOpen, err := file.Open()
+	if err != nil {
+		log.Printf("ExcelExport err = %v", err)
+		return
+	}
+	defer fileOpen.Close()
+	bytes, err := ioutil.ReadAll(fileOpen)
+	if err != nil {
+		log.Printf("ExcelExport err = %v", err)
+		return
+	}
+	xfile, err := xlsx.OpenBinary(bytes)
+	if err != nil {
+		log.Printf("ExcelExport err = %v", err)
+		return
+	}
+	var exportStaffList []model.StaffCreateDTO
+	for _, sheet := range xfile.Sheets {
+		headers := sheet.Rows[0]
+		for _, r := range sheet.Rows[1:] {
+			staff := model.StaffCreateDTO{}
+			for i, v := range r.Cells {
+				switch headers.Cells[i].String() {
+				case "员工姓名":
+					staff.StaffName = v.String()
+				case "指定上级":
+					staff.LeaderName = v.String()
+				case "上级工号":
+					staff.LeaderStaffId = v.String()
+				case "员工性别":
+					staff.SexStr = v.String()
+				case "身份证号":
+					staff.IdentityNum = v.String()
+				case "出生日期":
+					staff.BirthdayStr = v.String()
+				case "民族":
+					staff.Nation = v.String()
+				case "毕业院校":
+					staff.School = v.String()
+				case "毕业专业":
+					staff.Major = v.String()
+				case "最高学历":
+					staff.EduLevel = v.String()
+				case "基本薪资":
+					if s, err := v.Int64(); err != nil {
+						staff.BaseSalary = -1
+					} else {
+						staff.BaseSalary = s
+					}
+				case "银行卡号":
+					staff.CardNum = v.String()
+				case "职位":
+					staff.RankId = getRankID(c, v.String())
+				case "部门":
+					staff.DepId = getDepID(c, v.String())
+				case "电子邮箱":
+					staff.Email = v.String()
+				case "手机号":
+					if s, err := v.Int64(); err != nil {
+						staff.Phone = -1
+					} else {
+						staff.Phone = s
+					}
+				case "入职日期":
+					staff.EntryDateStr = v.String()
+				}
+			}
+			exportStaffList = append(exportStaffList, staff)
+		}
+	}
+
+	var (
+		eg         errgroup.Group
+		successNum int64
+		errNum     int64
+	)
+	for _, s := range exportStaffList {
+		var s = s
+		eg.Go(func() error {
+			if _, err := buildStaffInfoSaveDB(c, s); err != nil {
+				atomic.AddInt64(&errNum, 1)
+				return err
+			}
+			atomic.AddInt64(&successNum, 1)
+			return nil
+		})
+	}
+	eg.Wait()
+
+	c.JSON(http.StatusOK, gin.H{
+		"status": 2000,
+		"msg":    fmt.Sprintf("完成员工信息导入，成功%v条，失败%v条", successNum, errNum),
+	})
+}
+
+func getDepID(c *gin.Context, depName string) string {
+	var dep model.Department
+	if err := resource.HrmsDB(c).Model(&model.Department{}).Where("dep_name = ?", depName).Take(&dep).Error; err != nil {
+		return "-1"
+	}
+	return dep.DepId
+}
+
+func getRankID(c *gin.Context, rankName string) string {
+	var rank model.Rank
+	if err := resource.HrmsDB(c).Model(&model.Rank{}).Where("rank_name = ?", rankName).Take(&rank).Error; err != nil {
+		return "-1"
+	}
+	return rank.RankId
 }
