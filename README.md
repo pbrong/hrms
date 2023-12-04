@@ -2,7 +2,8 @@
 基于go、gorm、gin、mysql及layui构建的人力资源管理系统。提供员工管理、考试管理、通知管理、薪资考勤管理、招聘管理、权限管理及分公司分库数据隔离等功能。欢迎Star或提Issue。
 
 # 开源声明
-本项目用于Go爱好者学习和参考，不能直接用于生产环境，转载使用请说明出处。golang开发交流微信群，如二维码过期可添加微信arong2048，备注github。
+本项目用于Go爱好者学习和参考，不能直接用于生产环境，转载使用请说明出处。欢迎加入golang开发交流微信群，如二维码过期可添加微信arong2048，备注github。
+</br>
 <img width="265" alt="image" src="https://github.com/pbrong/hrms/assets/38597513/72a20f9e-0d0c-40c2-afa9-fde09110d98c">
 
 
